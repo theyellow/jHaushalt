@@ -1,0 +1,130 @@
+<html>
+<head>
+<title>jHaushalt - Hilfe</title>
+</head>
+<body>
+<IMG SRC="jhh-jHaushalt.png" WIDTH="276" HEIGHT="109" BORDER="0">
+<h1>Willkommen</h1>
+bei <i>jHaushalt</i>. Es folgen einige Hinweise zur Benutzung des Programms. 
+Falls Sie weitere Fragen oder Probleme haben, schauen Sie bitte in das <i>jHaushalt</i>-Forum
+<a href="http://jhh.dnsalias.com/phpBB3/">http://jhh.dnsalias.com/phpBB3/</a>. 
+Bitte lesen Sie aber immer zun&auml;chst diese Anleitung sowie die
+<a href="jhh-faq_de.html">FAQ</a> und beachten Sie, 
+dass ich die Entwicklung von <i>jHaushalt</i> in meiner Freizeit betreibe. Aus 
+diesem Grund kann eine Antwort auf ihre Frage schon einmal ein paar Wochen 
+dauern. Die aktuelle Version von <i>jHaushalt</i> findet sich unter
+<b>http://www.jhaushalt.de/</b>.
+<p>
+<h3>Allgemeines</h3>
+<i>jHaushalt</i> unterscheidet zwischen unterschiedlichen Registern (Konten). 
+Beispiele hierf&uuml;r sind "Bargeld", "Girokonto" oder "Sparbuch". Beim Programmstart
+von <i>jHaushalt</i> wird automatisch ein erstes Register "NEU" angelegt. Innerhalb 
+eines Registers k&ouml;nnen einzelne Buchungen eingegeben werden. Diese bestehen aus
+<ul>
+<li>einem Datum,
+<li>einem Buchungstext,
+<li>einer Kategorie und
+<li>einem Betrag.
+</ul>
+<p>
+Betr&auml;ge einer Buchung d&uuml;rfen positiv oder negativ sein. Je nachdem ob es sich 
+um eine Einnahme oder eine Ausgabe handelt. Buchungen k&ouml;nnen gesplittet werden, 
+d.h. der Betrag einer Buchung kann auf unterschiedliche Kategorien aufgeteilt 
+werden. Normale Buchungen werden direkt im Register eingegeben. Dar&uuml;ber hinaus 
+gibt es Umbuchungen. Hierbei handelt es sich um Buchungen zwischen unterschiedlichen 
+Registern. Umbuchungen k&ouml;nnen nicht direkt im Register eingegeben werden.
+<p>
+<h3>Tastatur-Befehle ("Shortcuts")</h3>
+<table>
+<tr><td>Strg-A</td><td>Zeigt die Auswertungen an</td></tr>
+<tr><td>Strg-D</td><td>Löscht eine Buchung</td></tr>
+<tr><td>Strg-E</td><td>Löscht alle Buchungen vor einem Datum</td></tr>
+<tr><td>Strg-I</td><td>Importiert eine CSV-Datei</td></tr>
+<tr><td>Strg-K</td><td>Erzeugen und Umbenennen von Kategorien</td></tr>
+<tr><td>Strg-L</td><td>Lädt ein Haushaltsbuch</td></tr>
+<tr><td>Strg-N</td><td>Legt ein neues Haushaltsbuch an</td></tr>
+<tr><td>Strg-O</td><td>Verändert die optionalen Einstellungen</td></tr>
+<tr><td>Strg-P</td><td>Splittet eine Buchung</td></tr>
+<tr><td>Strg-Q</td><td>Importiert eine QIF-Datei</td></tr>
+<tr><td>Strg-R</td><td>Erzeugt ein neues Register</td></tr>
+<tr><td>Strg-S</td><td>Speichert ein Haushaltsbuch</td></tr>
+<tr><td>Strg-U</td><td>Erstellt eine neue Umbuchung</td></tr>
+<tr><td>Strg-V</td><td>Führt zwei Register zusammen</td></tr>
+<tr><td>Strg-X</td><td>Beendet <i>jHaushalt</i></td></tr>
+<tr><td>Strg-F1</td><td>Öffnet die Hilfe</td></tr>
+</table>
+<p>
+Eine Besonderheit ist die Taste "<code>Entf</code>". Mit ihr kann ein Feld gel&ouml;scht
+werden. Diese Funkion kann unter 'Optionen' ver&auml;ndert werden.
+Mit Hilfe der Plus- und Minustaste  ('+' / '-') kann das gerade selektierte Datum um einen
+Tag erh&ouml;ht bzw. erniedrigt werden. 
+<p>
+<h3>Eingabehilfen</h3>
+<ul>
+<li>Die Punkte bei einem Datum m&uuml;ssen nicht mit eingegeben werden. So wird "010102" zu 
+"01.01.02". 
+<li>Ein unvollst&auml;ndiges Datum wird entsprechend des aktuellen Datums erg&auml;nzt. 
+So wird (unter der Vorraussetzung, dass heute der 28.03.02 ist) die Eingabe "01" zu 
+"01.03.02" oder "1002" zu "10.02.02". Vorsicht, dies kann auch zu unerwarteten 
+Ergebnissen f&uuml;hren.
+<li>Bei der Eingabe eines Buchungstextes wird die Buchung automatisch erg&auml;nzt, 
+wenn in der Vergangenheit bereits eine gleichlautende Buchung erfasst wurde.
+</ul>
+<p>
+<h3>QIF-Import</h3>
+Es ist m&ouml;glich, mit <i>jHaushalt</i> Daten aus einer QIF-Datei zu importieren.
+Mit dem Programm "Q**ck**" l&auml;sst sich hierzu eine Export-Datei im QIF-Format
+erzeugen. Um Daten aus "Q**ck**" in <i>jHaushalt</i> zu &uuml;bernehmen, m&uuml;ssen
+zun&auml;chst alle Register einzeln als QIF-Datei exportiert werden. In <i>jHaushalt</i>
+muss dann mindestens ein Register erzeugt werden. Der Name dieses Registers&nbsp;
+<b>muss unbedingt</b> mit dem Register, das importiert werden soll, identisch
+sein (Der Dateiname spielt keine Rolle!). Beim Importieren des ersten Registers
+legt <i>jHaushalt</i> automatisch alle weiteren ben&ouml;tigten Register
+an. Das Importieren muss im Anschluss f&uuml;r jedes weitere Register einzeln
+erfolgen. Um alle Buchungen vollst&auml;ndig zu importieren, <b>m&uuml;ssen
+unbedingt</b> alle Register importiert werden. Da nur die positiven Buchungen
+importiert werden, w&uuml;rden sonst Buchungen fehlen. Noch einmal in Kurzform:
+<ol>
+  <li>Alle Register in "Q**ck**" exportieren.</li>
+  <li>Erstes Register in <i>jHaushalt</i> von Hand anlegen (z.B. "Kasse").</li>
+  <li>Erstes Register importieren (z.B. "<code>Kasse.qif</code>").</li>
+  <li>Importieren f&uuml;r jedes weitere Register wiederholen 
+      (z.B. "<code>Bankkonto.qif</code>").</li>
+</ol>
+Ich habe die Importfunktion im Zusammenspiel mit "Q**ck** 98" und DM-Konten
+erfolgreich getestet. Mit anderen Versionen von "Q**ck**" liegen mir keine
+Erfahrungen vor. In jedem Fall muss bei neueren Versionen die Importw&auml;hrung
+auf Euro gestellt werden. Zum Testen habe ich die beiden Dateien "<code>Kasse.qif</code>"
+und "<code>Bankkonto.qif</code>" beigelegt.
+<p>
+<h3>Automatische Buchungen</h3>
+Seit der Version 1.1 ist es m&ouml;glich, wiederkehrende Buchungen automatisch
+ausf&uuml;hren zu lassen. Wiederkehrende Buchungen sind z.B. die Wohnungsmiete
+oder das eigene Gehalt. Bei einer automatischen Buchung werden der erste
+Ausf&uuml;hrungstag und das Intervall der Ausf&uuml;hrung (Monat, Quartal,
+Halbjahr, Jahr) angegeben. Bei jedem Programmstart &uuml;berpr&uuml;ft <i>jHaushalt</i>,
+ob automatische Buchungen f&auml;llig sind, f&uuml;hrt sie ggf. aus und zeigt
+an wie viele ausgef&uuml;hrt wurden. Automatische Buchungen k&ouml;nnen mit
+<code>Alt-D</code> gel&ouml;scht werden.
+<p>
+<h3>H&auml;ufig gestellte Fragen (FAQ)</h3>
+<a href="jhh-faq_de.html">Liste mit den FAQ</a>
+<p>
+<h3>Freie Software</h3>
+<i>jHaushalt</i> ist freie Software. Sie k&ouml;nnen es unter
+den Bedingungen der GNU General Public License, wie von der
+Free Software Foundation herausgegeben, weitergeben und/oder
+modifizieren, entweder unter Version 3 der Lizenz oder
+jeder sp&auml;teren Version.
+<p>
+Die Ver&ouml;ffentlichung von <i>jHaushalt</i> erfolgt in der
+Hoffnung, daß es Ihnen von Nutzen sein wird, aber OHNE JEDE
+GEW&Auml;HRLEISTUNG - sogar ohne die implizite Gew&auml;hrleistung
+der MARKTREIFE oder der EIGNUNG F&Uuml;R EINEN BESTIMMTEN ZWECK.
+Details finden Sie in der GNU General Public License.
+<p>
+Sie sollten eine Kopie der GNU General Public License zusammen
+mit <i>jHaushalt</i> erhalten haben. Falls nicht, siehe
+<a href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>.
+</body>
+</html>

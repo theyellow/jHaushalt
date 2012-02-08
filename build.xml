@@ -1,0 +1,69 @@
+<?xml version="1.0"?>
+<project name="jHaushalt" default="all" >
+
+  <property name="srcdir"  value="${basedir}/src" />
+  <property name="builddir" value="${basedir}/bin" />
+  <property name="docdir"  value="${basedir}/doc" />
+  <property name="jardir"  value="${basedir}/jar" />
+  <property name="resdir"  value="${basedir}/res" />
+  
+  
+  <target name="all" depends="clean,build,jar" />
+  
+  <target name="clean">
+    <delete dir="${builddir}" />
+    <delete dir="${jardir}" />
+    <delete>
+      <fileset dir="${srcdir}" includes="**/*Skel.java" />
+      <fileset dir="${srcdir}" includes="**/*Stub.java" />
+    </delete>
+    <delete dir="${destdir}"/>
+  </target>
+  
+  <target name="build" depends="clean" description="Baut die komplette Anwendung">
+    <!-- Verzeichis anlegen -->
+    <mkdir dir="${builddir}" />
+    
+    <!-- Kopiert die Ressourcen -->
+    <copy todir="${builddir}/res">
+      <fileset dir="${resdir}">
+        <include name="**/*" />
+      </fileset>
+    </copy>
+    
+    <!-- Quelltext kompilieren -->
+    <javac
+      srcdir="${srcdir}"
+      excludes="**/haushalt/test/*"
+      destdir="${builddir}"
+      debug="false"
+      deprecation="true"
+      optimize="true" >
+    </javac>
+  </target>
+  
+  
+  <target name="jar" depends="clean,build"> 
+    <mkdir dir="${jardir}" />
+    <jar jarfile="${jardir}/jHaushalt.jar">
+      <manifest>
+        <attribute name="Main-Class" value="haushalt.gui.Haushalt" />
+        <attribute name="Sealed" value="true" />
+      </manifest>      
+      <fileset dir="${builddir}">
+        <include name="**/*" />
+      </fileset>
+    </jar>
+  </target>
+  
+  <target name="doc" >
+      <javadoc
+        sourcepath="${srcdir}"
+        destdir="${docdir}"
+        excludepackagenames="haushalt.test.*"
+        author="true"
+        version="true"
+        private="true">
+      </javadoc>
+  </target>  
+</project>

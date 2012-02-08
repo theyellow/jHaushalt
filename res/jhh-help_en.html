@@ -1,0 +1,83 @@
+<html>
+<head>
+<title>jHaushalt - Help</title>
+</head>
+<body>
+<IMG SRC="jhh-jHaushalt.png" WIDTH="276" HEIGHT="109" BORDER="0">
+<h1>Welcome!</h1>
+One remark at the beginning: Since my English is not 
+perfect please be lenient with this translation. Corrections and improvements
+are always welcome!
+
+Below you will find some quick hints for the use of <i>jHaushalt</i>. If you have 
+any further questions or problems, please see the forum at
+<a href="http://www.jhaushalt.de/">http://www.jhaushalt.de/</a>. At this place you will
+also find the newest version of <i>jHaushalt</i>.
+
+<h3>General</h3>
+<i>jHaushalt</i> distinguishes between different accounts. Examples of accounts
+are "cash", "current account" or "savings account”. At program start
+automatically a first register will be created. Within the register individual
+postings could be entered. A register consist of 
+<ul>
+<li>date, 
+<li>posting text, 
+<li>category and 
+<li>amount.
+</ul>
+The amount of a posting may be positive or negative, depending on either income
+or expenditure. Postings can be split, i.e. the amount of a posting can be split
+on different categories. Normal postings can be directly entered in the last row
+of a register. In addition, there are repostings. These are postings between
+different registers. Repostings can not be directly entered in the register, but by
+clicking on the respective button. 
+
+<h3>Special Keys</h3>
+A special feature is the delete key. With this key a whole field can be erased.
+This function can be changed under 'Options'. <br>
+With the help of the plus ('+')
+and minus ('-') keys a date can be easily increased or decreased. 
+
+<h3>QIF import</h3>
+It is possible to import data from a QIF file. Before you can import your data,
+you have to export all register from "Q**ck*n" to the QIF file format. Before starting
+the import in <i>jHaushalt</i> 
+at least one account must exist. The name of this account
+must necessarily match with the register which is imported (The file name does
+not matter!). By importing the first register <i>jHaushalt</i> will
+automatically create all other required accounts. The import must be done for each
+account individually. All accounts must be imported separately to complete the full import. 
+Otherwise some postings would be missing, since only the positive postings are imported. 
+Following is a short summary of required steps: 
+<ol>
+  <li>Export all registers from "Qu**ck*n"
+  <li>Create the first account in <i>jHaushalt</i> by yourself
+  <li>Import first account
+  <li>Repeat import for each additional account
+</ol>
+I have successfully tested the import function in combination with "Q**ck*n 98".
+Other versions of "Q**ck*n" may not work properly. For the purpose of testing I have included 
+two files 'Kasse.qif' and 'Bankkonto.qif' in the program archive. 
+
+<h3>Repeating postings</h3>
+It is possible to process automatically recurring postings. Repeating postings
+are e.g. the apartment's rent or your own salary. At every start-up <i>jHaushalt</i> checks 
+if it is necessary to execute automated postings. A repeating posting can be deleted with 
+'Alt-D'.
+<p>
+<h3>Free Software</h3>
+<i>jHaushalt</i> is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 3 of the License, or
+(at your option) any later version.
+<p>
+<i>jHaushalt</i> is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+<p>
+You should have received a copy of the GNU General Public License
+along with <i>jHaushalt</i>; if not, see
+<a href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>.
+</body>
+</html>
