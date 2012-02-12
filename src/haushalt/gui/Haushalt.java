@@ -56,39 +56,39 @@ import javax.swing.table.TableColumnModel;
  */
 
  /*
-  * 2010.08.14 Name der Datei für die Properties jetzt variabel (PROPERTIES_FILENAME)
-  * 2009.07.27 Erhöhen der Versionsnummer auf 2.6
-  * 2008.04.15 Erhöhen der Versionsnummer auf 2.5.4 :-)
+  * 2010.08.14 Name der Datei fï¿½r die Properties jetzt variabel (PROPERTIES_FILENAME)
+  * 2009.07.27 Erhï¿½hen der Versionsnummer auf 2.6
+  * 2008.04.15 Erhï¿½hen der Versionsnummer auf 2.5.4 :-)
   * 2008.04.04 BugFix: Korrektur Doppelpunkt
-  * 2008.03.19 Erhöhen der Versionsnummer auf 2.5.3 :-)
-  * 2008.03.11 Erhöhen der Versionsnummer auf 2.5.2 :-)
-  * 2008.03.10 Erhöhen der Versionsnummer auf 2.5.1 :-)
-  * 2008.02.12 Überprüfung, ob Auswertungen geaendert, hinzugefügt
+  * 2008.03.19 Erhï¿½hen der Versionsnummer auf 2.5.3 :-)
+  * 2008.03.11 Erhï¿½hen der Versionsnummer auf 2.5.2 :-)
+  * 2008.03.10 Erhï¿½hen der Versionsnummer auf 2.5.1 :-)
+  * 2008.02.12 ï¿½berprï¿½fung, ob Auswertungen geaendert, hinzugefï¿½gt
   * 2008.01.15 Internationalisierung
   * 2007.04.03 Automatisches Anlegen des ersten Registers beim Neueinrichten eines Haushaltsbuchs
   * 2007.02.22 Erweiterung: Export aller Buchungen
-  * 2007.02.14 Register können umbenannt und von Hand verschoben werden
+  * 2007.02.14 Register kï¿½nnen umbenannt und von Hand verschoben werden
   * 2007.02.06 Erweiterung: Beim Erstellen eines neuen Registers kann
-  *            optional ein Eröffnungssaldo übergeben werden
-  * 2007.01.31 BugFix: Korrektes Merken der Größe des Auswertungsdialog
-  *            Erhöhen der Versionsnummer auf 2.5 :-)
-  * 2006.06.21 Erhöhen der Versionsnummer auf 2.1.3 :-)
-  * 2006.06.19 Speicherung der Fenstergröße des Auswertungsdialog
-  * 2006.06.11 Erhöhen der Versionsnummer auf 2.1.2 :-)
-  * 2006.04.19 Erhöhen der Versionsnummer auf 2.1.1 :-)
+  *            optional ein Erï¿½ffnungssaldo ï¿½bergeben werden
+  * 2007.01.31 BugFix: Korrektes Merken der Grï¿½ï¿½e des Auswertungsdialog
+  *            Erhï¿½hen der Versionsnummer auf 2.5 :-)
+  * 2006.06.21 Erhï¿½hen der Versionsnummer auf 2.1.3 :-)
+  * 2006.06.19 Speicherung der Fenstergrï¿½ï¿½e des Auswertungsdialog
+  * 2006.06.11 Erhï¿½hen der Versionsnummer auf 2.1.2 :-)
+  * 2006.04.19 Erhï¿½hen der Versionsnummer auf 2.1.1 :-)
   * 2006.02.09 Ausdruck eines Registers; Verlagerung der 
   *            Druckereinstellungen in den Auswertungsdialog
-  * 2006.02.06 Erweiterung: Planungen hinzugefügt
+  * 2006.02.06 Erweiterung: Planungen hinzugefï¿½gt
   * 2006.02.03 BugFix: Nur reduzierte Split-Buchungen speichern
-  * 2006.02.01 Umwandeln von Buchungen hinzugefügt
-  * 2006.01.31 Methode zum Anzeigen von Änderungen in einem
+  * 2006.02.01 Umwandeln von Buchungen hinzugefï¿½gt
+  * 2006.01.31 Methode zum Anzeigen von ï¿½nderungen in einem
   *            Register
-  * 2006.01.24 Erhöhen der Versionsnummer auf 2.1 :-)
+  * 2006.01.24 Erhï¿½hen der Versionsnummer auf 2.1 :-)
   * 2005.04.30 BugFix: Nach Splitten Buchung merken
   * 2005.03.10 Erweiterung: Gemerkte Buchungen ab Datum
   * 2005.02.18 BugFix: Nachdem Splitten einer Buchung wurde
   *            nicht "mitgesprungen". 
-  * 2004.08.25 BugFix: Abbruch beim CSV-Import berücksichtigt.
+  * 2004.08.25 BugFix: Abbruch beim CSV-Import berï¿½cksichtigt.
   */
 public class Haushalt implements KeyListener, ListSelectionListener {
   private static final boolean DEBUG = false;
@@ -145,11 +145,13 @@ public class Haushalt implements KeyListener, ListSelectionListener {
     res.setLocale(properties.getProperty("jhh.opt.sprache", ""+Locale.getDefault()));
     Locale.setDefault(res.getLocale());
     frame.setLocale(res.getLocale());
-    try {
-      UIManager.setLookAndFeel(UIManager.getLookAndFeel());
-    } catch (UnsupportedLookAndFeelException e1) {
-      e1.printStackTrace();
-    }
+    // Look-and-Feel:
+	String systemClassName= UIManager.getSystemLookAndFeelClassName();
+	try {
+		UIManager.setLookAndFeel(systemClassName);
+	} catch (Exception e) {
+		e.printStackTrace();
+	}
 // TODO Auskommentiert; da Fehlermedlung unklar wie die Locale gesetzt wird
 //    sun.awt.AppContext.getAppContext().put("JComponent.defaultLocale", res.getLocale());
 
@@ -165,9 +167,9 @@ public class Haushalt implements KeyListener, ListSelectionListener {
     tabbedPane.setPreferredSize(new Dimension(breite, hoehe));
     frame.setGlassPane(glassPane);
     frame.setTitle(COPYRIGHT);
-    // Das Menü wird initialisiert
+    // Das Menï¿½ wird initialisiert
     if(DEBUG)
-      System.out.println("Initialisiere das Menü.");
+      System.out.println("Initialisiere das Menï¿½.");
     actionHandler = new ActionHandler(this);
     frame.setJMenuBar(actionHandler.erzeugeMenuBar());
     contentPane.add(actionHandler.erzeugeToolBar(), BorderLayout.PAGE_START);
@@ -192,7 +194,7 @@ public class Haushalt implements KeyListener, ListSelectionListener {
       neu();
     }
     
-    // Dialog für die Optionen erzeugen; die Optionen sind eine
+    // Dialog fï¿½r die Optionen erzeugen; die Optionen sind eine
     // Teilmenge der Properties 
     if(DEBUG)
       System.out.println("Options-Dialog initialisieren.");
@@ -226,11 +228,11 @@ public class Haushalt implements KeyListener, ListSelectionListener {
   // -- Einstellungen ---------------------------------------------------------
   
   /**
-   * Übernimmt die optionalen Einstellungen des Benutzters.
+   * ï¿½bernimmt die optionalen Einstellungen des Benutzters.
    *
    */
   private void oberflaecheAnpassen() {
-    Euro.setWaehrungssymbol(properties.getProperty("jhh.opt.waehrung", "€"));
+    Euro.setWaehrungssymbol(properties.getProperty("jhh.opt.waehrung", "ï¿½"));
     setTabPlacement(properties.getProperty("jhh.opt.reiter", "BOTTOM"));
     for(int i=0; i<tabbedPane.getTabCount(); i++) {
       JScrollPane scrollPane = (JScrollPane) tabbedPane.getComponent(i);
@@ -283,7 +285,7 @@ public class Haushalt implements KeyListener, ListSelectionListener {
   }
   
   /**
-   * Lädt Bilder aus dem Verzeichnis <code>res/</code>.
+   * Lï¿½dt Bilder aus dem Verzeichnis <code>res/</code>.
    * @param dateiname Dateiname des Bildes (ohne Pfad)
    */
   public ImageIcon bildLaden(String dateiname) {
@@ -334,7 +336,7 @@ public class Haushalt implements KeyListener, ListSelectionListener {
     int tabNr = tabbedPane.indexOfTab(regname);
     //    int tabNr = getRegisterTabNr(""+tableModel);
     if(tabNr > -1) {
-      // Register wird schon angezeigt, wahrscheinlich wurde es verändert:
+      // Register wird schon angezeigt, wahrscheinlich wurde es verï¿½ndert:
       registerVeraendert(tabNr);
       return tabNr;
     }
@@ -414,7 +416,7 @@ public class Haushalt implements KeyListener, ListSelectionListener {
   }
   
   /**
-   * Erhöht den Index des Register-Tabs um eins.
+   * Erhï¿½ht den Index des Register-Tabs um eins.
    * @param regname Registername
    */
   public void bewegeRegisterNachOben(String regname) {
@@ -436,7 +438,7 @@ public class Haushalt implements KeyListener, ListSelectionListener {
   }
   
   /**
-   * Löscht die Tabelle zu einem Register. Falls keine Tabelle mehr vorhanden ist,
+   * Lï¿½scht die Tabelle zu einem Register. Falls keine Tabelle mehr vorhanden ist,
    * wird wieder das Hintergrundbild angezeigt.
    * @param regname Name des Registers
    */
@@ -445,7 +447,7 @@ public class Haushalt implements KeyListener, ListSelectionListener {
       if(regname.equals(tabbedPane.getTitleAt(i))) {
         JScrollPane scrollPane = (JScrollPane) tabbedPane.getComponentAt(i);
         JTable table = (JTable) scrollPane.getViewport().getView();
-        // Die Register teilen sich ein ColumnModel, bevor ein Register gelöscht wird
+        // Die Register teilen sich ein ColumnModel, bevor ein Register gelï¿½scht wird
         // muss daher das ColumnModel neu gesetzt werden.
         table.setColumnModel(new DefaultTableColumnModel());
         tabbedPane.removeTabAt(i);
@@ -470,7 +472,7 @@ public class Haushalt implements KeyListener, ListSelectionListener {
   }
   
   /**
-   * Teilt mit, dass die Daten des Registers verändert wurden
+   * Teilt mit, dass die Daten des Registers verï¿½ndert wurden
    * @param name Name des Registers
    */
   public void registerVeraendert(String name) {
@@ -490,7 +492,7 @@ public class Haushalt implements KeyListener, ListSelectionListener {
   }
   
   /**
-   * Wählt eine bestimmte Buchung in einer der Register-Tabellen aus.
+   * Wï¿½hlt eine bestimmte Buchung in einer der Register-Tabellen aus.
    * @param regname Name des Registers
    * @param buchungIndex Zeile der Buchung
    */
@@ -520,7 +522,7 @@ public class Haushalt implements KeyListener, ListSelectionListener {
   
   /**
    * Setzt die Koordinaten an denen die gemerkte Buchung erscheinen soll.
-   * Die Koordinaten werden in Abhängigkeit von dem TextField gesetzt in dem
+   * Die Koordinaten werden in Abhï¿½ngigkeit von dem TextField gesetzt in dem
    * der Buchungstext eingegeben wird.
    * @param comp Component = JTextField
    */
@@ -551,7 +553,7 @@ public class Haushalt implements KeyListener, ListSelectionListener {
   }
   
   /**
-   * Überprüft, ob schon ein Register angelegt wurde
+   * ï¿½berprï¿½ft, ob schon ein Register angelegt wurde
    * @return <code>false</code> mindestens ein Register vorhanden
    */
   private boolean keinRegisterVorhanden() {
@@ -567,12 +569,12 @@ public class Haushalt implements KeyListener, ListSelectionListener {
     return false;
   }
   
-  // == Menü: Datei ============================================================
+  // == Menï¿½: Datei ============================================================
   
   /**
-   * Überprüft, ob die Applikationsdaten geändert wurden. Wird von neu() und 
+   * ï¿½berprï¿½ft, ob die Applikationsdaten geï¿½ndert wurden. Wird von neu() und 
    * beenden() aufgerufen.
-   * @return <code>true</code> - Applikation wurde geändert,
+   * @return <code>true</code> - Applikation wurde geï¿½ndert,
    *         <code>false</code> - Daten sind gespeichert
    */
   private boolean abfrageGeaendert() {
@@ -764,7 +766,7 @@ public class Haushalt implements KeyListener, ListSelectionListener {
     }
   }
   
-  // === Menü: Bearbeiten ======================================================
+  // === Menï¿½: Bearbeiten ======================================================
   
   public void suchen() {
     if(keinRegisterVorhanden()) 
@@ -1000,7 +1002,7 @@ public class Haushalt implements KeyListener, ListSelectionListener {
     }
   }
   
-  // == Menü: Ausgabe ==========================================================
+  // == Menï¿½: Ausgabe ==========================================================
   
   public void zeigeAuswertung() {
     if(keinRegisterVorhanden()) 
@@ -1036,7 +1038,7 @@ public class Haushalt implements KeyListener, ListSelectionListener {
     }
   }
   
-  // == Menü: Extras ===========================================================
+  // == Menï¿½: Extras ===========================================================
   
   public void optionen() {
     dlgOptionen.showDialog();
@@ -1107,11 +1109,11 @@ public class Haushalt implements KeyListener, ListSelectionListener {
     }
   }
   
-  // == Menü: Hilfe ============================================================
+  // == Menï¿½: Hilfe ============================================================
   
   /**
-   * Wird von Menü-Handler bei Auswahl von '<b>Hilfe/Inhalt</b>' aufgerufen.
-   * Es wird standardmäßig die Datei "html/help.html" angezeigt.
+   * Wird von Menï¿½-Handler bei Auswahl von '<b>Hilfe/Inhalt</b>' aufgerufen.
+   * Es wird standardmï¿½ï¿½ig die Datei "html/help.html" angezeigt.
    */
   public void hilfeInhalt() {
     DlgHilfe dlg = new DlgHilfe(frame);
@@ -1120,7 +1122,7 @@ public class Haushalt implements KeyListener, ListSelectionListener {
   }
   
   /**
-   * Wird von Menü-Handler bei Auswahl von '<b>Hilfe/Programm-Info</b>' aufgerufen.
+   * Wird von Menï¿½-Handler bei Auswahl von '<b>Hilfe/Programm-Info</b>' aufgerufen.
    */
   public void programmInfo() {
     DlgInfo dlg = new DlgInfo(frame);
