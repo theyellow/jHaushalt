@@ -1174,6 +1174,8 @@ public class Haushalt implements KeyListener, ListSelectionListener {
       public void run() {
         JFrame frame = haushalt.getFrame();
         frame.pack();
+        // Frame mittig im Bildschirm platzieren:
+        frame.setLocationRelativeTo(null); 
         frame.setVisible(true);
       }
   });
