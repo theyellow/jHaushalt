@@ -50,5 +50,11 @@
 			<type>jar</type>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>com.apple</groupId>
+			<artifactId>AppleJavaExtensions</artifactId>
+			<version>1.4</version>
+			<scope>provided</scope>
+		</dependency>
 	</dependencies>
 </project>

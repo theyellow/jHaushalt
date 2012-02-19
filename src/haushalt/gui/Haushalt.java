@@ -20,11 +20,36 @@
  */
 
 package haushalt.gui;
-import haushalt.auswertung.*;
-import haushalt.daten.*;
+import haushalt.auswertung.CsvHandler;
+import haushalt.auswertung.DlgContainerAuswertung;
+import haushalt.auswertung.FarbPaletten;
+import haushalt.daten.AbstractBuchung;
+import haushalt.daten.Datenbasis;
 import haushalt.daten.Datenbasis.QuickenImportException;
-import haushalt.gui.dialoge.*;
-import haushalt.gui.generischerdialog.*;
+import haushalt.daten.Datum;
+import haushalt.daten.EinzelKategorie;
+import haushalt.daten.Euro;
+import haushalt.daten.SplitBuchung;
+import haushalt.daten.StandardBuchung;
+import haushalt.daten.Umbuchung;
+import haushalt.gui.dialoge.DlgAutoBuchung;
+import haushalt.gui.dialoge.DlgBereinigen;
+import haushalt.gui.dialoge.DlgEinrichtung;
+import haushalt.gui.dialoge.DlgHilfe;
+import haushalt.gui.dialoge.DlgImport;
+import haushalt.gui.dialoge.DlgInfo;
+import haushalt.gui.dialoge.DlgKategorienBearbeiten;
+import haushalt.gui.dialoge.DlgOptionen;
+import haushalt.gui.dialoge.DlgRegisterBearbeiten;
+import haushalt.gui.dialoge.DlgSplitBuchung;
+import haushalt.gui.dialoge.DlgSuchenErsetzen;
+import haushalt.gui.generischerdialog.DatumGDP;
+import haushalt.gui.generischerdialog.EineKategorieGDP;
+import haushalt.gui.generischerdialog.EuroGDP;
+import haushalt.gui.generischerdialog.GenerischerDialog;
+import haushalt.gui.generischerdialog.RegisterGDP;
+import haushalt.gui.generischerdialog.TextGDP;
+import haushalt.gui.mac.MacAdapter;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -33,16 +58,46 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.Point;
-import java.awt.event.*;
-import java.awt.print.*;
-import java.io.*;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.print.PrinterException;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.text.MessageFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Locale;
+import java.util.Properties;
 
-import javax.swing.*;
+import javax.swing.DefaultCellEditor;
+import javax.swing.ImageIcon;
+import javax.swing.JDialog;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JScrollBar;
+import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.JViewport;
+import javax.swing.ListSelectionModel;
+import javax.swing.ProgressMonitorInputStream;
+import javax.swing.ScrollPaneConstants;
+import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+import javax.swing.WindowConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileFilter;
@@ -145,6 +200,7 @@ public class Haushalt implements KeyListener, ListSelectionListener {
     res.setLocale(properties.getProperty("jhh.opt.sprache", ""+Locale.getDefault()));
     Locale.setDefault(res.getLocale());
     frame.setLocale(res.getLocale());
+
     // Look-and-Feel:
 	String systemClassName= UIManager.getSystemLookAndFeelClassName();
 	try {
@@ -177,7 +233,8 @@ public class Haushalt implements KeyListener, ListSelectionListener {
     contentPane.add(status, BorderLayout.PAGE_END);
     frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
     frame.addWindowListener(new WindowAdapter() {
-      public void windowClosing(WindowEvent e) {
+      @Override
+	public void windowClosing(WindowEvent e) {
         beenden();
       }
     });
@@ -205,6 +262,11 @@ public class Haushalt implements KeyListener, ListSelectionListener {
     
     oberflaecheAnpassen(); // hier werden auch andere Optionen gesetzt
     
+		// some smaller improvements for apple-users
+		if (isMacOSX()) {
+			MacAdapter.macStyle(this);
+		}
+
     if(DEBUG)
       System.out.println("Applikation initialisiert.");
   }
@@ -610,14 +672,16 @@ public class Haushalt implements KeyListener, ListSelectionListener {
   }
   
   private final FileFilter fileFilter = new FileFilter() {
-    public boolean accept(File file) {
+    @Override
+	public boolean accept(File file) {
       if (file.isDirectory())
         return true;
       if(file.getName().toLowerCase().endsWith(".jhh"))
         return true;
       return false;
     }
-    public String getDescription() {
+    @Override
+	public String getDescription() {
       return res.getString("jhaushalt_files");
     }
   };
@@ -1154,31 +1218,45 @@ public class Haushalt implements KeyListener, ListSelectionListener {
     glassPane.setVisible(false);
   }
   
+	public static boolean isMacOSX() {
+		String osName = System.getProperty("os.name");
+		return osName.startsWith("Mac OS X");
+	}
+
   // -- MAIN -------------------------------------------------------------------
   
-  public static void main(String[] args) {
-    String version = System.getProperty("java.specification.version");
-    if(version.compareTo("1.5") < 0) {
-      JOptionPane.showMessageDialog(null,
-          res.getString("message_wrong_java_version1") +
-          " " + version + " " +
-          res.getString("message_wrong_java_version2")
-      );
-      System.exit(0);
-    }
-    String dateiname = null;
-    if((args.length > 0) && (!args[0].equals("")))
-      dateiname = args[0];
-    final Haushalt haushalt = new Haushalt(dateiname);
-    SwingUtilities.invokeLater(new Runnable() {
-      public void run() {
-        JFrame frame = haushalt.getFrame();
-        frame.pack();
-        // Frame mittig im Bildschirm platzieren:
-        frame.setLocationRelativeTo(null); 
-        frame.setVisible(true);
-      }
-  });
-  }
+	public static void main(String[] args) {
+		String version = System.getProperty("java.specification.version");
+		if (version.compareTo("1.5") < 0) {
+			JOptionPane.showMessageDialog(
+					null,
+					res.getString("message_wrong_java_version1") + " "
+							+ version + " "
+							+ res.getString("message_wrong_java_version2"));
+			System.exit(0);
+		}
+		String dateiname = null;
+		if ((args.length > 0) && (!args[0].equals("")))
+			dateiname = args[0];
+
+		// small 'hack' for Apple-users
+		if (isMacOSX()) {
+			System.setProperty("apple.laf.useScreenMenuBar", "true");
+			System.setProperty(
+					"com.apple.mrj.application.apple.menu.about.name",
+					"jHaushalt");
+		}
+
+		final Haushalt haushalt = new Haushalt(dateiname);
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				JFrame frame = haushalt.getFrame();
+				frame.pack();
+				// Frame mittig im Bildschirm platzieren:
+				frame.setLocationRelativeTo(null);
+				frame.setVisible(true);
+			}
+		});
+	}
   
 }

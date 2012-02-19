@@ -23,6 +23,7 @@ along with jHaushalt; if not, see <http://www.gnu.org/licenses/>.
 package haushalt.gui;
 
 
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.lang.reflect.InvocationTargetException;
@@ -91,18 +92,30 @@ public class ActionHandler {
     {"exportCSV", res.getString("export_csv")+"...", "Export", res.getString("export_csv_legend"), null},
     {"drucken", res.getString("print")+"...", "Print", res.getString("print_legend"), new Integer(KeyEvent.VK_P)}
 	};
-  // 3:
-	final private Object[][] menuExtrasText = {
-		{"optionen", res.getString("preferences")+"...", "Preferences", res.getString("preferences_legend"), new Integer(KeyEvent.VK_O)},
-		{"autoBuchung", res.getString("automatic_booking")+"...", "Robot", res.getString("automatic_booking_legend"), null},
-		{"importCSV", res.getString("import_csv")+"...", "Import", res.getString("import_csv_legend"), new Integer(KeyEvent.VK_I)},
-		{"importQuicken", res.getString("import_quicken")+"...", null, res.getString("import_quicken_legend"), new Integer(KeyEvent.VK_Q)}
-	};
-  // 4:
-	final private Object[][] menuHilfeText = {
-		{"hilfeInhalt", res.getString("help_content")+"...", "Help", res.getString("help_content_legend"), new Integer(KeyEvent.VK_F1)},
-		{"programmInfo", res.getString("program_info")+"...", "Information", res.getString("program_info_legend"), null}
-	};
+
+	// 3: Extras
+	final private Object[] preferences = { "optionen",
+			res.getString("preferences") + "...", "Preferences",
+			res.getString("preferences_legend"), new Integer(KeyEvent.VK_O) };
+	final private Object[] autoBuchungen = { "autoBuchung",
+			res.getString("automatic_booking") + "...", "Robot",
+			res.getString("automatic_booking_legend"), null };
+	final private Object[] importCSV = { "importCSV",
+			res.getString("import_csv") + "...", "Import",
+			res.getString("import_csv_legend"), new Integer(KeyEvent.VK_I) };
+	final private Object[] importQuicken = { "importQuicken",
+			res.getString("import_quicken") + "...", null,
+			res.getString("import_quicken_legend"), new Integer(KeyEvent.VK_Q) };
+	final private Object[][] menuExtrasText;
+
+	// 4: Hilfe
+	final private Object[] hilfe = { "hilfeInhalt",
+			res.getString("help_content") + "...", "Help",
+			res.getString("help_content_legend"), new Integer(KeyEvent.VK_F1) };
+	final private Object[] programmInfo = { "programmInfo",
+			res.getString("program_info") + "...", "Information",
+			res.getString("program_info_legend"), null };
+	final private Object[][] menuHilfeText;
 
   protected final Haushalt haushalt;
   private final JPopupMenu popupMenu = new JPopupMenu();
@@ -110,6 +123,15 @@ public class ActionHandler {
   public ActionHandler(Haushalt haushalt) {
     super();
     this.haushalt = haushalt;
+		if (!Haushalt.isMacOSX()) {
+			menuHilfeText = new Object[][] { hilfe, programmInfo };
+			menuExtrasText = new Object[][] { preferences, autoBuchungen,
+					importCSV, importQuicken };
+		} else {
+			menuHilfeText = new Object[][] { hilfe };
+			menuExtrasText = new Object[][] { autoBuchungen, importCSV,
+					importQuicken };
+		}
     alleActions = new Object[hauptmenu.length];
 		alleActions[0] = erzeugeAction(menuDateiText);
 		alleActions[1] = erzeugeAction(menuBearbeitenText);
@@ -201,7 +223,8 @@ public class ActionHandler {
 			if(text[4] != null) {
 	  		putValue(MNEMONIC_KEY, text[4]);
   			int code = ((Integer)text[4]).intValue();
-				putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(code, ActionEvent.CTRL_MASK));
+				putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(code, Toolkit
+						.getDefaultToolkit().getMenuShortcutKeyMask()));
 			}
 		}
 		public ImageIcon getBigIcon() {
