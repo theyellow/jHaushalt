@@ -28,8 +28,10 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.NumberFormat;
+import java.text.ParseException;
 import java.util.Date;
 import java.util.Locale;
+import java.util.logging.Logger;
 
 /**
  * Repräsentiert einen Geldbetrag.
@@ -40,14 +42,21 @@ import java.util.Locale;
  */
 
 /*
- * 2009.05.17 Erweiterung (durch Kay Ruhland): 
- *            Mehrere Euro-Stringwerte werden jetzt addiert.
+ * 2012.02.19 BugFix: Rückgängig machen der vorherigen Verbesserung, durch
+ * Fehler die beim Verwenden von . und , (Tausender-Trennzeichen) auftraten
+ * 
+ * 2009.05.17 Erweiterung (durch Kay Ruhland): Mehrere Euro-Stringwerte werden
+ * jetzt addiert.
+ * 
  * 2007.07.24 Internationalisierung
+ * 
  * 2006.02.02 BugFix: Plus-Zeichen beim Pharsen ignorieren
  */
 
 public class Euro implements Cloneable, Comparable<Euro> {
-  private static final TextResource res = TextResource.get();
+	private static final Logger LOGGER = Logger.getLogger(Euro.class.getName());
+
+private static final TextResource res = TextResource.get();
 
   public static final Euro NULL_EURO = new Euro();
 	private static String symbol = "€";
@@ -60,19 +69,22 @@ public class Euro implements Cloneable, Comparable<Euro> {
     setWert(wert);
   }
 
-  public Euro(String wert) {
-    Locale locale = res.getLocale();
-    NumberFormat nf = NumberFormat.getInstance(locale);
-    nf.setMinimumFractionDigits(2);
-    nf.setMaximumFractionDigits(2);
-    MathParser mp = new MathParser(nf);
-    if(wert != "") {
-      setWert(mp.parseExpr(wert));
-    }
-    else
-      this.wert = 0L;
-  }
+	public Euro(String wert) {
+		Locale locale = res.getLocale();
+		NumberFormat nf = NumberFormat.getInstance(locale);
+		nf.setMinimumFractionDigits(2);
+		nf.setMaximumFractionDigits(2);
+		if (wert != "") {
+			try {
+				setWert(nf.parse(wert).doubleValue());
+			} catch (ParseException e) {
+				LOGGER.warning("Error while parsing string: " + wert);
+			}
+		} else
+			this.wert = 0L;
+	}
 
+	@Override
 	public String toString() {
     Locale locale = res.getLocale();
     NumberFormat nf = NumberFormat.getInstance(locale);
@@ -104,7 +116,8 @@ public class Euro implements Cloneable, Comparable<Euro> {
       wert = (long)(wert / 1.95583D + 0.5D);
   }
 
-  public boolean equals(Object obj) {
+  @Override
+public boolean equals(Object obj) {
     if(obj == null)
       return false;
     if(obj.getClass() != Euro.class)
@@ -112,7 +125,8 @@ public class Euro implements Cloneable, Comparable<Euro> {
     return ((Euro)obj).wert == wert;
   }
 
-  public int hashCode() {
+  @Override
+public int hashCode() {
     assert false : "hashCode not designed";
     return 0;
   }
@@ -167,6 +181,7 @@ public class Euro implements Cloneable, Comparable<Euro> {
 
 	// -- Methoden fuer Interface: Cloneable --------------------
 
+	@Override
 	final public Object clone() {
 		Euro kopie = new Euro();
 		kopie.wert = this.wert;
