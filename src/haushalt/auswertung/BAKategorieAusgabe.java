@@ -84,7 +84,7 @@ public class BAKategorieAusgabe extends AbstractBlockAuswertung {
     if(DEBUG)
       System.out.println(""+anzahl+" Buchungen im Zeitraum "+zeitraum);
 
-		// Vorhandene Blöcke löschen und neu berechnete einfügen
+		// Vorhandene BlÃ¶cke lÃ¶schen und neu berechnete einfÃ¼gen
     String titel = res.getString("selected_bookings")+" ("+zeitraum;
     if(register == null)
       titel += " / "+res.getString("all_registers")+")";
@@ -110,7 +110,7 @@ public class BAKategorieAusgabe extends AbstractBlockAuswertung {
       TabellenBlock block2 = new TabellenBlock(tabelle);
 			block2.setFont(new Font(haushalt.getFontname(), Font.PLAIN, haushalt.getFontgroesse()));
 	    block2.setRelTabs(relTabs);
-	    block2.setLinienFarbe("Weiß");
+	    block2.setLinienFarbe("WeiÃŸ");
 	    block2.setAusrichtung(attribute);
 	    addDokumentenBlock(block2);
 	    String[][] text = {{"", res.getString("total")+":", "", ""+summe}};

@@ -33,7 +33,7 @@ import java.util.StringTokenizer;
  */
 
 /*
- * 2010.08.16 BugFix: Berechnung des Zeitraums für ein halbes Jahr korrigiert (1.6. -> 1.7.)
+ * 2010.08.16 BugFix: Berechnung des Zeitraums fÃ¼r ein halbes Jahr korrigiert (1.6. -> 1.7.)
  *            (entdeckt von Daniel Seither)
  * 2004.08.22 Erste Version
  */

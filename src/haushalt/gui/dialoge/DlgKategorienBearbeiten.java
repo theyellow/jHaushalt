@@ -69,12 +69,12 @@ import javax.swing.tree.TreeSelectionModel;
  */
 
 /*
- * 2008.03.31 BugFix: Kategoriennamen mit Leerzeichen ermöglicht
+ * 2008.03.31 BugFix: Kategoriennamen mit Leerzeichen ermÃ¶glicht
  * 2007.05.29 Internationalisierung
- * 2006.02.14 Löschen des TextFields nach an dem Anlegen einer
+ * 2006.02.14 LÃ¶schen des TextFields nach an dem Anlegen einer
  *            neuen Kategorie und Sicherstellen, dass die neue
  *            Kategorie sichtbar ist
- * 2006.01.27 Keine globale Änderung der Option
+ * 2006.01.27 Keine globale Ã„nderung der Option
  *            "Unterkategorien verwenden" mehr
  */
 
@@ -216,7 +216,7 @@ public class DlgKategorienBearbeiten extends JDialog implements TreeSelectionLis
       else
         haupt.add(new DefaultMutableTreeNode(kategorien[i].getName()));
       if(DEBUG)
-        System.out.println(""+kategorien[i]+" hinzugefügt.");
+        System.out.println(""+kategorien[i]+" hinzugefÃ¼gt.");
     }
     treeModel = new DefaultTreeModel(root);
     tree = new JTree(treeModel);

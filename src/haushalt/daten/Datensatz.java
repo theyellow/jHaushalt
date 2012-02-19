@@ -23,7 +23,7 @@ along with jHaushalt; if not, see <http://www.gnu.org/licenses/>.
 package haushalt.daten;
 
 /**
- * Fasst ein Register und eine Buchung zu einem vollst‰ndigen Datensatz zusammen.
+ * Fasst ein Register und eine Buchung zu einem vollst√§ndigen Datensatz zusammen.
  * @author Dr. Lars H. Hahn
  * @version 2.1/2006.02.10
  */

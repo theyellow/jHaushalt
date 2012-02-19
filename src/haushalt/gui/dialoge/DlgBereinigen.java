@@ -57,8 +57,8 @@ import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
 
 /**
- * Ermöglicht das nachträgliche Ändern der Kategorien von 
- * Buchungen unabhängig von den Registern
+ * ErmÃ¶glicht das nachtrÃ¤gliche Ã„ndern der Kategorien von 
+ * Buchungen unabhÃ¤ngig von den Registern
  * 
  * @author Dr. Lars H. Hahn
  * @version 2.5/2007.02.28

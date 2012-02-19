@@ -56,8 +56,8 @@ import javax.swing.filechooser.FileFilter;
  /*
   * 2007.07.03 Internationalisierung
   * 2007.02.22 Weiterer Konstruktor
-  * 2006.02.08 FileFilter für CSV-Dateien hinzugefügt
-  * 2006.01.30 Erweiterung: Pane für Laden/Speichern extern 
+  * 2006.02.08 FileFilter fÃ¼r CSV-Dateien hinzugefÃ¼gt
+  * 2006.01.30 Erweiterung: Pane fÃ¼r Laden/Speichern extern 
   *            nutzbar
   * 2004.08.25 BugFix: OK / Abruch des Im-/Export-Dialogs 
   *            weitergegeben

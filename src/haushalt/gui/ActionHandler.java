@@ -48,7 +48,7 @@ import javax.swing.KeyStroke;
 
 /*
  * 2006.07.04 Internationalisierung
- * 2006.01.31 Erweiterung: Kontextmenü hinzugefügt
+ * 2006.01.31 Erweiterung: KontextmenÃ¼ hinzugefÃ¼gt
  */
 
 public class ActionHandler {
@@ -117,7 +117,7 @@ public class ActionHandler {
 		alleActions[3] = erzeugeAction(menuExtrasText);
 		alleActions[4] = erzeugeAction(menuHilfeText);
     
-    // Das PopupMenü wird mit Bearbeiten-Menü belegt.
+    // Das PopupMenÃ¼ wird mit Bearbeiten-MenÃ¼ belegt.
     HaushaltAction[] action = (HaushaltAction[]) alleActions[1];
     for (int i = 0; i < action.length; i++)
       popupMenu.add(new JMenuItem(action[i]));

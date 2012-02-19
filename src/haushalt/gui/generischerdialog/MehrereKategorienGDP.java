@@ -51,7 +51,7 @@ import javax.swing.ScrollPaneConstants;
  */
 
 /*
- * 2008.01.17 "Alle Hinzufügen" / "Alle Entfernen" ergänzt
+ * 2008.01.17 "Alle HinzufÃ¼gen" / "Alle Entfernen" ergÃ¤nzt
  * 2008.01.17 Internationalisierung
  * 2006.01.26 Verwendung der Unterkategorien einstellbar
  */

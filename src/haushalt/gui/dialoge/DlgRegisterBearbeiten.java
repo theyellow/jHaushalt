@@ -65,7 +65,7 @@ import javax.swing.text.PlainDocument;
  */
 
 /*
- * 2008.03.31 Icons für Buttons verwenden
+ * 2008.03.31 Icons fÃ¼r Buttons verwenden
  * 2007.02.07 Erste Version
  */
 

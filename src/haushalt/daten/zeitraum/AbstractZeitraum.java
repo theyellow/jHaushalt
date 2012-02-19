@@ -31,7 +31,7 @@ import java.lang.reflect.InvocationTargetException;
 import haushalt.daten.Datum;
 
 /**
- * Basisklasse für alle Zeiträume
+ * Basisklasse fÃ¼r alle ZeitrÃ¤ume
  * @author Dr. Lars H. Hahn
  * @version 2.5/2007.10.31
  */
@@ -58,8 +58,8 @@ abstract public class AbstractZeitraum {
 
   /**
    * Liefert den auf diesen Zeitraum folgenden Zeitraum mit 
-   * gleicher Länge.
-   * @return nächster Zeitraum
+   * gleicher LÃ¤nge.
+   * @return nÃ¤chster Zeitraum
    */
   abstract public AbstractZeitraum folgeZeitraum();
 

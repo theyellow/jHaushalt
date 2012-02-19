@@ -40,7 +40,7 @@ import java.awt.geom.Rectangle2D;
 
 /*
  * 2007.06.26 Erweiterung: Anzeigen des Betrags der Durchschnittswerte
- * 2006.02.03 BugFix: Farbwahl auch für Durchschnitt gültig
+ * 2006.02.03 BugFix: Farbwahl auch fÃ¼r Durchschnitt gÃ¼ltig
  * 2006.02.02 Betrag immer oberhalb der X-Achse
  */
 public class BalkenBlock extends AbstractGraphikBlock {
@@ -78,7 +78,7 @@ public class BalkenBlock extends AbstractGraphikBlock {
   }
 
   protected int getHoehe(int breite) {
-    // enspricht dem Standard-Bildschirmverhältnis 4:3
+    // enspricht dem Standard-BildschirmverhÃ¤ltnis 4:3
     return (int)(breite * 0.75 + 0.5);
   }
 
@@ -140,20 +140,20 @@ public class BalkenBlock extends AbstractGraphikBlock {
 
       AffineTransform oldAt = g2.getTransform();
       if(hoeheEinnahmen > fontMetrics.stringWidth(""+einnahmen[i]))
-        // Prima! Der Balken ist hoch genug für den Text
+        // Prima! Der Balken ist hoch genug fÃ¼r den Text
         g2.translate(x+xEinnahmenText, yBalken-hoeheEinnahmen+5);
       else 
-        // Pech! Der Text ragt über den Balken hinaus, ist aber sichtbar
+        // Pech! Der Text ragt Ã¼ber den Balken hinaus, ist aber sichtbar
         g2.translate(x+xEinnahmenText, yBalken-fontMetrics.stringWidth(""+einnahmen[i])-5);
       g2.rotate(Math.toRadians(90));
       g2.drawString(""+einnahmen[i], 0, 0);
       g2.setTransform(oldAt);
       
       if(hoeheAusgaben > fontMetrics.stringWidth(""+ausgaben[i]))
-        // Prima! Der Balken ist hoch genug für den Text
+        // Prima! Der Balken ist hoch genug fÃ¼r den Text
         g2.translate(x+xAusgabenText, yBalken-hoeheAusgaben+5);
       else 
-        // Pech! Der Text ragt über den Balken hinaus, ist aber sichtbar
+        // Pech! Der Text ragt Ã¼ber den Balken hinaus, ist aber sichtbar
         g2.translate(x+xAusgabenText, yBalken-fontMetrics.stringWidth(""+ausgaben[i])-5);
       g2.rotate(Math.toRadians(90));
       g2.drawString(""+ausgaben[i], 0, 0);

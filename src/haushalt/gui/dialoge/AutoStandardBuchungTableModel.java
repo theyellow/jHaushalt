@@ -33,7 +33,7 @@ import haushalt.gui.TextResource;
 import javax.swing.table.AbstractTableModel;
 
 /**
- * Ermöglicht die Darstellung der wiederkehrenden (automatischen) 
+ * ErmÃ¶glicht die Darstellung der wiederkehrenden (automatischen) 
  * Standard-Buchungen in einer Swing-Tabelle.
  * @author Dr. Lars H. Hahn
  * @version 2.5/2007.02.27
@@ -104,7 +104,7 @@ public class AutoStandardBuchungTableModel extends AbstractTableModel {
       }
     }
 
-    // Werte für die letzte Zeile gibt es noch nicht:
+    // Werte fÃ¼r die letzte Zeile gibt es noch nicht:
     switch(col) {
       case 0: return new Datum();
       case 1: return "";

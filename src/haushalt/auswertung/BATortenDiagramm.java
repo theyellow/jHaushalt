@@ -137,7 +137,7 @@ public class BATortenDiagramm extends AbstractBlockAuswertung {
       }
     }
 
-		// Vorhandene Blöcke löschen und neu berechnete einfügen
+		// Vorhandene BlÃ¶cke lÃ¶schen und neu berechnete einfÃ¼gen
     String titel = res.getString("distribution_income_expenditure")+" ("+zeitraum;
 		loescheBloecke();
     if(register == null)
@@ -186,7 +186,7 @@ public class BATortenDiagramm extends AbstractBlockAuswertung {
     block3.setAusrichtung(attribute2, true);
     block3.setAusrichtung(attribute2, false);
     block3.setHgFarbe(farbschema);
-    block3.setLinienFarbe("Weiß");
+    block3.setLinienFarbe("WeiÃŸ");
     block3.setRelRand(0.05D);
     addDokumentenBlock(block3);
 

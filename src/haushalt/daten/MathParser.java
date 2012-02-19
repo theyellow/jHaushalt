@@ -45,7 +45,7 @@ public class MathParser {
     /**
      * Bildet die Summe aus mehreren Zahlen. Bei einem '-' wird die Zahl
      * als negative Zahl interpretiert und somit vom Ergebnis abgezogen.
-     * @param expr (" 5€ - 3,0")
+     * @param expr (" 5â‚¬ - 3,0")
      * @return (2.0)
      */
     public double parseExpr(String expr) {
@@ -77,6 +77,7 @@ public class MathParser {
         nf.setMaximumFractionDigits(2);
 
         MathParser mp = new MathParser(nf);
-        System.out.println( mp.parseExpr("=  - 123,2 -4,1 CHF + *0,3€ 0,5$") );
+        //System.out.println( mp.parseExpr("=  - 123,2 -4,1 CHF + *0,3â‚¬ 0,5$") );
+        System.out.println( mp.parseExpr("3.754,15") );
     }
 }

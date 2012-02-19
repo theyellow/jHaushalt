@@ -97,7 +97,7 @@ public class BAEinnahmenAusgaben extends AbstractBlockAuswertung {
     tabelle[anzahlZeitraeume+1][2] = ""+summeAusgaben.durch(anzahlZeitraeume);
     tabelle[anzahlZeitraeume+1][3] = ""+summeEinnahmen.sub(summeAusgaben).durch(anzahlZeitraeume);
 
-		// Vorhandene Blöcke löschen und neu berechnete einfügen
+		// Vorhandene BlÃ¶cke lÃ¶schen und neu berechnete einfÃ¼gen
 		String titel = res.getString("income_expenditure")+" ("+tabelle[1][0]+" "+res.getString("to")+" "+tabelle[anzahlZeitraeume][0];
 		if(register == null)
 		  titel += ")";

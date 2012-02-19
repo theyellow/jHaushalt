@@ -88,7 +88,7 @@ public class FarbPaletten {
   };
 
   private final static String[] farbenNamen = {
-    "Weiﬂ", "Schwarz", "Grau", "Rot", "Gelb", "Blau", "Gr¸n"
+    "Wei√ü", "Schwarz", "Grau", "Rot", "Gelb", "Blau", "Gr√ºn"
   };
   
   private final static Color[] farben = {

@@ -21,10 +21,10 @@ along with jHaushalt; if not, see <http://www.gnu.org/licenses/>.
 */
 
 /*
- * 2005.02.18 BugFix: Das Übernehmen einer auto. Buchung kann zum Neusortieren
- * führen, dies wurde aber nicht angezeigt und es wurde nicht mitgesprungen.
- * 2004.08.25 BugFix: Beim Einfügen einer neuen Buchung wurde teilweise, die 
- * zuvor erzeugte überschrieben.
+ * 2005.02.18 BugFix: Das Ãœbernehmen einer auto. Buchung kann zum Neusortieren
+ * fÃ¼hren, dies wurde aber nicht angezeigt und es wurde nicht mitgesprungen.
+ * 2004.08.25 BugFix: Beim EinfÃ¼gen einer neuen Buchung wurde teilweise, die 
+ * zuvor erzeugte Ã¼berschrieben.
  * 2004.08.25 BugFix: Bei der Verwendung von gemerkten Buchungen wurde teilweise 
  * die Anzeige nicht aktualisiert.
  */
@@ -44,17 +44,17 @@ import haushalt.daten.UmbuchungKategorie;
 import javax.swing.table.AbstractTableModel;
 
 /**
- * Ermöglicht die Darstellung eines Registers in einer Swing-Tabelle.
+ * ErmÃ¶glicht die Darstellung eines Registers in einer Swing-Tabelle.
  * @author Dr. Lars H. Hahn
  * @version 2.5/2006.07.04
  */
 
 /*
  * 2006.07.04 Internationalisierung
- * 2006.02.01 BugFix: Umbuchung wird jetzt bei der Änderung
+ * 2006.02.01 BugFix: Umbuchung wird jetzt bei der Ã„nderung
  *            des Datums im zweiten Register neusortiert
- * 2006.02.01 BugFix: Änderung des Wertes einer Umbuchung
- *            im zweiten Register führte zu einem Wechsel
+ * 2006.02.01 BugFix: Ã„nderung des Wertes einer Umbuchung
+ *            im zweiten Register fÃ¼hrte zu einem Wechsel
  *            des Vorzeichens
  */
 
@@ -100,7 +100,7 @@ public class RegisterTableModel extends AbstractTableModel {
 
   public int getRowCount() {
   	// eine Zeile mehr, da in der letzten Zeile die Eingabe
-  	// möglich ist
+  	// mÃ¶glich ist
     return db.getAnzahlBuchungen(registerName) + 1;
   }
 
@@ -140,7 +140,7 @@ public class RegisterTableModel extends AbstractTableModel {
   		}
   	}
   	
-  	// Werte für die letzte Zeile gibt es noch nicht:
+  	// Werte fÃ¼r die letzte Zeile gibt es noch nicht:
   	switch(col) {
   		case 0: return new Datum();
   		case 1: return "";

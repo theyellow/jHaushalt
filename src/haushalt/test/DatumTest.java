@@ -77,9 +77,9 @@ public class DatumTest {
 
   @Test
   public void testCompareTo() {
-    assertTrue("24.04.71 sollte größer als der 28.03.70 sein.",
+    assertTrue("24.04.71 sollte grÃ¶ÃŸer als der 28.03.70 sein.",
         datum1.compareTo(datum2) > 0);
-    assertTrue("24.04.71 sollte größer als der 28.03.70 sein.",
+    assertTrue("24.04.71 sollte grÃ¶ÃŸer als der 28.03.70 sein.",
         datum2.compareTo(datum1) < 0);
   }
 

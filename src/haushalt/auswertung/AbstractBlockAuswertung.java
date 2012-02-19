@@ -64,12 +64,12 @@ import javax.swing.SwingUtilities;
 
 /**
  * Abstrakte Klasse, die Auswertungen standardisiert.
- * Die Auswertung wird hierzu in einzelne Blˆcke aufgeteilt, diese
- * kˆnnen f¸r unterschiedliche Auswertungen wiederverwertet werden.
- * Dar¸ber hinaus werden die Parameter der Auswertung ¸ber einen
+ * Die Auswertung wird hierzu in einzelne Bl√∂cke aufgeteilt, diese
+ * k√∂nnen f√ºr unterschiedliche Auswertungen wiederverwertet werden.
+ * Dar√ºber hinaus werden die Parameter der Auswertung √ºber einen
  * generischen Dialog eingestellt, der ebenfalls wiederverwendet werden
  * kann. In der abgeleiteten Auswertung muss lediglich die Methode
- * 'berechneAuswertung' ¸berladen werden.
+ * 'berechneAuswertung' √ºberladen werden.
  * @see AbstractBlockAuswertung#berechneAuswertung(Object[])
  * 
  * @author Dr. Lars H. Hahn
@@ -79,10 +79,10 @@ import javax.swing.SwingUtilities;
 
 /*
  * 2011.02.08 BuxFix: Laden/Speichern von Auswertungen ohne spezielle Eigenschaften
- *            ermˆglicht
+ *            erm√∂glicht
  * 2010.09.19 Graphics2D in der Methode 'print' verwendet; DoubleBuffering 
  *            beim Drucken ausgeschaltet
- * 2009.08.10 Auswertungen ohne spezifische Eigenschaften ermˆglicht
+ * 2009.08.10 Auswertungen ohne spezifische Eigenschaften erm√∂glicht
  * 2008.01.17 Internationalisierung
  * 2007.05.24 BugFix: Letzte Zeile eines Blocks wurde nicht ausgedruckt
  * 2004.08.22 Erste Version (2.0)
@@ -107,13 +107,13 @@ public abstract class AbstractBlockAuswertung extends AbstractAuswertung {
   public void addDokumentenBlock(AbstractBlock block) {
     bloecke.add(block);
     if(DEBUG)
-      System.out.println("AbstractBlockAuswertung: Block hinzugef¸gt.");
+      System.out.println("AbstractBlockAuswertung: Block hinzugef√ºgt.");
   }
   
   public void loescheBloecke() {
     bloecke.clear();
     if(DEBUG)
-      System.out.println("AbstractBlockAuswertung: Alle Blˆcke gelˆscht.");
+      System.out.println("AbstractBlockAuswertung: Alle Bl√∂cke gel√∂scht.");
   }
 
   public void paintComponent(Graphics g) {
@@ -143,7 +143,7 @@ public abstract class AbstractBlockAuswertung extends AbstractAuswertung {
         System.out.println("AbstractBlockAuswertung: PanelSize = "+getSize());
     }
     if(gesuchteSeite == 0) {
-      // Die erste Seite ist gew¸nscht => alle Z‰hler zur¸cksetzen
+      // Die erste Seite ist gew√ºnscht => alle Z√§hler zur√ºcksetzen
       seitenZaehler = 0;
       blockZaehler = 0;
       zeilenZaehler = 0;
@@ -151,13 +151,13 @@ public abstract class AbstractBlockAuswertung extends AbstractAuswertung {
       zeilenStart = 0;
     }
     else if(gesuchteSeite == seitenZaehler) {
-      // Die aktuelle Seite wird wiederholt abgefragt => Z‰hler wieder auf die
+      // Die aktuelle Seite wird wiederholt abgefragt => Z√§hler wieder auf die
       // Anfangswerte
       blockZaehler = blockStart;
       zeilenZaehler = zeilenStart;
     }
     else if(gesuchteSeite == (seitenZaehler+1)) {
-      // Die n‰chste Seite ist gew¸nscht
+      // Die n√§chste Seite ist gew√ºnscht
       seitenZaehler ++;
       blockStart = blockZaehler;
       zeilenStart = zeilenZaehler;
@@ -227,19 +227,19 @@ public abstract class AbstractBlockAuswertung extends AbstractAuswertung {
         zeilenZaehler = 0;
       }
       else if(verbrauchteHoehe == 0) {
-        // Zeile passt nicht in die (Rest-)Hˆhe
+        // Zeile passt nicht in die (Rest-)H√∂he
         if (y == 0)
         // ... und wir sind am Anfang der Seite!
-          throw new PrinterException("Block ist zu hoch f¸r die Seite.");
-        // Wir versuchen es auf der n‰chsten Seite. Achtung: Zeilenz‰ler nicht inkrementieren!
+          throw new PrinterException("Block ist zu hoch f√ºr die Seite.");
+        // Wir versuchen es auf der n√§chsten Seite. Achtung: Zeilenz√§hler nicht inkrementieren!
       }
       else {
-        // PRIMA! N‰chste Zeile ...
+        // PRIMA! N√§chste Zeile ...
         y += verbrauchteHoehe;
         zeilenZaehler ++;
       }
     } while((blockZaehler < bloecke.size()) && (verbrauchteHoehe != 0));
-            // Es gibt noch Blˆcke und es wurde etwas ausgegeben --> also weiter!
+            // Es gibt noch Bl√∂cke und es wurde etwas ausgegeben --> also weiter!
 
     setDoubleBuffered(true);
     return PAGE_EXISTS;
@@ -252,8 +252,8 @@ public abstract class AbstractBlockAuswertung extends AbstractAuswertung {
 	abstract protected String berechneAuswertung(Object[] werte);
 
   /**
-   * Ermˆglicht die Auswertung neu zu berechnen, wenn sich die allgemeinen
-   * Eigenschaften ‰ndern.
+   * Erm√∂glicht die Auswertung neu zu berechnen, wenn sich die allgemeinen
+   * Eigenschaften √§ndern.
    */
 	public final String berechneAuswertung() {
     Object[] werte = null;
@@ -340,7 +340,7 @@ public abstract class AbstractBlockAuswertung extends AbstractAuswertung {
         };
         String fontname = "SansSerif";
         Euro summe = new Euro(99.99);
-        String titel = "Ausgew‰hlte Buchungen ("+zeitraum;
+        String titel = "Ausgew√§hlte Buchungen ("+zeitraum;
         titel += " / "+register+")";
         loescheBloecke();
         AbstractBlock block1 = new TextBlock(titel);
@@ -357,7 +357,7 @@ public abstract class AbstractBlockAuswertung extends AbstractAuswertung {
         TabellenBlock block2 = new TabellenBlock(tabelle);
         block2.setFont(new Font(fontname, Font.PLAIN, 12));
         block2.setRelTabs(relTabs);
-        block2.setLinienFarbe("Weiﬂ");
+        block2.setLinienFarbe("Wei√ü");
         block2.setAusrichtung(attribute);
         addDokumentenBlock(block2);
         String[][] text = {{"", res.getString("total")+":", "", ""+summe}};

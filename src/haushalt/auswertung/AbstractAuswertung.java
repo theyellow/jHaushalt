@@ -37,13 +37,13 @@ import java.lang.reflect.Constructor;
 import javax.swing.JPanel;
 
 /**
- * Abstrakte Klasse für alle Auswertungen.<br>
+ * Abstrakte Klasse fÃ¼r alle Auswertungen.<br>
  * Eine Auswertung ist ein Panel und kann gedruckt werden.
  * In den abgeleiteten Klassen werden alle Parameter einer 
  * Auswertung gekapselt.
  * Die Parameter werden in einem generischen Dialog 
- * ("Eigenschaften") angezeigt und können verändert werden. 
- * Die Parameter können gespeichert und wieder geladen werden.
+ * ("Eigenschaften") angezeigt und kÃ¶nnen verÃ¤ndert werden. 
+ * Die Parameter kÃ¶nnen gespeichert und wieder geladen werden.
  *  
  * @author Dr. Lars H. Hahn
  * @version 2.5/2008.01.17
@@ -94,7 +94,7 @@ public abstract class AbstractAuswertung extends JPanel implements Printable {
   /**
    * Liefert die zentrale Tabelle der Auswertung.
    * Viele Auswertungen werden in Tabellenform ausgegeben, um den
-   * CSV-Export der Tabelle zu ermöglichen. Wird die Tabelle in der
+   * CSV-Export der Tabelle zu ermÃ¶glichen. Wird die Tabelle in der
    * Super-Klasse verwaltet und kann mit dieser Methode abgefragt
    * werden.
    * @return zentrale Tabelle
@@ -107,15 +107,15 @@ public abstract class AbstractAuswertung extends JPanel implements Printable {
     throws PrinterException;
 	
 	/**
-	 * Ermöglicht die Auswertung bei Bedarf neu zu berechnen. Es wird so verhindert,
-	 * dass ständig (z.B. bei Größenänderungen des Fensters) die Auswertung neu
+	 * ErmÃ¶glicht die Auswertung bei Bedarf neu zu berechnen. Es wird so verhindert,
+	 * dass stÃ¤ndig (z.B. bei GrÃ¶ÃŸenÃ¤nderungen des Fensters) die Auswertung neu
 	 * berechnet werden muss.
 	 */
 	abstract public String berechneAuswertung(); 
 	
 	/**
-	 * Zeigt einen Dialog in dem die Parameter der Auswertungen änderbar sind.
-	 * @return <code>false</code> Benutzer hat 'Abbruch' gewählt
+	 * Zeigt einen Dialog in dem die Parameter der Auswertungen Ã¤nderbar sind.
+	 * @return <code>false</code> Benutzer hat 'Abbruch' gewÃ¤hlt
 	 */
 	abstract public boolean zeigeEigenschaften();
 	

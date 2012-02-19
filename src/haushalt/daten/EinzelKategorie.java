@@ -26,7 +26,7 @@ import haushalt.gui.TextResource;
 
 /**
  * Verwaltet alle Kategorien.
- * Standardmäßig steht die die Kategorie "Sonstiges" zur Verfügung.
+ * StandardmÃ¤ÃŸig steht die die Kategorie "Sonstiges" zur VerfÃ¼gung.
  * @author Dr. Lars H. Hahn
  * @version 2.5/2008.01.22
  */
@@ -76,7 +76,7 @@ public class EinzelKategorie implements Kategorie {
   	if(kategorie == this)
   	  return true;
   	// wenn die Unterkatgorien NICHT verwendet werden, dann
-  	// muss überprüft werden, ob die Hauptkategorie passt:
+  	// muss Ã¼berprÃ¼ft werden, ob die Hauptkategorie passt:
   	if((!unterkategorienVerwenden) && (getHauptkategorie() == kategorie))
   	  return true;
   	return false;

@@ -28,8 +28,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 /**
- * Die Register dienen als Container für die Buchung. Beispiele
- * für Register sind "Girokonto" oder "Bargeld".
+ * Die Register dienen als Container fÃ¼r die Buchung. Beispiele
+ * fÃ¼r Register sind "Girokonto" oder "Bargeld".
  * @author Dr. Lars H. Hahn
  * @version 2.1.3/2006.06.21
  */
@@ -37,13 +37,13 @@ import java.util.ArrayList;
 /*
  * 2006.06.21 Verbesserung der Performanz beim Einsortieren
  *            durch die Annahme, dass meistens an das Ende des
- *            Registers eingefügt werden muss
+ *            Registers eingefÃ¼gt werden muss
  * 2006.06.21 BugFix: Einsortieren war doch notwendig, da die
  *            Umbuchungen tw. schon vorzeitig ins Register
  *            geladen werden 
  * 2006.06.19 Verbesserung der Performanz durch Verzichten des
  *            "Einsortierens" der Buchungen beim Laden 
- * 2006.02.14 BugFix: Abfangen des Löschens der "letzten Zeile"
+ * 2006.02.14 BugFix: Abfangen des LÃ¶schens der "letzten Zeile"
  * 2006.02.10 Implementierung des Interface 'Comparable'
  * 2006.01.31 Neusortieren einer Buchung jetzt unter Angabe 
  *            der Buchung selbst
@@ -88,23 +88,23 @@ public class Register implements Comparable<Register> {
 	}
 	
 	/**
-	 * Wird benötigt um alte Buchungen zu löschen.
-	 * @param nr Position bis zu der Buchungen gelöscht werden
+	 * Wird benÃ¶tigt um alte Buchungen zu lÃ¶schen.
+	 * @param nr Position bis zu der Buchungen gelÃ¶scht werden
 	 */
 	public void removeBisBuchung(int nr) {
 		for(int i=0;i<=nr;i++)
 			buchungen.remove(0);
-		// mit jedem remove verändert sich der Index -> immer erstes Element löschen
+		// mit jedem remove verÃ¤ndert sich der Index -> immer erstes Element lÃ¶schen
 	}
 
 	/**
-	 * Löscht eine Buchung.
+	 * LÃ¶scht eine Buchung.
 	 * @param nr
 	 */
 	public void entferneBuchung(int nr) {
     if(nr == buchungen.size())
-      return; // wenn eine neue (Split-)Buchung eingefügt
-              // werden soll, kann keine alte Buchung gelöscht
+      return; // wenn eine neue (Split-)Buchung eingefÃ¼gt
+              // werden soll, kann keine alte Buchung gelÃ¶scht
               // werden :-)
     AbstractBuchung buchung = buchungen.get(nr);
 		if(buchung.getClass() == Umbuchung.class) {
@@ -116,7 +116,7 @@ public class Register implements Comparable<Register> {
 	}
 	
 	/**
-	 * Entfernt eine Umbuchung. Hiermit kann eine Umbuchung bei Änderung seines
+	 * Entfernt eine Umbuchung. Hiermit kann eine Umbuchung bei Ã„nderung seines
 	 * Quell- oder Zielregisters sich aus dem alten Register entfernen.
 	 * @param buchung
 	 */
@@ -125,10 +125,10 @@ public class Register implements Comparable<Register> {
 	}
   
   /**
-   * Sortiert die übergebene Buchung in das Register ein.
+   * Sortiert die Ã¼bergebene Buchung in das Register ein.
    * Es wird aufsteigend nach Buchungsdatum sortiert.
    * @param buchung einzusortierende Buchung
-   * @return Einfüge-Position 
+   * @return EinfÃ¼ge-Position 
    */
   public int einsortierenBuchung(AbstractBuchung buchung) {
     int size = buchungen.size();
@@ -151,10 +151,10 @@ public class Register implements Comparable<Register> {
   
   /**
    * Sortiert die angegebene Buchung neu ein.
-   * Dies wird notwendig, wenn das Datum der Buchung geändert
+   * Dies wird notwendig, wenn das Datum der Buchung geÃ¤ndert
    * wurde.
-   * @param buchung geänderte Buchung
-   * @return Einfüge-Position 
+   * @param buchung geÃ¤nderte Buchung
+   * @return EinfÃ¼ge-Position 
    */
   public int buchungNeusortieren(AbstractBuchung buchung) {
     buchungen.remove(buchung);
@@ -162,9 +162,9 @@ public class Register implements Comparable<Register> {
   }
 
 	/**
-	 * Fügt die Buchungen aus einem anderen Register diesem 
-   * Register hinzu und löscht sie dann.
-	 * @param registerZumLoeschen Register aus dem die Buchungen übernommen werden
+	 * FÃ¼gt die Buchungen aus einem anderen Register diesem 
+   * Register hinzu und lÃ¶scht sie dann.
+	 * @param registerZumLoeschen Register aus dem die Buchungen Ã¼bernommen werden
 	 */
 	public void registerVereinigen(Register registerZumLoeschen) {
 			while(registerZumLoeschen.getAnzahlBuchungen() > 0) {
@@ -175,7 +175,7 @@ public class Register implements Comparable<Register> {
 					if(alteKategorie.isSelbstbuchung()) {
 					  // Umbuchung: alte Selbstbuchung
 						umbuchung.setKategorie(new UmbuchungKategorie(this, this));
-						// -> automatisch löschen und neu einfügen
+						// -> automatisch lÃ¶schen und neu einfÃ¼gen
 					}
 					else {
 					  // normale Umbuchung

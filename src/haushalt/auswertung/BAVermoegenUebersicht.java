@@ -73,7 +73,7 @@ public class BAVermoegenUebersicht extends AbstractBlockAuswertung {
 		tabelle[register.length][0] = res.getString("total");
 		tabelle[register.length][1] = ""+summe;
 
-		// Vorhandene Blöcke löschen und neu berechnete einfügen
+		// Vorhandene BlÃ¶cke lÃ¶schen und neu berechnete einfÃ¼gen
 		String titel = res.getString("fortune_overview")+" ("+datum+")";
 		loescheBloecke();
 		TextBlock block1 = new TextBlock(titel);

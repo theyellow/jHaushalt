@@ -34,7 +34,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 /**
- * Die SplitBuchung ist ähnlich der StandardBuchung. Der Buchungsbetrag wurde
+ * Die SplitBuchung ist Ã¤hnlich der StandardBuchung. Der Buchungsbetrag wurde
  * lediglich auf mehrere Kategorien aufgeteilt.
  * @author Dr. Lars H. Hahn
  * @version 2.6/2010.02.03
@@ -42,8 +42,8 @@ import java.util.ArrayList;
 
 /*
  * 2010.02.03 Funktion clone() korrigiert: new String() verwendet
- * 2009.07.28 BugFix: Nach Löschung aller Kategorien/Beträge, liefert reduziere() jetzt "SONSTIGES"/0€ zurück
- * 2006.02.10 Ergänzung der Methode isInKategorie
+ * 2009.07.28 BugFix: Nach LÃ¶schung aller Kategorien/BetrÃ¤ge, liefert reduziere() jetzt "SONSTIGES"/0â‚¬ zurÃ¼ck
+ * 2006.02.10 ErgÃ¤nzung der Methode isInKategorie
  */
 
 public class SplitBuchung extends AbstractBuchung {
@@ -52,7 +52,7 @@ public class SplitBuchung extends AbstractBuchung {
 	private ArrayList<Euro> splitBetrag  = new ArrayList<Euro>();
 
 	public SplitBuchung() {
-		// wird zum Laden benötigt
+		// wird zum Laden benÃ¶tigt
 	}
 	
 	public SplitBuchung(Datum datum, String text) {

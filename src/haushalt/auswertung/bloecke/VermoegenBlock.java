@@ -39,7 +39,7 @@ import java.awt.geom.AffineTransform;
  */
 
 /*
- * 2008.04.03 BugFix: Ausgabe des Wert "0 €" an der Nulllinie
+ * 2008.04.03 BugFix: Ausgabe des Wert "0 â‚¬" an der Nulllinie
  * 2008.03.05 BugFix: pos. Betrag immer oberhalb der X-Achse; 
  *            neg. Betrag immer oberhalb des kleinsten Wertes
  * 2004.08.22 Version 2.0
@@ -92,14 +92,14 @@ public class VermoegenBlock extends AbstractGraphikBlock {
     int xBalken = intervallBreite * 1 / 8;
     Euro deltaWert = grWert.sub(klWert);
     if(deltaWert.equals(Euro.NULL_EURO))
-      return 0; // keine Veränderungen im Vermögen -> keine Anzeige
+      return 0; // keine VerÃ¤nderungen im VermÃ¶gen -> keine Anzeige
     // Mit der folgenden Formel wird ein Euro-Wert in eine Y-Koordinate umgerechnet: 
     // y = yStart + rand + (grWert - wert) * hoehe / (grWert - klWert)
     //   = yOffset - yFaktor * wert
     double yFaktor = (hoehe - 2 * textHoehe) / deltaWert.toDouble();
     double yOffset = yStart + grWert.toDouble() * yFaktor; // = Nullline
 
-    // Werte für die Y-Achse berechnen und zeichnen
+    // Werte fÃ¼r die Y-Achse berechnen und zeichnen
     g.setColor(Color.gray);
     for(int i = 0; i <= 8; i++) {
       Euro wert = deltaWert.mal(i / 8.0D).add(klWert);
@@ -138,12 +138,12 @@ public class VermoegenBlock extends AbstractGraphikBlock {
       if(salden[i].compareTo(Euro.NULL_EURO) >= 0) {
         // -- Positiver Wert -----------------------------------------------------------------
         if(textBreite+10 <= yFaktor * salden[i].toDouble()) {
-          // Prima! Der Balken ist hoch genug für den Text
+          // Prima! Der Balken ist hoch genug fÃ¼r den Text
           g2.rotate(Math.toRadians(90), x+xSaldoText, y+5);
           g2.drawString(""+salden[i], x+xSaldoText, (int)(y+5));
         }
         else {
-          // Pech! Der Text ragt über den Balken hinaus, ist aber sichtbar
+          // Pech! Der Text ragt Ã¼ber den Balken hinaus, ist aber sichtbar
           g2.rotate(Math.toRadians(90), x+xSaldoText, yOffset - textBreite - 5);
           g2.drawString(""+salden[i], x+xSaldoText, (int)(yOffset - textBreite - 5));
         }
@@ -151,12 +151,12 @@ public class VermoegenBlock extends AbstractGraphikBlock {
       else {
         // -- Negativer Wert -----------------------------------------------------------------
         if(textBreite+10 <= yFaktor * -salden[i].toDouble()) {
-          // Prima! Der Balken ist hoch genug für den Text
+          // Prima! Der Balken ist hoch genug fÃ¼r den Text
           g2.rotate(Math.toRadians(90), x+xSaldoText, y - textBreite - 5);
           g2.drawString(""+salden[i], x+xSaldoText, (int) y - textBreite - 5);
         }
         else {
-          // Pech! Der Text ragt über den Balken hinaus, ist aber sichtbar
+          // Pech! Der Text ragt Ã¼ber den Balken hinaus, ist aber sichtbar
           g2.rotate(Math.toRadians(90), x+xSaldoText, yOffset+5);
           g2.drawString(""+salden[i], x+xSaldoText, (int)(yOffset+5));
         }

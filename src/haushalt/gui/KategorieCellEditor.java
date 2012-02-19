@@ -34,13 +34,13 @@ import javax.swing.JComboBox;
 import javax.swing.JTable;
 
 /**
- * Cell-Editor für die Kategorie.
+ * Cell-Editor fÃ¼r die Kategorie.
  * @author Dr. Lars H. Hahn
  * @version 2.1.1/2006.04.21
  */
 
 /*
- * 2006.04.21 BugFix: Bei der Änderung eine Umbuchung wurden
+ * 2006.04.21 BugFix: Bei der Ã„nderung eine Umbuchung wurden
  *            Ziel- und Quellregister vertauscht
  * 2006.02.13 Anpassung an die neue abstrakte Klasse 
  *            'Kategorie'
@@ -104,7 +104,7 @@ public class KategorieCellEditor extends DefaultCellEditor {
 			String regname = ""+table.getModel();
 			comboBox = new JComboBox(db.getRegisterNamen());
 			// Ob das Quell- oder Ziel-Register in der Combo-Box
-			// ausgewählt werden muss, ist davon abhängig in
+			// ausgewÃ¤hlt werden muss, ist davon abhÃ¤ngig in
 			// welchem der beiden Register sich die Umbuchung
 			// befindet. 
       quellregister = (db.findeOderErzeugeRegister(regname) == umbuchungKategorie.getQuelle());

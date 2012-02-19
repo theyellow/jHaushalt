@@ -91,7 +91,7 @@ public class BAKategorieEntwicklung extends AbstractBlockAuswertung {
       tmpZeitraum = tmpZeitraum.folgeZeitraum();      
     }
 
-		// Vorhandene Blöcke löschen und neu berechnete einfügen
+		// Vorhandene BlÃ¶cke lÃ¶schen und neu berechnete einfÃ¼gen
 		String titel = res.getString("category_development")+" ("+zeitraumNamen[0]+" "+res.getString("to")+" "+zeitraumNamen[anzahlZeitraeume-1];
 		if(register == null)
 		  titel += ")";
@@ -116,7 +116,7 @@ public class BAKategorieEntwicklung extends AbstractBlockAuswertung {
 			block3.setFont(new Font(haushalt.getFontname(), Font.PLAIN, haushalt.getFontgroesse()));
 	    block3.setRelTabs(relTabs);
 	    block3.setHgFarbe(farbschema);
-	    block3.setLinienFarbe("Weiß");
+	    block3.setLinienFarbe("WeiÃŸ");
 	    addDokumentenBlock(block3);
 		}
 		else

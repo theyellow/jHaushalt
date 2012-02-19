@@ -45,7 +45,7 @@ import haushalt.gui.TextResource;
  * 2008.03.10 BugFix: Fehlender Resource-String
  * 2007.07.03 Internationalisierung
  * 2006.04.21 BugFix: Bei Wechsel auf 'nur Hauptkatgorien'
- *            müssen die Unterkategorien deaktiviert werden
+ *            mÃ¼ssen die Unterkategorien deaktiviert werden
  * 2006.02.04 Erste Version
  */
 
@@ -157,7 +157,7 @@ public class Planung {
       for (int i = 0; i < hauptkategorien.length; i++) {
         int count = hauptkategorien[i];
         Euro summe = new Euro();
-        // Der Hauptkategotrie werden die Beträge der Unter-
+        // Der Hauptkategotrie werden die BetrÃ¤ge der Unter-
         // kategorien hinzuaddiert; die Unterkategorien werden
         // deaktiviert
         while((count < kategorien.size()) &&
@@ -215,7 +215,7 @@ public class Planung {
 
   public void kategorienAbgleichen() {
     EinzelKategorie[] kat = db.getKategorien(true);
-    // Kategorien die es noch nicht gibt werden hinzugefügt
+    // Kategorien die es noch nicht gibt werden hinzugefÃ¼gt
     for (int i = 0; i < kat.length; i++) 
       if((i >= kategorien.size()) ||
           (kat[i] != kategorien.get(i))) {

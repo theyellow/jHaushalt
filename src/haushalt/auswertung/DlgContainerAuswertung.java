@@ -64,19 +64,19 @@ import javax.swing.event.ListSelectionListener;
  */
 
 /* 
- * 2011.01.25 BuxFix: Nutzung "WrapLayout" für die ButtonPane
- * 2011.01.21 BugFix: Auflösung (Resolution) des Druckers gesetzt, um fehlerhafte
+ * 2011.01.25 BuxFix: Nutzung "WrapLayout" fÃ¼r die ButtonPane
+ * 2011.01.21 BugFix: AuflÃ¶sung (Resolution) des Druckers gesetzt, um fehlerhafte
  *            Ausdrucke auf einigen Druckern zu verhindern
- * 2009.08.15 BugFix: Fehler beim Laden von Auswertungen ignoriert; ermöglicht
+ * 2009.08.15 BugFix: Fehler beim Laden von Auswertungen ignoriert; ermÃ¶glicht
  *            das Laden von neuen Auswertungen in alten Versionen 
  * 2009.08.04 BugFix: Anzeigen der Button bei schmalem Fenster
  * 2008.05.15 BugFix: Falscher Fokus beim Sortieren der Auswertungen korrigiert
  * 2008.03.31 Erweiterung: Auswertungen sortieren
- * 2008.02.12 Überprüfung, ob Auswertungen geaendert, hinzugefügt
+ * 2008.02.12 ÃœberprÃ¼fung, ob Auswertungen geaendert, hinzugefÃ¼gt
  * 2007.07.02 Internationalisierung
  * 2007.02.14 Versionsnummer und Versionskontrolle angepasst
- * 2006.06.19 Größe des Dialogs wird nicht mehr lokal festgelegt
- * 2006.06.11 Löschen der Anzeige nach dem Entfernen der letzten Auswertung
+ * 2006.06.19 GrÃ¶ÃŸe des Dialogs wird nicht mehr lokal festgelegt
+ * 2006.06.11 LÃ¶schen der Anzeige nach dem Entfernen der letzten Auswertung
  * 2006.02.09 Verlagerung der Drucker-Einstellungen in den Dialog
  * 2006.02.07 Erweiterung um Versionskontrolle
  */
@@ -135,15 +135,15 @@ public class DlgContainerAuswertung extends JDialog implements ListSelectionList
   	list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
   	list.addListSelectionListener(this);
 		
-    // SplitPane enthält links die Liste der Auswertungen und
-    // rechts das Fenster der gewählten Auswertung
+    // SplitPane enthÃ¤lt links die Liste der Auswertungen und
+    // rechts das Fenster der gewÃ¤hlten Auswertung
     split.setOneTouchExpandable(true);
     split.setDividerLocation(150);
     listScrollPane.setMinimumSize(minimumSize);
     graphikScrollPane.setMinimumSize(minimumSize);
     graphikScrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 
-    // Buttons zur ButtonPane hinzufügen:
+    // Buttons zur ButtonPane hinzufÃ¼gen:
     paneButton.add(buttonHoch, null);
     paneButton.add(buttonRunter, null);
     paneButton.add(buttonHinzu, null);
@@ -214,8 +214,8 @@ public class DlgContainerAuswertung extends JDialog implements ListSelectionList
   }
   
   /**
-   * Ist <code>true</code>, wenn die Auswertungen geändert wurden.
-   * @return geändert oder nicht geändert
+   * Ist <code>true</code>, wenn die Auswertungen geÃ¤ndert wurden.
+   * @return geÃ¤ndert oder nicht geÃ¤ndert
    */
   public boolean isGeaendert() {
     return geaendert;

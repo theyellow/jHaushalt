@@ -39,7 +39,7 @@ import javax.swing.JFrame;
  */
 
 /*
- * 2008.01.17 BugFix: Übergabe der Überschrift an den ColorChooser
+ * 2008.01.17 BugFix: Ãœbergabe der Ãœberschrift an den ColorChooser
  * 2006.02.02 Erste Version
  */
 

@@ -54,14 +54,14 @@ import java.util.Locale;
 import java.util.Properties;
 
 /**
- * Dialog zum Ändern der Optionen.
+ * Dialog zum Ã„ndern der Optionen.
  * @author Dr. Lars H. Hahn
  * @version 2.5.4/2008.05.14
  */
 
  /*
-  * 2008.05.14 Reiter für benutzer-definierte Farben
-  * 2008.04.15 Farbe für zukünftige Buchungen
+  * 2008.05.14 Reiter fÃ¼r benutzer-definierte Farben
+  * 2008.04.15 Farbe fÃ¼r zukÃ¼nftige Buchungen
   * 2008.01.22 Umstellung der Auswahl des Delkeys auf Index
   * 2007.05.30 Internationalisierung
   * 2006.01.27 Entfernen der globalen Option 
@@ -290,7 +290,7 @@ public class DlgOptionen extends JDialog {
     punkt.setText(properties.getProperty("jhh.opt.punkt", "12"));
 		gemerkte.setSelected(Boolean.valueOf(properties.getProperty("jhh.opt.gemerkte", "true")).booleanValue());
     startDatum.setText(properties.getProperty("jhh.opt.startdatum", "01.01.00"));
-		waehrung.setText(properties.getProperty("jhh.opt.waehrung", "€"));
+		waehrung.setText(properties.getProperty("jhh.opt.waehrung", "â‚¬"));
     int idx = Integer.parseInt(properties.getProperty("jhh.opt.deltaste", "0"));
     deltaste.setSelectedIndex(idx);
 		reiter.setSelectedItem(properties.getProperty("jhh.opt.reiter", "BOTTOM"));

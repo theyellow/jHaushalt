@@ -49,21 +49,21 @@ import java.util.StringTokenizer;
   * 2008.02.04 Umstellung der Intervalle bei den autom. Buchungen auf Index
   * 2008.01.15 BugFix: Falls der Name des Intervall bei der automatischen Buchung
   *            unbekannt ist, wird jetzt "Jahr" angenommen 
-  * 2007.05.24 Ausführen von automatischen Buchungen bis zu einem Datum 
+  * 2007.05.24 AusfÃ¼hren von automatischen Buchungen bis zu einem Datum 
   * 2007.03.28 BugFix: getKategorieSalden summierte, wenn die Unterkategorien
-  *            NICHT verwendet werden, falsch auf (Lösung durch Nils op den Winkel)
+  *            NICHT verwendet werden, falsch auf (LÃ¶sung durch Nils op den Winkel)
   * 2007.02.22 Erweiterung: Ausgabe aller Buchungen
   * 2007.02.14 Verschieben eines Registers in der Register-Liste um ein
-  *            Offset hinzugefügt.
+  *            Offset hinzugefÃ¼gt.
   * 2007.02.13 Automatisches Einsortieren eines Registers entfernt
-  * 2007.02.12 Umbenennen von Registern hinzugefügt
+  * 2007.02.12 Umbenennen von Registern hinzugefÃ¼gt
   * 2006.06.16 Erweiterung um automatische Umbuchung
   * 2006.01.27 Die Entscheidung, ob Unterkategorien verwendet
-  *            werden fällt nicht mehr hier global, sondern
+  *            werden fÃ¤llt nicht mehr hier global, sondern
   *            individuell in den Auswertungen 
   * 2005.03.10 Erweiterung: Gemerkte Buchungen ab Datum
-  * 2005.02.18 Erweiterung: Ersetzen einer Buchung liefert Position zurück.
-  * 2004.08.25 BugFix: Einfügen einer StandardBuchung liefert Position zurück.
+  * 2005.02.18 Erweiterung: Ersetzen einer Buchung liefert Position zurÃ¼ck.
+  * 2004.08.25 BugFix: EinfÃ¼gen einer StandardBuchung liefert Position zurÃ¼ck.
   */
 
 public class Datenbasis {
@@ -79,15 +79,15 @@ public class Datenbasis {
   }
   
   /**
-   * Ist <code>true</code>, wenn Daten geändert wurden.
-   * @return geändert oder nicht geändert
+   * Ist <code>true</code>, wenn Daten geÃ¤ndert wurden.
+   * @return geÃ¤ndert oder nicht geÃ¤ndert
    */
   public boolean isGeaendert() {
   	return geaendert;
   }
   
   /**
-   * Wird auf´gerufen, wenn die Daten geaendert wurden
+   * Wird aufgerufen, wenn die Daten geaendert wurden
    */
   public void setGeaendert() {
     geaendert = true;
@@ -98,7 +98,7 @@ public class Datenbasis {
   private final ArrayList<EinzelKategorie> kategorieListe;
 
 	/**
-	 * Liefert die Kategorie mit dem angegebene Namen zurück.
+	 * Liefert die Kategorie mit dem angegebene Namen zurÃ¼ck.
 	 * Wenn sie noch nicht existiert, wird sie erzeugt.
 	 * @param name Name der Kategorie
 	 * @param hauptkategorie Hauptkategorie
@@ -178,8 +178,8 @@ public class Datenbasis {
 	private final ArrayList<Register> registerListe = new ArrayList<Register>();
 	
   /**
-   * Prüft, ob der Regsitername schon existiert und hängt ggf. Ziffern an.
-   * @param regname gewünscher Name
+   * PrÃ¼ft, ob der Registername schon existiert und hÃ¤ngt ggf. Ziffern an.
+   * @param regname gewÃ¼nschter Name
    * @return generierter Name
    */
   private String generiereRegistername(String regname) {
@@ -202,7 +202,7 @@ public class Datenbasis {
    * Wenn es schon ein Register mit gleichem Namen gibt, wird ein neues Register
    * mit fortlaufender Nummerierung erzeugt.
    * @param regname Name des neuen Registers
-   * @return tatsächlich verwendeter Name
+   * @return tatsÃ¤chlich verwendeter Name
    */
   public String erzeugeRegister(String regname) {
     String generierterName = generiereRegistername(regname);
@@ -286,7 +286,7 @@ public class Datenbasis {
   
 	/**
    * Liefert eine Liste mit alle Register-Namen.
-   * Diese wird für die Combo-Boxen zur Auswahl eines Registers benötigt.
+   * Diese wird fÃ¼r die Combo-Boxen zur Auswahl eines Registers benÃ¶tigt.
 	 * @return Array mit den Register-Namen
 	 */
   public String[] getRegisterNamen() {
@@ -298,8 +298,8 @@ public class Datenbasis {
 	}
 
   /**
-   * Überträgt die Buchungen aus dem Quell-Register ins Ziel-Register.
-   * Das Quell-Register wird anschließend gelöscht.
+   * ÃœbertrÃ¤gt die Buchungen aus dem Quell-Register ins Ziel-Register.
+   * Das Quell-Register wird anschlieÃŸend gelÃ¶scht.
    * @param quelle Name des Quell-Registers
    * @param ziel Name des Ziel-Registers
    */
@@ -318,7 +318,7 @@ public class Datenbasis {
    * Dies ist in der Regel die noch leere Buchung am Ende des Registers.
    * @param regname Name des Registers
    * @param buchung Neue Buchung
-   * @return Index an der die neue Buchung in das Register eingefügt wurde
+   * @return Index an der die neue Buchung in das Register eingefÃ¼gt wurde
    */
   public int addStandardBuchung(String regname, StandardBuchung buchung) {
     Register register = findeRegister(regname);
@@ -328,7 +328,7 @@ public class Datenbasis {
   }
 
 	/**
-   * Erzeugt eine Umbuchung und fügt diese im Quell- und Zielregister ein.
+   * Erzeugt eine Umbuchung und fÃ¼gt diese im Quell- und Zielregister ein.
 	 * @param datum Buchungdatum
 	 * @param buchungstext Buchungstext
 	 * @param quelle Quellregister
@@ -342,7 +342,7 @@ public class Datenbasis {
     );
     new Umbuchung(datum, buchungstext, kategorie, betrag);
     // beim Erzeugen der Umbuchung wird diese automatisch in die beiden Register
-    // eingefügt.
+    // eingefÃ¼gt.
     geaendert = true;
   }
   
@@ -378,7 +378,7 @@ public class Datenbasis {
    * @param regname Name des Registers
    * @param index Position der Buchung
    * @param buchung Neue Buchung
-   * @return Einfüge-Position
+   * @return EinfÃ¼ge-Position
    */
   public int ersetzeBuchung(String regname, int index, AbstractBuchung buchung) {
 		Register register = findeRegister(regname);
@@ -400,10 +400,10 @@ public class Datenbasis {
 
   /**
    * Sortiert die angegebene Buchung neu ins Register ein.
-   * Dies wird notwendig, wenn das Datum der Buchung geändert wurde.
+   * Dies wird notwendig, wenn das Datum der Buchung geÃ¤ndert wurde.
    * @param regname Name des Registers
-   * @param buchung geänderte Buchung
-   * @return Einfüge-Position 
+   * @param buchung geÃ¤nderte Buchung
+   * @return EinfÃ¼ge-Position 
    */
   public int buchungNeusortieren(String regname, AbstractBuchung buchung) {
     Register register = findeRegister(regname);
@@ -411,7 +411,7 @@ public class Datenbasis {
   }
 
 	/**
-   * Löscht alle Buchungen vor dem angegebenen Datum.
+   * LÃ¶scht alle Buchungen vor dem angegebenen Datum.
 	 * @param datum Datum
 	 */
   public void entferneAlteBuchungen(Datum datum) {
@@ -421,14 +421,14 @@ public class Datenbasis {
 		// Erstmal die Salden aller Register ermitteln ...
 		for(int i=0; i<anzahlRegister; i++) {
 			Register register = (Register)registerListe.get(i);
-			pos[i] = -1; // -1 = keine Buchungen löschen
+			pos[i] = -1; // -1 = keine Buchungen lÃ¶schen
 			for(int j=0; j<register.getAnzahlBuchungen();j++)
 				if(register.getBuchung(j).compareTo(datum) <= 0)
 					pos[i] = j;
 			if(pos[i] > -1)
 				salden[i] = register.getSaldo(pos[i]);
 		}
-		// ... und dann ggf. alte Buchungen löschen und Selbstbuchung einfügen.
+		// ... und dann ggf. alte Buchungen lÃ¶schen und Selbstbuchung einfÃ¼gen.
 		for(int i=0; i<anzahlRegister; i++) {
 			if(pos[i] > -1) {
 				Register register = (Register)registerListe.get(i);
@@ -440,7 +440,7 @@ public class Datenbasis {
             salden[i]);
 				// Umbuchung werden automatisch einsortiert
 				if(DEBUG)
-				  System.out.println("-I- Im Register "+register+" wurden "+pos[i]+" Buchungen gelöscht!");
+				  System.out.println("-I- Im Register "+register+" wurden "+pos[i]+" Buchungen gelÃ¶scht!");
 			}
 		}
     geaendert = true;
@@ -632,7 +632,7 @@ public class Datenbasis {
   }
 
 	/**
-	 * Ermittelt den Saldo an einem bestimmten Datum über alle Register.
+	 * Ermittelt den Saldo an einem bestimmten Datum Ã¼ber alle Register.
 	 * @param datum Datum des gesuchten Saldos
 	 * @return gesuchter Saldo
 	 */
@@ -667,7 +667,7 @@ public class Datenbasis {
 	}
 
   /**
-   * Ermittelt den Saldo über EINE Kategorie in einem bestimmten Register und
+   * Ermittelt den Saldo Ã¼ber EINE Kategorie in einem bestimmten Register und
    * Zeitraum.
    * @param regname Name des Registers, <code>null</code> = alle Register
    * @param kategorie Name der Kategorie
@@ -682,7 +682,7 @@ public class Datenbasis {
   }
 
   /**
-   * Liefert die Salden für ALLE Kategorien in einem Zeitraum.
+   * Liefert die Salden fÃ¼r ALLE Kategorien in einem Zeitraum.
    * @param zeitraum Zeitraum
    * @return Salden aller Kategorien
    */
@@ -697,11 +697,11 @@ public class Datenbasis {
     }
     // Nur die Hauptkategorien:
     return getKategorieSalden(getKategorien(true), zeitraum, null, false);
-    // Alle Kategorien werden übergeben, aber nur die Hauptkategorien aufgerufen
+    // Alle Kategorien werden Ã¼bergeben, aber nur die Hauptkategorien aufgerufen
   }
 
   /**
-   * Liefert die Salden für BESTIMMTE Kategorien in einem Zeitraum.
+   * Liefert die Salden fÃ¼r BESTIMMTE Kategorien in einem Zeitraum.
    * @param kategorien Kategorien
    * @param zeitraum Zeitraum
    * @param regname Name der Registers, <code>null</code> = alle Register
@@ -723,13 +723,13 @@ public class Datenbasis {
   public static int cacheMiss = 0;
   /**
    * Die Summen der Kategorien werden in einem Cache gehalten,
-   * da sich aufeinanderfolgende Abfragen häufig auf die
+   * da sich aufeinanderfolgende Abfragen hÃ¤ufig auf die
    * gleichen Daten beziehen.
-   * Um zu überprüfen, ob der Cache noch aktuell ist, wird
+   * Um zu Ã¼berprÃ¼fen, ob der Cache noch aktuell ist, wird
    * getestet ob 
    * (1) Zeitraum und (2) Registername dem Cache entsprechen
    * (3) der Cache noch aktuell ist und ob
-   * (4) die Verwendung der Unterkategorien übereinstimmt
+   * (4) die Verwendung der Unterkategorien Ã¼bereinstimmt
    *
    * @param zeitraum Zeitraum der Abfrage
    * @param regname Register der Abfrage
@@ -787,7 +787,7 @@ public class Datenbasis {
   
 	/**
 	 * Merkt sich die Standard- und SplitBuchungen. Falls es den Buchungstext schon
-	 * gibt wird die zuvor gemerkte Buchung überschrieben.
+	 * gibt wird die zuvor gemerkte Buchung Ã¼berschrieben.
 	 * @param buchung Buchung zum Merken
 	 */
 	public void buchungMerken(AbstractBuchung buchung) {
@@ -982,7 +982,7 @@ public class Datenbasis {
   public void addAutoUmbuchung() {
     // Erzeugen einer Dummy-Umbuchung; Quell- und Ziel-Register
     // sind das erste Register der Liste
-    // Problem: Automatisches Einfügen der Umbuchung ==> getrennte Speicherung des Register-Paars
+    // Problem: Automatisches EinfÃ¼gen der Umbuchung ==> getrennte Speicherung des Register-Paars
     autoUmbuchungen.add(new Umbuchung());
     autoUmbuchungRegister.add(new UmbuchungKategorie(registerListe.get(0), registerListe.get(0)));
     autoUmbuchungIntervalle.add(new Integer(0));
@@ -990,7 +990,7 @@ public class Datenbasis {
   }
 
   /**
-   * Löscht eine wiederkehrende Standard-Buchung.
+   * LÃ¶scht eine wiederkehrende Standard-Buchung.
    * @param index Nummer der Buchung
    */
   public void entferneAutoStandardBuchung(int index) {
@@ -1003,7 +1003,7 @@ public class Datenbasis {
   }
 
   /**
-   * Löscht eine wiederkehrende Umbuchung.
+   * LÃ¶scht eine wiederkehrende Umbuchung.
    * @param index Nummer der Buchung
    */
   public void entferneAutoUmbuchung(int index) {
@@ -1015,9 +1015,9 @@ public class Datenbasis {
   }
 
 	/**
-	 * Fügt die fälligen wiederkehrenden Buchungen in das entsprechende Register ein.
-   * @param datum Datum bis zum die Buchungen ausgeführt werden sollen
-	 * @return Anzahl der eingefügten Buchungen
+	 * FÃ¼gt die fÃ¤lligen wiederkehrenden Buchungen in das entsprechende Register ein.
+   * @param datum Datum bis zum die Buchungen ausgefÃ¼hrt werden sollen
+	 * @return Anzahl der eingefÃ¼gten Buchungen
 	 */
 	public int ausfuehrenAutoBuchungen(Datum datum) {
 	  int zaehler = 0;
@@ -1028,7 +1028,7 @@ public class Datenbasis {
       while(buchung.getDatum().compareTo(datum) <= 0) {
         register.einsortierenBuchung((StandardBuchung)buchung.clone());
         if(DEBUG)
-          System.out.println("AutoBuchung ausgeführt: "+buchung.getText());
+          System.out.println("AutoBuchung ausgefÃ¼hrt: "+buchung.getText());
         Integer intervall = autoStandardBuchungIntervalle.get(i);
         buchung.setDatum(getFolgeDatum(buchung.getDatum(), intervall));
         autoStandardBuchungen.set(i, buchung);
@@ -1045,7 +1045,7 @@ public class Datenbasis {
         neueUmbuchung.setKategorie((UmbuchungKategorie) umbuchungKategorie.clone());
         // das Einsortieren ist damit automatisch erfolgt
         if(DEBUG)
-          System.out.println("AutoBuchung ausgeführt: "+buchung.getText());
+          System.out.println("AutoBuchung ausgefÃ¼hrt: "+buchung.getText());
         Integer intervall = autoUmbuchungIntervalle.get(i);
         buchung.setDatum(getFolgeDatum(buchung.getDatum(), intervall));
         zaehler++;
@@ -1059,10 +1059,10 @@ public class Datenbasis {
 	}
 
   /**
-   * Berechnet das nächste Datum an dem die wiederkehrende Buchung ausgeführt
+   * Berechnet das nÃ¤chste Datum an dem die wiederkehrende Buchung ausgefÃ¼hrt
    * werden soll.
    * @param datum altes Datum
-   * @param intervall Index des Intervalls in den die Buchung ausgeführt wird
+   * @param intervall Index des Intervalls in den die Buchung ausgefÃ¼hrt wird
    * @return Neues Datum
    */
   static private Datum getFolgeDatum(Datum datum, Integer intervall) {
@@ -1081,7 +1081,7 @@ public class Datenbasis {
       monat -= 12;
       jahr ++;
     }
-    // der mögliche Überlauf beim Tag wird in der Klasse
+    // der mÃ¶gliche Ãœberlauf beim Tag wird in der Klasse
     // 'Datum' korrigiert
     return new Datum(tag, monat, jahr);
   }
@@ -1090,7 +1090,7 @@ public class Datenbasis {
   
 	/**
 	 * Importiert eine CSV-Datei (Comma Separated Value) in das angegebene Register.
-	 * Die übergebene Tabelle muss (mindestens) 4 Spalten besitzen.
+	 * Die Ã¼bergebene Tabelle muss (mindestens) 4 Spalten besitzen.
 	 * @param regname Name des Registers
 	 * @param tabelle Tabelle
 	 */
@@ -1112,7 +1112,7 @@ public class Datenbasis {
 	 * Importiert eine Quicken-Export-Datei (QIF) in das angegebene Register.
 	 * @param in Eingabe-Stream
 	 * @param regname Name des Registers
-	 * @param dm <code>true</code> wenn die Währung der Daten D-Mark ist.
+	 * @param dm <code>true</code> wenn die WÃ¤hrung der Daten D-Mark ist.
 	 */
 	public void importQuickenRegister(InputStream in, String regname, boolean dm) throws IOException, QuickenImportException {
 	  final Register register = findeRegister(regname);
@@ -1132,7 +1132,7 @@ public class Datenbasis {
 	    if(tag.length() == 1)
 	      tag = "0" + tag;
 	    String jahr = st.nextToken();
-      // TODO Import Überarbeiten: Funktioniert nur mit deutschem Datum!
+      // TODO Import Ã¼berarbeiten: Funktioniert nur mit deutschem Datum!
 	    Datum datum = new Datum(tag+"."+monat+"."+jahr);
 	    
 	    // Betrag einlesen
@@ -1179,7 +1179,7 @@ public class Datenbasis {
 	      Euro wert = new Euro(leseQIFZeile(in).replace('.',',')); // US -> deutsch
 	      if(dm)
 	        wert.umrechnenVonDM();
-	      // Prüfen, ob Umbuchung:
+	      // PrÃ¼fen, ob Umbuchung:
 	      if((kategorie.length() > 2) &&
 	          kategorie.startsWith("[") &&
 	          kategorie.endsWith("]")) {
@@ -1191,7 +1191,7 @@ public class Datenbasis {
                     findeOderErzeugeRegister(kategorie), 
                     register), 
                 wert);
-	          // Nur positive Umbuchungen erzeugen; Umbuchungen werden automatisch eingefügt
+	          // Nur positive Umbuchungen erzeugen; Umbuchungen werden automatisch eingefÃ¼gt
 	          if(DEBUG)
 	            System.out.println("Umbuchung "+text+" erzeugt.");
 	        }
@@ -1235,7 +1235,7 @@ public class Datenbasis {
                   register), 
               einzelWert
           );
-	        // Nur positive Umbuchungen erzeugen; Umbuchungen werden automatisch eingefügt
+	        // Nur positive Umbuchungen erzeugen; Umbuchungen werden automatisch eingefÃ¼gt
           if(DEBUG)
             System.out.println("Umbuchung "+text+" erzeugt.");
 	      }
@@ -1287,7 +1287,7 @@ public class Datenbasis {
 	// -- E/A-Funktionen -------------------------------------------------------
  
  /**
-  * Lädt die Buchungen in die Register. Lädt und führt die 
+  * LÃ¤dt die Buchungen in die Register. LÃ¤dt und fÃ¼hrt die 
   * wiederkehrenden Buchungen.
   */
  public void laden(DataInputStream in, String versionInfo) throws IOException {
@@ -1304,7 +1304,7 @@ public class Datenbasis {
 	 if(DEBUG)
 	   System.out.println(""+anzahl+" Register geladen.");
 
-	 // automatische Buchungen laden und ausführen (in v1.0 noch unbekannt!)
+	 // automatische Buchungen laden und ausfÃ¼hren (in v1.0 noch unbekannt!)
 	 if(!versionInfo.equals("jHaushalt1.0")) {
 		 int size = in.readInt();
 		 autoStandardBuchungen.ensureCapacity(size);
@@ -1356,7 +1356,7 @@ public class Datenbasis {
   				 else
   					 throw new IOException("AutoBuchung: Falscher Buchungstyp: SplitBuchung");
   			 }
-         else { // Laden des aktuellen Formats für Standard-Buchungen
+         else { // Laden des aktuellen Formats fÃ¼r Standard-Buchungen
   				 buchung = new StandardBuchung();
   				 ((StandardBuchung)buchung).laden(in, this);
          }

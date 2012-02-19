@@ -37,7 +37,7 @@ import haushalt.daten.EinzelKategorie;
  * @since 2.0
  */
 
-/* 2008.02.13 Ausgaben können wahlweise mit positiven oder negativen Werten angezeigt werden
+/* 2008.02.13 Ausgaben kÃ¶nnen wahlweise mit positiven oder negativen Werten angezeigt werden
  * 2004.08.22 Erste Version
  */
 public class EntwicklungBlock extends AbstractGraphikBlock {
@@ -99,7 +99,7 @@ public class EntwicklungBlock extends AbstractGraphikBlock {
     double yFaktor = hoehe / deltaWert.toDouble();
     double yOffset = yStart + grWert.toDouble() * yFaktor;
     
-    // Werte für die Y-Achse berechnen und zeichnen
+    // Werte fÃ¼r die Y-Achse berechnen und zeichnen
     for(int i = 0; i <= 8; i++) {
       Euro wert = deltaWert.mal(i / 8.0D).add(klWert);
       int y = (int)(yOffset - yFaktor * wert.toDouble());
@@ -113,7 +113,7 @@ public class EntwicklungBlock extends AbstractGraphikBlock {
     // Y-Null-Linie zeichnen
     g.drawLine(xStart + rand + breiteYAchse, (int)yOffset, xStart + rand + breiteYAchse + graphikBreite, (int)yOffset);
     
-    // Werte für die X-Achse berechnen und zeichnen
+    // Werte fÃ¼r die X-Achse berechnen und zeichnen
     for(int i = 0; i < anzahlZeitraeume; i++) {
       int y = yStart + getHoehe(breite);
       int x = xStart + rand + breiteYAchse + spaltenBreite * i;
@@ -144,7 +144,7 @@ public class EntwicklungBlock extends AbstractGraphikBlock {
   }
 
   protected int getHoehe(int breite) {
-    // enspricht dem Standard-Bildschirmverhältnis 4:3
+    // enspricht dem Standard-BildschirmverhÃ¤ltnis 4:3
     return (int)(breite * 0.75 + 0.5);
   }
   

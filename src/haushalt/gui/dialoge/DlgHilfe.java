@@ -44,7 +44,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 /**
- * Dialog mit dem HTML-Seiten angezeigt werden können.
+ * Dialog mit dem HTML-Seiten angezeigt werden kÃ¶nnen.
  * @author Dr. Lars H. Hahn
  * @version 2.5/2007.02.28
  * @since 2.0

@@ -46,7 +46,7 @@ import javax.swing.JScrollPane;
 
 /*
  * 2007.07.02 Internationalisierung
- * 2006.02.02 Doppelklick w‰hlt Auswertung aus
+ * 2006.02.02 Doppelklick w√§hlt Auswertung aus
  */
 public class DlgAuswertungAuswaehlen extends JDialog {
   private static final long serialVersionUID = 1L;

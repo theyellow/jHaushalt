@@ -28,14 +28,14 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 /**
- * Basisklasse für die Buchungsarten Umbuchung, SplitBuchung und
+ * Basisklasse fÃ¼r die Buchungsarten Umbuchung, SplitBuchung und
  * StandardBuchung. Jede Buchung wird in einem Register abgelegt.
  * @author Dr. Lars H. Hahn
  * @version 2.1/2006.02.10
  */
 
 /*
- * 2006.02.10 Ergänzung der Methode isInKategorie
+ * 2006.02.10 ErgÃ¤nzung der Methode isInKategorie
  * 2004.08.22 Erste Version
  */
 
@@ -129,7 +129,7 @@ abstract public class AbstractBuchung implements Cloneable, Comparable<Object> {
 
   /**
    * Ersetzt eine alte Kategorie durch eine neue.
-   * Bei einer gesplitteten Buchung werden alle Einzel-Kategorien überprüft und
+   * Bei einer gesplitteten Buchung werden alle Einzel-Kategorien Ã¼berprÃ¼ft und
    * ggf. ersetzt. Bei einer Umbuchung erfolgt keine Ersetzung.<br>
    * Wenn die alte Kategorie <b>null</b> ist, wird jede 
    * beliebige Kategorie ersetzt.
@@ -140,10 +140,10 @@ abstract public class AbstractBuchung implements Cloneable, Comparable<Object> {
   abstract public int ersetzeKategorie(EinzelKategorie alteKategorie, EinzelKategorie neueKategorie);
   
   /**
-   * Überprüft ob die Buchung teil einer Kategorie ist
-   * @param kategorie Kategorie auf die überprüft wird
+   * ÃœberprÃ¼ft ob die Buchung teil einer Kategorie ist
+   * @param kategorie Kategorie auf die Ã¼berprÃ¼ft wird
    * @param unterkategorienVerwenden false, wenn nur Hauptkategorien betrachtet werden
-   * @return true, wenn die Buchung (oder Teile der Buchung) zu der angegeben Kategorie gehören
+   * @return true, wenn die Buchung (oder Teile der Buchung) zu der angegeben Kategorie gehÃ¶ren
    */
   abstract public boolean istInKategorie(EinzelKategorie kategorie, boolean unterkategorienVerwenden);
   
@@ -185,7 +185,7 @@ abstract public class AbstractBuchung implements Cloneable, Comparable<Object> {
 
   /**
    * Liest die Buchung vom angegeben Stream.
-   * Die Datenbasis wird benötigt, um die Kategorien und Register aufzulösen.
+   * Die Datenbasis wird benÃ¶tigt, um die Kategorien und Register aufzulÃ¶sen.
    * @param in Eingabe-Stream
    * @param db Datenbasis
    */

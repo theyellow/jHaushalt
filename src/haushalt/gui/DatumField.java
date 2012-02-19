@@ -35,7 +35,7 @@ import javax.swing.text.PlainDocument;
  * Textfeld um das Datum einzugeben.
  * Es muss nur den Anfang des aktuellen Datums eingegeben
  * werden. Auf die Punkte zur Trennung kann verzichtet werden.
- * Das aktuelle Datum kann mit +/- erhöht/erniedrigt werden.
+ * Das aktuelle Datum kann mit +/- erhÃ¶ht/erniedrigt werden.
  * @author Dr. Lars H. Hahn
  * @version 2.6/2009-08-05
  */
@@ -45,9 +45,9 @@ import javax.swing.text.PlainDocument;
   * 2007.08.07 Pharsen eines nicht deutschen Datums
   * 2007.07.18 Komma als Trennzeichen
   * 2006.06.15 Verwendung der Plus/Minus-Tasten des 
-  *            Nummernblocks ermöglicht
-  * 2006.01.28 Plus/Minus-Tasten zum Verändern des Datums
-  *            hinzugefügt
+  *            Nummernblocks ermÃ¶glicht
+  * 2006.01.28 Plus/Minus-Tasten zum VerÃ¤ndern des Datums
+  *            hinzugefÃ¼gt
   */
 
 public class DatumField extends DeleteableTextField {

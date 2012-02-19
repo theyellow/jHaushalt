@@ -38,7 +38,7 @@ abstract public class AbstractTabelleBlock extends AbstractBlock {
 
   public enum Ausrichtung {LINKS, CENTER, RECHTS};
   
-  protected String hgFarbe = "Weiﬂ";
+  protected String hgFarbe = "Wei√ü";
   protected String linienFarbe = "Schwarz";
   private final int zeilen;
   

@@ -32,7 +32,7 @@ import haushalt.gui.TextResource;
 import javax.swing.table.AbstractTableModel;
 
 /**
- * Ermöglicht die Darstellung von wiederkehrenden (automatischen) 
+ * ErmÃ¶glicht die Darstellung von wiederkehrenden (automatischen) 
  * Umbuchungen in einer Swing-Tabelle.
  * @author Dr. Lars H. Hahn
  * @version 2.5/2007.02.27
@@ -40,7 +40,7 @@ import javax.swing.table.AbstractTableModel;
 
 /*
  * 2007.02.27 Internationalisierung
- * 2007.01.30 BugFix: AutoStandardBuchung wurde statt der AutoUmbuchung gelöscht
+ * 2007.01.30 BugFix: AutoStandardBuchung wurde statt der AutoUmbuchung gelÃ¶scht
  * 2006.06.16 Erste Version
  */
 
@@ -105,7 +105,7 @@ public class AutoUmbuchungTableModel extends AbstractTableModel {
       }
     }
 
-    // Werte für die letzte Zeile gibt es noch nicht:
+    // Werte fÃ¼r die letzte Zeile gibt es noch nicht:
     switch(col) {
       case 0: return new Datum();
       case 2: return new Euro();

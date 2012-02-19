@@ -55,8 +55,8 @@ import javax.swing.JTextArea;
 /*
  * 2008.04.15 BugFix: Formatierung Hit/Miss-Rate
  * 2007.04.04 Internationalisierung
- * 2006.01.26 Ausgabe der verschienden Versionstände
- * 2006.01.27 Cache-Statistik hinzugefügt
+ * 2006.01.26 Ausgabe der verschienden VersionstÃ¤nde
+ * 2006.01.27 Cache-Statistik hinzugefÃ¼gt
  */
 
 public class DlgInfo extends JDialog {

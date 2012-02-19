@@ -38,7 +38,7 @@ import javax.swing.table.TableCellEditor;
  */
 
 /*
- * 2009.09.07 Bug-Fix: Löschen der Eingabe-Zeile verhindert
+ * 2009.09.07 Bug-Fix: LÃ¶schen der Eingabe-Zeile verhindert
  * 2007.05.31 Internationalisierung
  * 2004.08.22 Erste Version
  */

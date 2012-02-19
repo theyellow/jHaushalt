@@ -67,9 +67,9 @@ import javax.swing.table.TableColumnModel;
  */
 
 /* 
- * 2007.05.24 Ausführen von automatischen Buchungen bis zu einem Datum 
+ * 2007.05.24 AusfÃ¼hren von automatischen Buchungen bis zu einem Datum 
  * 2007.02.28 Internationalisierung
- * 2007.01.30 BugFix: Nachdem Löschen wird die Selektierung aufgehoben;
+ * 2007.01.30 BugFix: Nachdem LÃ¶schen wird die Selektierung aufgehoben;
  *            Gleichzeitige Selektierung in beiden Tabellen verhindert
  * 2006.06.16 Erweiterung um Umbuchungen
  * 2004.08.22 Erste Version
@@ -91,7 +91,7 @@ public class DlgAutoBuchung extends JDialog {
   public DlgAutoBuchung(final Haushalt haushalt, final Datenbasis db) {
     super(haushalt.getFrame(), res.getString("automatic_booking"), true);
     
-    // Table für Standard-Buchungen initialisieren
+    // Table fÃ¼r Standard-Buchungen initialisieren
     standardTableModel = new AutoStandardBuchungTableModel(db);
     standardTable = new JTable(standardTableModel);
     standardTable.setSurrendersFocusOnKeystroke(true);
@@ -105,7 +105,7 @@ public class DlgAutoBuchung extends JDialog {
       }
     });
 
-    // Table für Umbuchungen initialisieren
+    // Table fÃ¼r Umbuchungen initialisieren
     umbuchungTableModel = new AutoUmbuchungTableModel(db);
     umbuchungTable = new JTable(umbuchungTableModel);
     umbuchungTable.setSurrendersFocusOnKeystroke(true);
@@ -166,7 +166,7 @@ public class DlgAutoBuchung extends JDialog {
 		action.putValue(Action.ACCELERATOR_KEY, key);
 		action.putValue(Action.MNEMONIC_KEY, new Integer(KeyEvent.VK_D));
     
-    // Cell-Editoren für Standard-Buchungen erzeugen
+    // Cell-Editoren fÃ¼r Standard-Buchungen erzeugen
     TableColumnModel columnModel = standardTable.getColumnModel();
     DatumField datumField = new DatumField();
     columnModel.getColumn(0).setCellEditor(new DefaultCellEditor(datumField));
@@ -180,7 +180,7 @@ public class DlgAutoBuchung extends JDialog {
     JComboBox comboBox2 = new JComboBox(res.getAutoBuchungIntervallNamen());
     columnModel.getColumn(5).setCellEditor(new DefaultCellEditor(comboBox2));
     
-    // Cell-Editoren für Umbuchungen erzeugen
+    // Cell-Editoren fÃ¼r Umbuchungen erzeugen
     columnModel = umbuchungTable.getColumnModel();
     columnModel.getColumn(0).setCellEditor(new DefaultCellEditor(datumField));
     columnModel.getColumn(1).setCellEditor(new DefaultCellEditor(textField));
@@ -189,11 +189,11 @@ public class DlgAutoBuchung extends JDialog {
     columnModel.getColumn(4).setCellEditor(new DefaultCellEditor(comboBox1));
     columnModel.getColumn(5).setCellEditor(new DefaultCellEditor(comboBox2));
     
-    // Cell-Renderer für Standard-Buchungen erzeugen
+    // Cell-Renderer fÃ¼r Standard-Buchungen erzeugen
     standardTable.setDefaultRenderer(EinzelKategorie.class, new KategorieRenderer());
     standardTable.setDefaultRenderer(Euro.class, new EuroRenderer());
 
-    // Cell-Renderer für Umbuchungen erzeugen
+    // Cell-Renderer fÃ¼r Umbuchungen erzeugen
     umbuchungTable.setDefaultRenderer(EinzelKategorie.class, new KategorieRenderer());
     umbuchungTable.setDefaultRenderer(Euro.class, new EuroRenderer());
 

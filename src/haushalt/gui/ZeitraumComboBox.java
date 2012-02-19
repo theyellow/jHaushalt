@@ -27,7 +27,7 @@ import haushalt.daten.zeitraum.*;
 import javax.swing.JComboBox;
 
 /**
- * Stellt die Auswahlbox für die verschiedenen Zeiträume bereit.
+ * Stellt die Auswahlbox fÃ¼r die verschiedenen ZeitrÃ¤ume bereit.
  *
  * @author Dr. Lars H. Hahn
  * @version 2.5/2007.05.31
@@ -36,7 +36,7 @@ import javax.swing.JComboBox;
  /*
   * 2007.05.31 Internationalisierung
   * 2007.02.14 Erweiterung: Aktueller Monat und aktuelles Jahr
-  * 2005.02.19 Erweiterung: Zeitraum für mehrere Jahre
+  * 2005.02.19 Erweiterung: Zeitraum fÃ¼r mehrere Jahre
   */
 
 public class ZeitraumComboBox extends JComboBox {
@@ -60,8 +60,8 @@ public class ZeitraumComboBox extends JComboBox {
     };
 
 	/**
-	 * Es wird der Zeitraum passend zur Klasse des Parameters vorausgewält.
-	 * Wird <b>null<b> übergeben, wird der Zeitraum 'Monat' gewählt.
+	 * Es wird der Zeitraum passend zur Klasse des Parameters vorausgewÃ¤hlt.
+	 * Wird <b>null<b> Ã¼bergeben, wird der Zeitraum 'Monat' gewÃ¤hlt.
 	 * @param zeitraum Objekt vom Typ 'ZeitIntervall' zur Auswahl des passenden
 	 * Eintrags in der ComboBox 
 	 */
@@ -102,7 +102,7 @@ public class ZeitraumComboBox extends JComboBox {
 	}
 
   /**
-   * Erzeugt aus dem ausgewählten Eintrag der ComboBox und dem übergebenen
+   * Erzeugt aus dem ausgewÃ¤hlten Eintrag der ComboBox und dem Ã¼bergebenen
    * Text einen neuen Zeitraum.
    * @param text Wert des Zeitraums
    * @return erzeugter Zeitraum

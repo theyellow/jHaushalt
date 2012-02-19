@@ -31,7 +31,7 @@ import javax.swing.text.PlainDocument;
 
 /**
  * Textfeld um Euro-Werte zu editieren.
- * 0€ werden als leeres Feld angezeigt.
+ * 0â‚¬ werden als leeres Feld angezeigt.
  * Bei der Eingabe werden keine Buchstaben akzeptiert.
  * @author Dr. Lars H. Hahn
  * @version 2.6/2009.07.28
@@ -39,7 +39,7 @@ import javax.swing.text.PlainDocument;
 
  /*
   * 2009.07.28 Eingabe des Plus-Zeichens ('+') erlaubt
-  * 2007.02.12 Hinzufügen der Methode getValue()
+  * 2007.02.12 HinzufÃ¼gen der Methode getValue()
   * 2004.08.22 Version 2.0
   */
 
@@ -77,7 +77,7 @@ public class EuroField extends DeleteableTextField {
       int j = 0;
 
       for (int i = 0; i < anzChar; i++) {
-        if (Character.isDigit(source[i]) || (source[i] == '€') || (source[i] == '-') ||
+        if (Character.isDigit(source[i]) || (source[i] == 'â‚¬') || (source[i] == '-') ||
         	(source[i] == '+') || (source[i] == ' ') || (source[i] == '.') || (source[i] == ','))
           result[j++] = source[i];
       }

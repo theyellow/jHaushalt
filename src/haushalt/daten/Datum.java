@@ -34,19 +34,19 @@ import java.util.GregorianCalendar;
 import java.util.Locale;
 
 /**
- * Repr‰sentiert ein Buchungsdatum.
+ * Repr√§sentiert ein Buchungsdatum.
  * @author Dr. Lars H. Hahn
  * @version 2.6/2009.08.05
  * @since 2.0
  */
 
 /*
- * 2009.08.05 addiereTage(int) liefert keine Clone mehr zur¸ck
+ * 2009.08.05 addiereTage(int) liefert keine Clone mehr zur√ºck
  * 2007.10.31 Umstellung des Wertes von Date auf GregorianCalendar
  * 2007.10.30 An Tagen mit 25/23 Stunden (wg. Sommerzeitumstellung) hat das 
  *            Inkremetieren/Dekremetieren des Datums nicht funktioniert
- * 2007.08.07 Automatisches Erg‰nzen eines (internationalen) Datums (> 8 Zeichen) 
- * 2007.07.18 Internationalisierung + Entfernung der ¸berfl¸ssigen Methode 'heute'
+ * 2007.08.07 Automatisches Erg√§nzen eines (internationalen) Datums (> 8 Zeichen) 
+ * 2007.07.18 Internationalisierung + Entfernung der √ºberfl√ºssigen Methode 'heute'
  * 2004.08.22 Erste Version
  */
 
@@ -115,7 +115,7 @@ public class Datum implements Comparable<Datum>, Cloneable {
 	// -- E/A-Funktionen -------------------------------------------------------
 
 	public void laden(DataInputStream in) throws IOException {
-    // Das Datum wird immer im deutschen Formaz gespeichert
+    // Das Datum wird immer im deutschen Format gespeichert
     DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT, Locale.GERMAN);
 		try {
 			wert.setTime(df.parse(in.readUTF()));

@@ -41,7 +41,7 @@ import javax.swing.JComponent;
 
 /*
  * 2008.01.17 Internationalisierung
- * 2006.01.27 Übergabe der Datenbasis, statt der Register-Namen
+ * 2006.01.27 Ãœbergabe der Datenbasis, statt der Register-Namen
  */
 
 public class EinOderAlleRegisterGDP extends AbstractGDPane {

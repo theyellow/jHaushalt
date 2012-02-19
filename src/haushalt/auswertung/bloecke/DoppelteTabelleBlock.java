@@ -58,7 +58,7 @@ public class DoppelteTabelleBlock extends AbstractTabelleBlock {
     spaltenLinks = (tabelleLinks.length == 0)?0:tabelleLinks[0].length;
     spaltenRechts = (tabelleRechts.length == 0)?0:tabelleRechts[0].length;
 
-    // Standard-Tabs gleichm‰ﬂig verteilen
+    // Standard-Tabs gleichm√§√üig verteilen
     relTabsLinks = new double[spaltenLinks];
     double abstand = relBreiteSpalteLinks / spaltenLinks;
     for(int i=0; i<spaltenLinks; i++)
@@ -80,13 +80,13 @@ public class DoppelteTabelleBlock extends AbstractTabelleBlock {
     int tabellenBreiteRechts = (int) ((breite - 2*getAbsRand(breite)) * relBreiteSpalteRechts / 100.0D );
     int tabellenBreiteAbstand = (int) ((breite - 2*getAbsRand(breite)) * relSpaltenAbstand / 100.0D );
     
-    // Berechnung der absoluten Abst‰nde (=Tabs) der linken Spalte 
+    // Berechnung der absoluten Abst√§nde (=Tabs) der linken Spalte 
     final int[] absTabsLinks = new int[spaltenLinks+1];
     for(int i=0; i<spaltenLinks; i++)
       absTabsLinks[i] = (int)(tabellenBreiteLinks * relTabsLinks[i] / 100.0D + getAbsRand(breite));
     absTabsLinks[spaltenLinks] = tabellenBreiteLinks + getAbsRand(breite);
     
-    // Berechnung der absoluten Abst‰nde (=Tabs) der rechten Spalte 
+    // Berechnung der absoluten Abst√§nde (=Tabs) der rechten Spalte 
     final int[] absTabsRechts = new int[spaltenRechts+1];
     for(int i=0; i<spaltenRechts; i++)
       absTabsRechts[i] = (int)(tabellenBreiteRechts * relTabsRechts[i] / 100.0D + tabellenBreiteAbstand + tabellenBreiteLinks + getAbsRand(breite));

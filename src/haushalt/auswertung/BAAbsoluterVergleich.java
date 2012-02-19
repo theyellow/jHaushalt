@@ -49,7 +49,7 @@ import haushalt.gui.generischerdialog.ZeitraumGDP;
  * 2008.03.19 BugFix: Breite erste Spalte jetzt Integer
  * 2007.05.30 Internationalisierung
  * 2007.02.20 Erweiterung: Festlegen der Breite der ersten Spalte
- * 2006.06.11 BugFix: Nur die ausgewählten Kategorien werden
+ * 2006.06.11 BugFix: Nur die ausgewÃ¤hlten Kategorien werden
  *            berechnet
  * 2004.08.22 Erste Version
  */
@@ -102,7 +102,7 @@ public class BAAbsoluterVergleich extends AbstractBlockAuswertung {
 		tabelle[anzKat+1][2] = ""+summe2;
 		tabelle[anzKat+1][3] = ""+summe1.sub(summe2);
 
-		// Vorhandene Blöcke löschen und neu berechnete einfügen
+		// Vorhandene BlÃ¶cke lÃ¶schen und neu berechnete einfÃ¼gen
 		String titel = res.getString("absolute_comparison")+" ("+tabelle[0][1]+" "+res.getString("and")+" "+tabelle[0][2];
 		if(register == null)
 		  titel += ")";

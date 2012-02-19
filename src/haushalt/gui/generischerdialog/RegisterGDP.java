@@ -29,7 +29,7 @@ import haushalt.daten.Datenbasis;
  */
 
 /*
- * 2006.01.27 Übergabe der Datenbasis, statt der Register-Namen
+ * 2006.01.27 Ãœbergabe der Datenbasis, statt der Register-Namen
  */
 
 public class RegisterGDP extends TextArrayGDP {

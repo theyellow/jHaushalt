@@ -55,7 +55,7 @@ protected Object wert;
 
   public void refreshRegisterUndKategorien() {
     // Methode ersetzt die obenstehende; der GDP wird die
-    // Datenbasis übergeben
+    // Datenbasis Ã¼bergeben
   }
   
   abstract protected JComponent getZentraleKomponente();

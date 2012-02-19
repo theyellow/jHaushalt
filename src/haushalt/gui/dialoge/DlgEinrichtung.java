@@ -109,7 +109,7 @@ public class DlgEinrichtung extends JDialog {
     auswahlPane.setLayout(new GridLayout(0,2));
     auswahlPane.add(new JLabel(res.getString("language")+":"));
     auswahlPane.add(sprache);
-    waehrung.setText("€");
+    waehrung.setText("â‚¬");
     auswahlPane.add(new JLabel(res.getString("currency_symbol")+":"));
     auswahlPane.add(waehrung);
     buttonOK.addActionListener(new ActionListener() {

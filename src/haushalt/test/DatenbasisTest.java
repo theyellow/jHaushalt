@@ -106,17 +106,17 @@ public class DatenbasisTest {
   public void testAddUmbuchung() {
     // Wichtig ist das neue Objekte 'Datum' verwendet werden, da diese nicht geklont werden!
     db.addUmbuchung(new Datum(1,1,2008), "Umbuchung1", "Konto1", "Konto2", new Euro(50.0D));
-    assertTrue("In Konto1 / Konto2 müssen jetzt 3 / 1 Buchungen sein.",
+    assertTrue("In Konto1 / Konto2 mÃ¼ssen jetzt 3 / 1 Buchungen sein.",
         (db.getAnzahlBuchungen("Konto1") == 3) &&
         (db.getAnzahlBuchungen("Konto2") == 1));
     Euro saldo1 = db.getRegisterSaldo("Konto1", new Datum(1,1,2008));
-    assertTrue("Der Saldo sollte 52,70€ sein.",
+    assertTrue("Der Saldo sollte 52,70â‚¬ sein.",
         saldo1.compareTo(new Euro(52.7D)) == 0);
     Euro saldo2 = db.getRegisterSaldo("Konto1", new Datum(2,1,2008));
-    assertTrue("Der Saldo sollte 2,70€ sein.",
+    assertTrue("Der Saldo sollte 2,70â‚¬ sein.",
         saldo2.compareTo(new Euro(2.7D)) == 0);
     Euro saldo3 = db.getRegisterSaldo("Konto2", new Datum(2,1,2008));
-    assertTrue("Der Saldo sollte 50€ sein.",
+    assertTrue("Der Saldo sollte 50â‚¬ sein.",
         saldo3.compareTo(new Euro(50.0D)) == 0);
   }
 
@@ -140,15 +140,15 @@ public class DatenbasisTest {
     db.addStandardBuchung("Konto3", buchung);
     db.registerVereinigen("Konto3", "Konto1");
     Euro saldo2 = db.getRegisterSaldo("Konto1", new Datum(2,1,2008));
-    assertTrue("Der Saldo sollte 3,70€ sein.",
+    assertTrue("Der Saldo sollte 3,70â‚¬ sein.",
         saldo2.compareTo(new Euro(3.7D)) == 0);
     AbstractZeitraum zeitraum = new MehrereJahre(1970,2008);
     Euro euro = db.getEinnahmen(zeitraum, "Konto1");
-    assertTrue("Die Einnahmen sollen 53,70€ sein.",
+    assertTrue("Die Einnahmen sollen 53,70â‚¬ sein.",
       euro.compareTo(new Euro(53.7D)) == 0);
     zeitraum = new Monat(1,1970);
     euro = db.getEinnahmen(zeitraum, "Konto1");
-    assertTrue("Die Einnahmen sollen 1€ sein.",
+    assertTrue("Die Einnahmen sollen 1â‚¬ sein.",
       euro.compareTo(new Euro(1.0D)) == 0);
   }
 
@@ -156,15 +156,15 @@ public class DatenbasisTest {
   public void testEntferneAlteBuchungen() {
     db.entferneAlteBuchungen(new Datum(27,3,1970));
     Euro saldo2 = db.getRegisterSaldo("Konto1", new Datum(2,1,2008));
-    assertTrue("Der Saldo sollte 3,70€ sein.",
+    assertTrue("Der Saldo sollte 3,70â‚¬ sein.",
         saldo2.compareTo(new Euro(3.7D)) == 0);
     AbstractZeitraum zeitraum = new MehrereJahre(1970,2008);
     Euro euro = db.getEinnahmen(zeitraum, "Konto1");
-    assertTrue("Die Einnahmen sollen 52,70€ sein.",
+    assertTrue("Die Einnahmen sollen 52,70â‚¬ sein.",
       euro.compareTo(new Euro(52.7D)) == 0);
     zeitraum = new Monat(1,1970);
     euro = db.getEinnahmen(zeitraum, "Konto1");
-    assertTrue("Die Einnahmen sollen 0€ sein.",
+    assertTrue("Die Einnahmen sollen 0â‚¬ sein.",
       euro.compareTo(Euro.NULL_EURO) == 0);
   }
 
@@ -172,17 +172,17 @@ public class DatenbasisTest {
   public void testGetAusgaben() {
     AbstractZeitraum zeitraum = new MehrereJahre(1970,2008);
     Euro euro = db.getAusgaben(zeitraum, "Konto1");
-    assertTrue("Die Ausgaben sollen 0€ sein.",
+    assertTrue("Die Ausgaben sollen 0â‚¬ sein.",
       euro.compareTo(Euro.NULL_EURO) == 0);
   }
 
   @Test
   public void testGetSaldo() {
     Euro saldo = db.getSaldo(new Datum(2,1,1971));
-    assertTrue("Der Saldo sollte 29,30€ sein.",
+    assertTrue("Der Saldo sollte 29,30â‚¬ sein.",
         saldo.compareTo(new Euro(29.3D)) == 0);
     saldo = db.getSaldo(new Datum(2,1,2008));
-    assertTrue("Der Saldo sollte 53,70€ sein.",
+    assertTrue("Der Saldo sollte 53,70â‚¬ sein.",
         saldo.compareTo(new Euro(53.7D)) == 0);
   }
 
@@ -206,10 +206,10 @@ public class DatenbasisTest {
     umbuchung.setWert(new Euro(1.0D));
     db.ausfuehrenAutoBuchungen(new Datum(1,1,2009));
     Euro saldo = db.getRegisterSaldo("Konto1", new Datum(1,1,2009));
-    assertTrue("Der Saldo sollte 3,70€ sein.",
+    assertTrue("Der Saldo sollte 3,70â‚¬ sein.",
         saldo.compareTo(new Euro(3.7D)) == 0);
     saldo = db.getRegisterSaldo("Konto2", new Datum(1,1,2009));
-    assertTrue("Der Saldo sollte 62€ sein.",
+    assertTrue("Der Saldo sollte 62â‚¬ sein.",
         saldo.compareTo(new Euro(62.0D)) == 0);
   }
 

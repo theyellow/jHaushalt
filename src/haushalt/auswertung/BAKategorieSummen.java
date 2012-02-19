@@ -103,10 +103,10 @@ public class BAKategorieSummen extends AbstractBlockAuswertung {
 		if(DEBUG) {
 		  System.out.println("Kategorie-Summen berechnet.");
 			System.out.println(""+anzahlKategorien+" Kategorien.");
-			System.out.println(""+anzahlZeitraeume+" Zeiträume.");
+			System.out.println(""+anzahlZeitraeume+" ZeitrÃ¤ume.");
 		}
 				
-		// Vorhandene Blöcke löschen und neu berechnete einfügen
+		// Vorhandene BlÃ¶cke lÃ¶schen und neu berechnete einfÃ¼gen
     String titel = res.getString("category_totals")+" (";
     titel += tabelle[0][1]+" "+res.getString("to")+" "+tabelle[0][anzahlZeitraeume];
 		if(register == null)

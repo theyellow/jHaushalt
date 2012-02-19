@@ -51,7 +51,7 @@ import java.awt.Font;
 /*
  * 2008.03.10 BugFix: Fehlender Resource-String
  * 2007.07.02 Internationalisierung
- * 2006.02.03 Setzten der Farben hinzugefügt
+ * 2006.02.03 Setzten der Farben hinzugefÃ¼gt
  * 2004.08.22 Erste Version
  */
 public class BAVermoegenDiagramm extends AbstractBlockAuswertung {
@@ -89,7 +89,7 @@ public class BAVermoegenDiagramm extends AbstractBlockAuswertung {
 			tmpZeitraum = tmpZeitraum.folgeZeitraum();
 		}
 
-		// Vorhandene Blöcke löschen und neu berechnete einfügen
+		// Vorhandene BlÃ¶cke lÃ¶schen und neu berechnete einfÃ¼gen
     String titel = res.getString("fortune_development") + " (" +
       zeitpunkte[0] + " " +
       res.getString("to") + " " +

@@ -32,7 +32,7 @@ import java.io.IOException;
  * Eine Umbuchung verschiebt Geld von einem Register in ein anderes. Es entstehen
  * keine Einnahmen oder Ausgaben. Umbuchungen sind deshalb keiner Kategorie
  * zugeordnet. Statt der Kategorie besitzen Umbuchungen ein Register-Paar
- * (Quell- und Zielregister). Umbuchungen werden (bei Änderungen) automatisch in 
+ * (Quell- und Zielregister). Umbuchungen werden (bei Ã„nderungen) automatisch in 
  * das Quell- und das Zielregister einsortiert.
  * @author Dr. Lars H. Hahn
  * @version 2.6/2010.02.03
@@ -40,10 +40,10 @@ import java.io.IOException;
 
 /*
  * 2010.02.03 Funktion clone() korrigiert: new String() verwendet
- * 2006.06.19 Speichern von Umbuchungen ohne Kategorie (für auto. Umbuchungen)
- * 2006.02.13 Überarbeitung: Umstellung auf Klasse 'UmbuchungKategorie' als
- *            Kategorie für eine Umbuchung
- * 2006.02.10 Ergänzung der Methode isInKategorie
+ * 2006.06.19 Speichern von Umbuchungen ohne Kategorie (fÃ¼r auto. Umbuchungen)
+ * 2006.02.13 Ãœberarbeitung: Umstellung auf Klasse 'UmbuchungKategorie' als
+ *            Kategorie fÃ¼r eine Umbuchung
+ * 2006.02.10 ErgÃ¤nzung der Methode isInKategorie
  * 2004.08.22 Erste Version
  */
 
@@ -54,7 +54,7 @@ public class Umbuchung extends AbstractBuchung {
   private UmbuchungKategorie kategorie = new UmbuchungKategorie(null, null);
 
   public Umbuchung() {
-    // OK. Wird beim Laden benötigt.
+    // OK. Wird beim Laden benÃ¶tigt.
   }
 
   public Umbuchung(Datum datum, String text, UmbuchungKategorie kategorie, Euro wert) {
@@ -71,8 +71,8 @@ public class Umbuchung extends AbstractBuchung {
   }
 
   public void setKategorie(Kategorie neueKategorie) {
-    // Wenn sich das Partner-Register ändert, muss die Buchung entfernt und
-    // wieder eingefügt werden. Vorsicht bei Selbstbuchungen!
+    // Wenn sich das Partner-Register Ã¤ndert, muss die Buchung entfernt und
+    // wieder eingefÃ¼gt werden. Vorsicht bei Selbstbuchungen!
     if(DEBUG)
     	System.out.println("Umbuchung.setKategorie: NEU "+neueKategorie+"; ALT "+kategorie);
 
@@ -81,7 +81,7 @@ public class Umbuchung extends AbstractBuchung {
       kategorie.getQuelle().loescheUmbuchung(this);
     if(!kategorie.isSelbstbuchung() && (kategorie.getZiel() != null))
       kategorie.getZiel().loescheUmbuchung(this);
-      // Wenn die alte Umbuchung eine Selbstbuchung war, darf nur 1x gelöscht
+      // Wenn die alte Umbuchung eine Selbstbuchung war, darf nur 1x gelÃ¶scht
       // werden.
 
     // Schritt 2: Neue Umbuchung einsortieren

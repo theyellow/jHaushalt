@@ -32,9 +32,9 @@ import java.util.Date;
 import java.util.Locale;
 
 /**
- * Repr‰sentiert einen Geldbetrag.
- * Die W‰hrung des Betrags ist in der Regel Euro, das W‰hrungssymbol kann aber
- * ge‰ndert werden.
+ * Repr√§sentiert einen Geldbetrag.
+ * Die W√§hrung des Betrags ist in der Regel Euro, das W√§hrungssymbol kann aber
+ * ge√§ndert werden.
  * @author Dr. Lars H. Hahn
  * @version 2.6/2009.05.17
  */
@@ -50,7 +50,7 @@ public class Euro implements Cloneable, Comparable<Euro> {
   private static final TextResource res = TextResource.get();
 
   public static final Euro NULL_EURO = new Euro();
-	private static String symbol = "Ä";
+	private static String symbol = "‚Ç¨";
   private long wert = 0L;
 
   public Euro() {

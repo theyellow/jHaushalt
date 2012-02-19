@@ -49,7 +49,7 @@ import java.awt.Font;
 
 /*
  * 2007.06.04 Internationalisierung
- * 2006.02.03 Setzten der Farben hinzugefügt
+ * 2006.02.03 Setzten der Farben hinzugefÃ¼gt
  * 2004.08.22 Erste Version
  */
 public class BABalkenDiagramm extends AbstractBlockAuswertung {
@@ -87,7 +87,7 @@ public class BABalkenDiagramm extends AbstractBlockAuswertung {
       tmpZeitraum = tmpZeitraum.folgeZeitraum();
 		}		 
 
-		// Vorhandene Blöcke löschen und neu berechnete einfügen
+		// Vorhandene BlÃ¶cke lÃ¶schen und neu berechnete einfÃ¼gen
 		String titel = res.getString("income_expenditure")+" ("+zeitraumNamen[0]+" "+res.getString("to")+" "+zeitraumNamen[anzahlZeitraeume-1];
 		if(register == null)
 		  titel += ")";

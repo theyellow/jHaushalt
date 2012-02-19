@@ -64,7 +64,7 @@ public class BAPlanung extends AbstractBlockAuswertung {
     planung.setZeitraum(zeitraum);
     tabelle = planung.getVergleich();
 
-    // Vorhandene Blöcke löschen und neu berechnete einfügen
+    // Vorhandene BlÃ¶cke lÃ¶schen und neu berechnete einfÃ¼gen
     String titel = res.getString("forecast")+" ("+zeitraum+")";
     loescheBloecke();
     TextBlock block1 = new TextBlock(titel);

@@ -83,7 +83,7 @@ public class DlgSuchenErsetzen extends JDialog {
         ersetzen.setEnabled(false);
       }
       public void caretPositionChanged(InputMethodEvent event) {
-        // wird nicht benötigt
+        // wird nicht benÃ¶tigt
       }
     });
     beenden.addActionListener(new ActionListener() {

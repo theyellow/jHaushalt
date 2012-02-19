@@ -29,7 +29,7 @@ import java.util.ResourceBundle;
 import java.util.StringTokenizer;
 
 /**
- * Klasse liefert die lokalisierten Menüs, Texte etc.
+ * Klasse liefert die lokalisierten MenÃ¼s, Texte etc.
  * @author Dr. Lars H. Hahn
  * @version 2.5/2006.07.04
  * @since 2.5

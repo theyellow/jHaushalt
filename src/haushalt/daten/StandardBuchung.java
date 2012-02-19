@@ -37,7 +37,7 @@ import java.io.IOException;
 
 /*
  * 2010.02.03 Funktion clone() korrigiert: new String() verwendet
- * 2006.02.10 Ergänzung der Methode isInKategorie
+ * 2006.02.10 ErgÃ¤nzung der Methode isInKategorie
  * 2004.08.22 Erste Version
  */
 
@@ -116,7 +116,7 @@ public class StandardBuchung extends AbstractBuchung {
   public void speichern(DataOutputStream out)
     throws IOException {
     // Bis zur Version 1.2 gab es keine Unterscheidung zwischen StandardBuchung
-    // und SplitBuchung. Damit Daten von alten Versionen gelesen werden können,
+    // und SplitBuchung. Damit Daten von alten Versionen gelesen werden kÃ¶nnen,
     // muss die neue StandardBuchung mit einem anderen Namen gespeichert werden.
     out.writeUTF("StandardBuchung2");
 		getDatum().speichern(out);
