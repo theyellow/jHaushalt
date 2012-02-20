@@ -8,7 +8,7 @@
 	<packaging>jar</packaging>
 
 	<name>jhaushalt</name>
-	<url>http://maven.apache.org</url>
+	<url>http://www.jhaushalt.de</url>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -42,6 +42,7 @@
 			</plugin>
 		</plugins>
 	</build>
+	
 	<dependencies>
 		<dependency>
 			<groupId>junit</groupId>
@@ -51,10 +52,18 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>com.apple</groupId>
+			<groupId>apple</groupId>
 			<artifactId>AppleJavaExtensions</artifactId>
-			<version>1.4</version>
+			<version>1.6</version>
 			<scope>provided</scope>
 		</dependency>
 	</dependencies>
+
+	<repositories>
+		<repository>
+			<id>tu-dresden</id>
+			<name>Apple library</name>
+			<url>http://anon.inf.tu-dresden.de/artifactory/repo</url>
+		</repository>
+	</repositories>
 </project>
