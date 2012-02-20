@@ -21,7 +21,7 @@ along with jHaushalt; if not, see <http://www.gnu.org/licenses/>.
 
 package haushalt.test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 import haushalt.daten.Datum;
 
 import org.junit.Before;
@@ -37,7 +37,7 @@ public class DatumTest {
     datum1 = new Datum(24,4,1971);
     datum2 = new Datum(28,3,1970);
   }
-  
+
   @Test
   public void testSub() {
     assertTrue("Die Differenz zwischen den Daten sollte 392 sein.",

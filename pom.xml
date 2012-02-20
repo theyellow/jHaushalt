@@ -16,12 +16,18 @@
 
 	<build>
 		<sourceDirectory>src</sourceDirectory>
+		<testSourceDirectory>test</testSourceDirectory>
 		<resources>
 			<resource>
 				<directory>res</directory>
 				<targetPath>res</targetPath>
 			</resource>
 		</resources>
+		<testResources>
+			<testResource>
+				<directory>res</directory>
+			</testResource>
+		</testResources>
 		<finalName>jhaushalt</finalName>
 		<plugins>
 			<plugin>
@@ -42,7 +48,7 @@
 			</plugin>
 		</plugins>
 	</build>
-	
+
 	<dependencies>
 		<dependency>
 			<groupId>junit</groupId>

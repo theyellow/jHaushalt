@@ -22,8 +22,15 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package haushalt.test;
 
-import static org.junit.Assert.*;
-import haushalt.daten.*;
+import static org.junit.Assert.assertTrue;
+import haushalt.daten.Datenbasis;
+import haushalt.daten.Datum;
+import haushalt.daten.EinzelKategorie;
+import haushalt.daten.Euro;
+import haushalt.daten.Register;
+import haushalt.daten.StandardBuchung;
+import haushalt.daten.Umbuchung;
+import haushalt.daten.UmbuchungKategorie;
 import haushalt.daten.zeitraum.AbstractZeitraum;
 import haushalt.daten.zeitraum.MehrereJahre;
 import haushalt.daten.zeitraum.Monat;
@@ -32,7 +39,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class DatenbasisTest {
-  
+
   private static Datenbasis db;
 
   @BeforeClass
