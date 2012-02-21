@@ -195,7 +195,7 @@ public class ActionHandler {
 		if(iconname == null)
 			return null;
 		URLClassLoader urlLoader = (URLClassLoader)getClass().getClassLoader();
-		URL imageURL = urlLoader.findResource("res/" + iconname + "24.gif");
+		URL imageURL = urlLoader.findResource("res/" + iconname + "24.png");
 		if(DEBUG)
 			System.out.println("ActionHandler: Erzeuge Image "+iconname+"@"+imageURL);
 		return new ImageIcon(imageURL);
@@ -205,7 +205,7 @@ public class ActionHandler {
 		if(iconname == null)
 			iconname = "Leer";
 		URLClassLoader urlLoader = (URLClassLoader)getClass().getClassLoader();
-		URL imageURL = urlLoader.findResource("res/" + iconname + "16.gif");
+		URL imageURL = urlLoader.findResource("res/" + iconname + "16.png");
 		if(DEBUG)
 			System.out.println("ActionHandler: Erzeuge Image "+iconname+"@"+imageURL);
 		return new ImageIcon(imageURL);

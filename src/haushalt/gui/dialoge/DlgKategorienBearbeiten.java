@@ -106,8 +106,8 @@ public class DlgKategorienBearbeiten extends JDialog implements TreeSelectionLis
     this.haushalt = haushalt;
     this.db = datenbasis;
     scrollPane = new JScrollPane();
-    final ImageIcon unterkatIcon = haushalt.bildLaden("Reifen16.gif");
-    final ImageIcon hauptkatIcon = haushalt.bildLaden("Auto16.gif");
+    final ImageIcon unterkatIcon = haushalt.bildLaden("Reifen16.png");
+    final ImageIcon hauptkatIcon = haushalt.bildLaden("Auto16.png");
     cellRenderer = new DefaultTreeCellRenderer(){
       private static final long serialVersionUID = 1L;
       public Component getTreeCellRendererComponent(

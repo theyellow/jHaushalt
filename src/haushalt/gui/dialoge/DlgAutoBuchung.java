@@ -120,7 +120,7 @@ public class DlgAutoBuchung extends JDialog {
     });
 
     // Action erzeugen
-    Action action = new AbstractAction(res.getString("button_delete"), haushalt.bildLaden("Delete16.gif")) {
+    Action action = new AbstractAction(res.getString("button_delete"), haushalt.bildLaden("Delete16.png")) {
       private static final long serialVersionUID = 1L;
   		public void actionPerformed(ActionEvent e) {
   		  if(e.getActionCommand().equals(res.getString("button_delete"))) {

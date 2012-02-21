@@ -107,11 +107,11 @@ public class DlgRegisterBearbeiten extends JDialog {
       }
     });
     scrollPane = new JScrollPane(list);
-    buttonErzeugen = new JButton(res.getString("button_create"), haushalt.bildLaden("New16.gif"));
+    buttonErzeugen = new JButton(res.getString("button_create"), haushalt.bildLaden("New16.png"));
     buttonUmbenennen = new JButton(res.getString("button_rename"));
     buttonAbbruch = new JButton(res.getString("button_close"));
-    buttonHoch = new JButton(haushalt.bildLaden("Up16.gif"));
-    buttonRunter = new JButton(haushalt.bildLaden("Down16.gif"));
+    buttonHoch = new JButton(haushalt.bildLaden("Up16.png"));
+    buttonRunter = new JButton(haushalt.bildLaden("Down16.png"));
     Dimension dimensionButton = buttonUmbenennen.getPreferredSize();
     erzeugenPane.setLayout(new GridLayout(0, 2, 5, 5));
     erzeugenPane.setBorder(BorderFactory.createTitledBorder(res.getString("create_register")));

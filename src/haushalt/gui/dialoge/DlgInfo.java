@@ -78,11 +78,12 @@ public class DlgInfo extends JDialog {
     textArea.append(res.getString("info_gpl_text1")+"\n");
     textArea.append(res.getString("info_gpl_text2")+"\n");
     textArea.append(res.getString("info_gpl_text3")+"\n\n");
-
+    textArea.append(res.getString("info_icons")+"\n\n");
+    
     textArea.append(res.getString("info_version_text1")+" "+Haushalt.VERSION+"\n");
     textArea.append(res.getString("info_version_text2")+" "+Datenbasis.VERSION_DATENBASIS+"\n");
     textArea.append(res.getString("info_version_text3")+" "+DlgContainerAuswertung.VERSION_AUSWERTUNG+"\n");
-    
+   
     textArea.append(res.getString("info_internals1")+" "+
         Datenbasis.cacheHit+"/"+Datenbasis.cacheMiss+" = "+
         String.format("%1$.1f%%", 100.0D*Datenbasis.cacheHit/(Datenbasis.cacheHit+Datenbasis.cacheMiss))+"\n");

@@ -121,14 +121,14 @@ public class DlgContainerAuswertung extends JDialog implements ListSelectionList
     this.haushalt = haushalt;
     this.db = db;
 
-    buttonHoch = new JButton(haushalt.bildLaden("Up16.gif"));
-    buttonRunter = new JButton(haushalt.bildLaden("Down16.gif"));
-    buttonHinzu = new JButton(res.getString("button_add"), haushalt.bildLaden("Add16.gif"));
-  	buttonEntf = new JButton(res.getString("button_delete"), haushalt.bildLaden("Delete16.gif"));
-  	buttonEigensch = new JButton(res.getString("button_properties"), haushalt.bildLaden("Properties16.gif"));
-    buttonExport = new JButton(res.getString("button_csv_export"), haushalt.bildLaden("Export16.gif"));
-    buttonEinstDr = new JButton(res.getString("button_page_setup"), haushalt.bildLaden("PageSetup16.gif"));
-    buttonDrucken = new JButton(res.getString("button_print"), haushalt.bildLaden("Print16.gif"));
+    buttonHoch = new JButton(haushalt.bildLaden("Up16.png"));
+    buttonRunter = new JButton(haushalt.bildLaden("Down16.png"));
+    buttonHinzu = new JButton(res.getString("button_add"), haushalt.bildLaden("Add16.png"));
+  	buttonEntf = new JButton(res.getString("button_delete"), haushalt.bildLaden("Delete16.png"));
+  	buttonEigensch = new JButton(res.getString("button_properties"), haushalt.bildLaden("Properties16.png"));
+    buttonExport = new JButton(res.getString("button_csv_export"), haushalt.bildLaden("Export16.png"));
+    buttonEinstDr = new JButton(res.getString("button_page_setup"), haushalt.bildLaden("PageSetup16.png"));
+    buttonDrucken = new JButton(res.getString("button_print"), haushalt.bildLaden("Print16.png"));
   	buttonAbbruch = new JButton(res.getString("button_close"));
     
   	// Liste zur Auswahl der Auswertung

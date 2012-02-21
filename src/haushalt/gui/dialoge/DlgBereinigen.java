@@ -136,7 +136,7 @@ public class DlgBereinigen extends JDialog {
         tableModel.setNeueKategorie(modelRows, neueKategorie);
       }
     });
-    final JButton buttonBearbeiten = new JButton(res.getString("edit_category_button"), haushalt.bildLaden("Auto16.gif"));
+    final JButton buttonBearbeiten = new JButton(res.getString("edit_category_button"), haushalt.bildLaden("Auto16.png"));
     buttonBearbeiten.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         DlgKategorienBearbeiten dlg = new DlgKategorienBearbeiten(haushalt, db);

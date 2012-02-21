@@ -186,11 +186,11 @@ public class DlgOptionen extends JDialog {
     customColor.addMouseListener(mouseListener);
     JScrollPane listScrollPane = new JScrollPane(customColor);
     customPane.add(listScrollPane);
-    buttonAdd = new JButton(res.getString("button_add"), haushalt.bildLaden("Add16.gif"));
+    buttonAdd = new JButton(res.getString("button_add"), haushalt.bildLaden("Add16.png"));
     customPane.add(buttonAdd);
-    buttonDelete = new JButton(res.getString("button_delete"), haushalt.bildLaden("Delete16.gif"));
+    buttonDelete = new JButton(res.getString("button_delete"), haushalt.bildLaden("Delete16.png"));
     customPane.add(buttonDelete);
-    buttonEdit = new JButton(res.getString("button_edit"), haushalt.bildLaden("Edit16.gif"));
+    buttonEdit = new JButton(res.getString("button_edit"), haushalt.bildLaden("Edit16.png"));
     customPane.add(buttonEdit);
     tabbedPane.add(res.getString("custom_color"), customPane);
 
