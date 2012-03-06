@@ -838,6 +838,18 @@ public class Haushalt implements KeyListener, ListSelectionListener {
     dlgSuchenErsetzen.showDialog(db);
   }
   
+	public void neueBuchungErstellen() {
+		int registerIndex= tabbedPane.getSelectedIndex();
+		String regname= tabbedPane.getTitleAt(registerIndex);
+		db.addStandardBuchung(regname, new StandardBuchung());
+
+		JScrollPane scrollPane= (JScrollPane) tabbedPane.getSelectedComponent();
+		JTable table= (JTable) scrollPane.getViewport().getView();
+		RegisterTableModel tableModel= (RegisterTableModel) table.getModel();
+		int buchungIndex= table.getRowCount();
+		tableModel.fireTableRowsInserted(buchungIndex, buchungIndex);
+	}
+  
   public void umbuchen() {
     if(keinRegisterVorhanden()) 
       return;

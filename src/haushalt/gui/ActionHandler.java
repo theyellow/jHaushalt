@@ -74,8 +74,9 @@ public class ActionHandler {
 	};
   // 1:
 	final private Object[][] menuBearbeitenText = {
+			{"neueBuchungErstellen", res.getString("new_booking")+"...", "AddBuchung", res.getString("new_booking_legend"), new Integer(KeyEvent.VK_C)},
+			{"loeschen", res.getString("delete"), "Delete", res.getString("delete_legend"), new Integer(KeyEvent.VK_D)},
 		{"umbuchen", res.getString("rebook")+"...", "Umbuchung", res.getString("rebook_legend"), new Integer(KeyEvent.VK_U)},
-		{"loeschen", res.getString("delete"), "Delete", res.getString("delete_legend"), new Integer(KeyEvent.VK_D)},
     {"splitten", res.getString("split")+"...", "Splitten", res.getString("split_legend"), new Integer(KeyEvent.VK_P)},
     {"umwandeln", res.getString("convert")+"...", "Umwandeln", res.getString("convert_legend"), new Integer(KeyEvent.VK_W)},
 		{"registerBearbeiten", res.getString("edit_registers")+"...", "Register", res.getString("edit_registers_legend"), new Integer(KeyEvent.VK_R)},
