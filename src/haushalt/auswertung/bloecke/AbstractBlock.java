@@ -1,23 +1,17 @@
 /*
-
-This file is part of jHaushalt.
-
-jHaushalt is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 3 of the License, or
-(at your option) any later version.
-
-jHaushalt is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with jHaushalt; if not, see <http://www.gnu.org/licenses/>.
-
-(C)opyright 2002-2010 Dr. Lars H. Hahn
-
-*/
+ * This file is part of jHaushalt.
+ * jHaushalt is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ * jHaushalt is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License
+ * along with jHaushalt; if not, see <http://www.gnu.org/licenses/>.
+ * (C)opyright 2002-2010 Dr. Lars H. Hahn
+ */
 
 package haushalt.auswertung.bloecke;
 
@@ -37,32 +31,35 @@ import java.awt.Graphics2D;
 
 abstract public class AbstractBlock {
 
-  private Font font = new Font("SansSerif", Font.PLAIN, 12);
-  private double rand = 0.02D;
+	private Font font = new Font("SansSerif", Font.PLAIN, 12);
+	private double rand = 0.02D;
 
-  abstract public int paint(Graphics g, int xStart, int yStart, int breite);
-  
-  abstract public int print(Graphics2D g2d, int zeile, int xStart, int yStart, int hoehe, int breite);  
-  
-  protected Font getFont() {
-    return font;
-  }
+	abstract public int paint(Graphics g, int xStart, int yStart, int breite);
 
-  public void setFont(Font font) {
-    this.font = font;
-  }
+	abstract public int print(Graphics2D g2d, int zeile, int xStart, int yStart, int hoehe, int breite);
 
-  public void setRelRand(double rand) {
-    if(rand > 0.5D)
-      this.rand = 0.5D;
-    else if(rand < 0.0D)
-      this.rand = 0.0D;
-    else
-      this.rand = rand;
-  }
+	protected Font getFont() {
+		return this.font;
+	}
 
-  protected int getAbsRand(int breite) {
-    return (int)(rand * breite);
-  }
-  
+	public void setFont(final Font font) {
+		this.font = font;
+	}
+
+	public void setRelRand(final double rand) {
+		if (rand > 0.5D) {
+			this.rand = 0.5D;
+		}
+		else if (rand < 0.0D) {
+			this.rand = 0.0D;
+		}
+		else {
+			this.rand = rand;
+		}
+	}
+
+	protected int getAbsRand(final int breite) {
+		return (int) (this.rand * breite);
+	}
+
 }

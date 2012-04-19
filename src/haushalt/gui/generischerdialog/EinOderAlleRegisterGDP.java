@@ -1,23 +1,17 @@
 /*
-
-This file is part of jHaushalt.
-
-jHaushalt is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 3 of the License, or
-(at your option) any later version.
-
-jHaushalt is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with jHaushalt; if not, see <http://www.gnu.org/licenses/>.
-
-(C)opyright 2002-2010 Dr. Lars H. Hahn
-
-*/
+ * This file is part of jHaushalt.
+ * jHaushalt is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ * jHaushalt is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License
+ * along with jHaushalt; if not, see <http://www.gnu.org/licenses/>.
+ * (C)opyright 2002-2010 Dr. Lars H. Hahn
+ */
 
 package haushalt.gui.generischerdialog;
 
@@ -45,69 +39,84 @@ import javax.swing.JComponent;
  */
 
 public class EinOderAlleRegisterGDP extends AbstractGDPane {
-  private static final long serialVersionUID = 1L;
-  private static final TextResource res = TextResource.get();
- 
-  protected final JComboBox comboBox;
-  protected final JCheckBox checkBox;
-  private final Datenbasis db;
 
-  public EinOderAlleRegisterGDP(String textAufforderung, Datenbasis datenbasis, String auswahl) {
-    super(textAufforderung);
-    db = datenbasis;
-    comboBox = new JComboBox(db.getRegisterNamen());
-    comboBox.addItemListener(new ItemListener() {
-      public void itemStateChanged(ItemEvent e) {
-        refreshWert();
-      }
-    });
-    if(auswahl != null)
-      comboBox.setSelectedItem(auswahl);
-    comboBox.setEnabled(false);
-		checkBox = new JCheckBox(res.getString("all_registers"), true);
-		checkBox.addItemListener(new ItemListener() {
-      public void itemStateChanged(ItemEvent e)  {
-		    if(checkBox.isSelected())
-		      comboBox.setEnabled(false);
-		    else
-		      comboBox.setEnabled(true);
-		    refreshWert();
-		  }
+	private static final long serialVersionUID = 1L;
+	private static final TextResource res = TextResource.get();
+
+	protected final JComboBox comboBox;
+	protected final JCheckBox checkBox;
+	private final Datenbasis db;
+
+	public EinOderAlleRegisterGDP(final String textAufforderung, final Datenbasis datenbasis, final String auswahl) {
+		super(textAufforderung);
+		this.db = datenbasis;
+		this.comboBox = new JComboBox(this.db.getRegisterNamen());
+		this.comboBox.addItemListener(new ItemListener() {
+
+			public void itemStateChanged(final ItemEvent e) {
+				refreshWert();
+			}
 		});
-    add(checkBox);
-    add(comboBox);
-    refreshWert();
-  }
+		if (auswahl != null) {
+			this.comboBox.setSelectedItem(auswahl);
+		}
+		this.comboBox.setEnabled(false);
+		this.checkBox = new JCheckBox(res.getString("all_registers"), true);
+		this.checkBox.addItemListener(new ItemListener() {
 
-  protected void refreshWert() {
-    if(checkBox.isSelected())
-      wert = null;
-    else
-      wert = comboBox.getSelectedItem();
-  }
+			public void itemStateChanged(final ItemEvent e) {
+				if (EinOderAlleRegisterGDP.this.checkBox.isSelected()) {
+					EinOderAlleRegisterGDP.this.comboBox.setEnabled(false);
+				}
+				else {
+					EinOderAlleRegisterGDP.this.comboBox.setEnabled(true);
+				}
+				refreshWert();
+			}
+		});
+		add(this.checkBox);
+		add(this.comboBox);
+		refreshWert();
+	}
 
-  public void refreshRegisterUndKategorien() {
-    String[] register = db.getRegisterNamen();
-    String regname = (String) comboBox.getSelectedItem();
-    comboBox.removeAllItems();
-    for(int i=0; i<register.length; i++) {
-      comboBox.addItem(register[i]);
-    }
-    if(regname != null)
-      comboBox.setSelectedItem(regname);
-  }
-  public JComponent getZentraleKomponente() {
-    return checkBox;
-  }
+	@Override
+	protected void refreshWert() {
+		if (this.checkBox.isSelected()) {
+			this.wert = null;
+		}
+		else {
+			this.wert = this.comboBox.getSelectedItem();
+		}
+	}
 
-  public void laden(DataInputStream in) throws IOException {
-    checkBox.setSelected(in.readBoolean());
-    comboBox.setSelectedItem(in.readUTF());
-  }
+	@Override
+	public void refreshRegisterUndKategorien() {
+		final String[] register = this.db.getRegisterNamen();
+		final String regname = (String) this.comboBox.getSelectedItem();
+		this.comboBox.removeAllItems();
+		for (int i = 0; i < register.length; i++) {
+			this.comboBox.addItem(register[i]);
+		}
+		if (regname != null) {
+			this.comboBox.setSelectedItem(regname);
+		}
+	}
 
-  public void speichern(DataOutputStream out) throws IOException {
-    out.writeBoolean(checkBox.isSelected());
-    out.writeUTF((String)comboBox.getSelectedItem());
-  }
+	@Override
+	public JComponent getZentraleKomponente() {
+		return this.checkBox;
+	}
+
+	@Override
+	public void laden(final DataInputStream in) throws IOException {
+		this.checkBox.setSelected(in.readBoolean());
+		this.comboBox.setSelectedItem(in.readUTF());
+	}
+
+	@Override
+	public void speichern(final DataOutputStream out) throws IOException {
+		out.writeBoolean(this.checkBox.isSelected());
+		out.writeUTF((String) this.comboBox.getSelectedItem());
+	}
 
 }

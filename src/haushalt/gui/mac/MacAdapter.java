@@ -1,23 +1,16 @@
 /*
-
-This file is part of jHaushalt.
-
-jHaushalt is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 3 of the License, or
-(at your option) any later version.
-
-jHaushalt is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with jHaushalt; if not, see <http://www.gnu.org/licenses/>.
-
-
-(C)opyright 2012 Benjamin Marstaller
-
+ * This file is part of jHaushalt.
+ * jHaushalt is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ * jHaushalt is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License
+ * along with jHaushalt; if not, see <http://www.gnu.org/licenses/>.
+ * (C)opyright 2012 Benjamin Marstaller
  */
 
 package haushalt.gui.mac;
@@ -45,23 +38,25 @@ import com.apple.eawt.PreferencesHandler;
  * 
  */
 public class MacAdapter {
+
 	public static void macStyle(final Haushalt haushalt) {
 
-		Application application = Application.getApplication();
+		final Application application = Application.getApplication();
 
-		URLClassLoader urlLoader = (URLClassLoader) MacAdapter.class
+		final URLClassLoader urlLoader = (URLClassLoader) MacAdapter.class
 				.getClassLoader();
 
 		// Apple dock
-		URL iconLoc = urlLoader.findResource("res/jhh-icon.gif");
-		Image dockIcon = new ImageIcon(iconLoc).getImage();
+		final URL iconLoc = urlLoader.findResource("res/jhh-icon.gif");
+		final Image dockIcon = new ImageIcon(iconLoc).getImage();
 		application.setDockIconImage(dockIcon);
 
 		// about dialog
 		application.setAboutHandler(new AboutHandler() {
+
 			@Override
-			public void handleAbout(AboutEvent e) {
-				DlgInfo dlg = new DlgInfo(null);
+			public void handleAbout(final AboutEvent e) {
+				final DlgInfo dlg = new DlgInfo(null);
 				dlg.pack();
 				dlg.setLocationRelativeTo(null);
 				dlg.setVisible(true);
@@ -70,8 +65,9 @@ public class MacAdapter {
 
 		// preferences
 		application.setPreferencesHandler(new PreferencesHandler() {
+
 			@Override
-			public void handlePreferences(PreferencesEvent arg0) {
+			public void handlePreferences(final PreferencesEvent arg0) {
 				haushalt.optionen();
 			}
 		});

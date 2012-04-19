@@ -1,29 +1,20 @@
 /*
-
-This file is part of jHaushalt.
-
-jHaushalt is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-jHaushalt is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with jHaushalt; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-
-(C)opyright 2002-2010 Dr. Lars H. Hahn
-
-*/
+ * This file is part of jHaushalt.
+ * jHaushalt is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ * jHaushalt is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License
+ * along with jHaushalt; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * (C)opyright 2002-2010 Dr. Lars H. Hahn
+ */
 
 package haushalt.auswertung;
-
-
-import java.awt.Font;
 
 import haushalt.auswertung.bloecke.LeererBlock;
 import haushalt.auswertung.bloecke.TabellenBlock;
@@ -33,6 +24,8 @@ import haushalt.daten.Datum;
 import haushalt.daten.Euro;
 import haushalt.gui.Haushalt;
 import haushalt.gui.TextResource;
+
+import java.awt.Font;
 
 /**
  * @author Dr. Lars H. Hahn
@@ -44,45 +37,47 @@ import haushalt.gui.TextResource;
  * 2009.08.10 Erste Version
  */
 public class BAVermoegenUebersichtHeute extends AbstractBlockAuswertung {
-  private static final long serialVersionUID = 1L;
-  private static final TextResource res = TextResource.get();
 
-  public static final String ueberschrift = res.getString("table_today_fortune_overview");
+	private static final long serialVersionUID = 1L;
+	private static final TextResource res = TextResource.get();
 
-  public BAVermoegenUebersichtHeute(Haushalt haushalt, Datenbasis db, String name) {
-    super(haushalt, db, name);
+	public static final String ueberschrift = res.getString("table_today_fortune_overview");
+
+	public BAVermoegenUebersichtHeute(final Haushalt haushalt, final Datenbasis db, final String name) {
+		super(haushalt, db, name);
 		erzeugeEigenschaften(haushalt.getFrame(), ueberschrift, null);
-		}
-  
-  protected String berechneAuswertung(Object[] werte) {
-    Datum datum = new Datum();
-		String[] register = db.getRegisterNamen();
-		tabelle = new String[register.length+1][2];
-		Euro summe = new Euro();
-		for(int i=0; i<register.length; i++) {
-			Euro saldo = db.getRegisterSaldo(register[i], datum);
-			tabelle[i][0] = register[i];
-			tabelle[i][1] = ""+saldo;
+	}
+
+	@Override
+	protected String berechneAuswertung(final Object[] werte) {
+		final Datum datum = new Datum();
+		final String[] register = this.db.getRegisterNamen();
+		this.tabelle = new String[register.length + 1][2];
+		final Euro summe = new Euro();
+		for (int i = 0; i < register.length; i++) {
+			final Euro saldo = this.db.getRegisterSaldo(register[i], datum);
+			this.tabelle[i][0] = register[i];
+			this.tabelle[i][1] = "" + saldo;
 			summe.sum(saldo);
 		}
-		tabelle[register.length][0] = res.getString("total");
-		tabelle[register.length][1] = ""+summe;
+		this.tabelle[register.length][0] = res.getString("total");
+		this.tabelle[register.length][1] = "" + summe;
 
 		// Vorhandene Blöcke löschen und neu berechnete einfügen
-		String titel = res.getString("fortune_overview")+" ("+datum+")";
+		final String titel = res.getString("fortune_overview") + " (" + datum + ")";
 		loescheBloecke();
-		TextBlock block1 = new TextBlock(titel);
-		block1.setFont(new Font(haushalt.getFontname(), Font.BOLD, haushalt.getFontgroesse()+6));
+		final TextBlock block1 = new TextBlock(titel);
+		block1.setFont(new Font(this.haushalt.getFontname(), Font.BOLD, this.haushalt.getFontgroesse() + 6));
 		addDokumentenBlock(block1);
 		addDokumentenBlock(new LeererBlock(1));
-		TabellenBlock block2 = new TabellenBlock(tabelle);
-		block2.setFont(new Font(haushalt.getFontname(), Font.PLAIN, haushalt.getFontgroesse()));
-    final TabellenBlock.Ausrichtung[] attribute = {
-        TabellenBlock.Ausrichtung.LINKS, 
-        TabellenBlock.Ausrichtung.RECHTS};
-    block2.setAusrichtung(attribute);
+		final TabellenBlock block2 = new TabellenBlock(this.tabelle);
+		block2.setFont(new Font(this.haushalt.getFontname(), Font.PLAIN, this.haushalt.getFontgroesse()));
+		final TabellenBlock.Ausrichtung[] attribute = {
+				TabellenBlock.Ausrichtung.LINKS,
+				TabellenBlock.Ausrichtung.RECHTS };
+		block2.setAusrichtung(attribute);
 		addDokumentenBlock(block2);
-    return titel;
-  }
+		return titel;
+	}
 
 }

@@ -1,23 +1,17 @@
 /*
-
-This file is part of jHaushalt.
-
-jHaushalt is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 3 of the License, or
-(at your option) any later version.
-
-jHaushalt is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with jHaushalt; if not, see <http://www.gnu.org/licenses/>.
-
-(C)opyright 2002-2010 Dr. Lars H. Hahn
-
-*/
+ * This file is part of jHaushalt.
+ * jHaushalt is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ * jHaushalt is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License
+ * along with jHaushalt; if not, see <http://www.gnu.org/licenses/>.
+ * (C)opyright 2002-2010 Dr. Lars H. Hahn
+ */
 
 package haushalt.gui.generischerdialog;
 
@@ -36,31 +30,35 @@ import javax.swing.JComponent;
 
 public class TextGDP extends AbstractGDPane {
 
-  private static final long serialVersionUID = 1L;
-  private final DeleteableTextField textField;
+	private static final long serialVersionUID = 1L;
+	private final DeleteableTextField textField;
 
-  public TextGDP(String textAufforderung, String textEingabe) {
-    super(textAufforderung);
-    textField = new DeleteableTextField(textEingabe, 20);
-    add(textField);
-    refreshWert();
-  }
+	public TextGDP(final String textAufforderung, final String textEingabe) {
+		super(textAufforderung);
+		this.textField = new DeleteableTextField(textEingabe, 20);
+		add(this.textField);
+		refreshWert();
+	}
 
-  protected void refreshWert() {
-    wert = textField.getText();
-  }
+	@Override
+	protected void refreshWert() {
+		this.wert = this.textField.getText();
+	}
 
-  public JComponent getZentraleKomponente() {
-    return textField;
-  }
+	@Override
+	public JComponent getZentraleKomponente() {
+		return this.textField;
+	}
 
-  public void laden(DataInputStream in) throws IOException {
-    textField.setText(in.readUTF());
-    refreshWert();
-  }
+	@Override
+	public void laden(final DataInputStream in) throws IOException {
+		this.textField.setText(in.readUTF());
+		refreshWert();
+	}
 
-  public void speichern(DataOutputStream out) throws IOException {
-    out.writeUTF(textField.getText());
-  }
+	@Override
+	public void speichern(final DataOutputStream out) throws IOException {
+		out.writeUTF(this.textField.getText());
+	}
 
 }

@@ -1,24 +1,17 @@
 /*
-
-This file is part of jHaushalt.
-
-jHaushalt is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 3 of the License, or
-(at your option) any later version.
-
-jHaushalt is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with jHaushalt; if not, see <http://www.gnu.org/licenses/>.
-
-
-(C)opyright 2002-2010 Dr. Lars H. Hahn
-
-*/
+ * This file is part of jHaushalt.
+ * jHaushalt is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ * jHaushalt is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License
+ * along with jHaushalt; if not, see <http://www.gnu.org/licenses/>.
+ * (C)opyright 2002-2010 Dr. Lars H. Hahn
+ */
 
 package haushalt.gui.dialoge;
 
@@ -72,259 +65,286 @@ import javax.swing.tree.TreeSelectionModel;
  * 2008.03.31 BugFix: Kategoriennamen mit Leerzeichen ermöglicht
  * 2007.05.29 Internationalisierung
  * 2006.02.14 Löschen des TextFields nach an dem Anlegen einer
- *            neuen Kategorie und Sicherstellen, dass die neue
- *            Kategorie sichtbar ist
+ * neuen Kategorie und Sicherstellen, dass die neue
+ * Kategorie sichtbar ist
  * 2006.01.27 Keine globale Änderung der Option
- *            "Unterkategorien verwenden" mehr
+ * "Unterkategorien verwenden" mehr
  */
 
 public class DlgKategorienBearbeiten extends JDialog implements TreeSelectionListener {
-  private static final boolean DEBUG = false;
-  private static final long serialVersionUID = 1L;
-  private static final TextResource res = TextResource.get();
 
-  private final Haushalt haushalt;
-  protected final Datenbasis db;
-  private JScrollPane scrollPane;
-  private JTree tree;
-  private DefaultTreeModel treeModel;
-  private final DefaultTreeCellRenderer cellRenderer;
-  protected DefaultMutableTreeNode root;
-  private final JPanel eastPane = new JPanel();
-  private final JPanel erzeugenPane = new JPanel();
-  private final DeleteableTextField textErzeugen;
-  private final JButton buttonErzeugen = new JButton(res.getString("button_create"));
-  private final JPanel umbenennenPane = new JPanel();
-  private final DeleteableTextField textUmbenennen;
-  private final JButton buttonUmbenennen = new JButton(res.getString("button_rename"));
-  protected final JCheckBox unterkategorienVerwenden = new JCheckBox(res.getString("use_subcategories"), true);
-  private final JPanel buttonPane = new JPanel();
-  private final JButton buttonAbbruch = new JButton(res.getString("button_close"));
-  
-  public DlgKategorienBearbeiten(Haushalt haushalt, final Datenbasis datenbasis) throws HeadlessException {
-    super(haushalt.getFrame(), res.getString("edit_category"), true); // = modal
-    this.haushalt = haushalt;
-    this.db = datenbasis;
-    scrollPane = new JScrollPane();
-    final ImageIcon unterkatIcon = haushalt.bildLaden("Reifen16.png");
-    final ImageIcon hauptkatIcon = haushalt.bildLaden("Auto16.png");
-    cellRenderer = new DefaultTreeCellRenderer(){
-      private static final long serialVersionUID = 1L;
-      public Component getTreeCellRendererComponent(
-        JTree l_tree,
-        Object value,
-        boolean sel,
-        boolean expanded,
-        boolean leaf,
-        int row,
-        boolean l_hasFocus) {
+	private static final boolean DEBUG = false;
+	private static final long serialVersionUID = 1L;
+	private static final TextResource res = TextResource.get();
 
-      	super.getTreeCellRendererComponent(l_tree, value, sel, expanded, leaf, row, l_hasFocus);
-      	DefaultMutableTreeNode node = (DefaultMutableTreeNode)value;
-      	if(node.getParent() == null) {
-        	setIcon(null);
-        	setToolTipText(null);
-      	}
-      	else if(node.getParent() == root) {
-        	setIcon(hauptkatIcon);
-        	setToolTipText(res.getString("major_category"));
-      	}
-      	else {
-        	setIcon(unterkatIcon);
-        	setToolTipText(res.getString("subcategory"));
-       	}
-      	return this;        	
-      }
-    };
-    treeErzeugen();
-    Dimension dimensionButton = buttonUmbenennen.getPreferredSize();
-    erzeugenPane.setBorder(BorderFactory.createTitledBorder(res.getString("create_category")));
-    textErzeugen = new DeleteableTextField(15) {
-      private static final long serialVersionUID = 1L;
-      protected Document createDefaultModel() {
-        return new KategorieDocument();
-      }
-    };
-    ActionListener erzeugenActionListener = new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        erzeugen();
-      }
-    };
-    textErzeugen.addActionListener(erzeugenActionListener);
-    erzeugenPane.add(textErzeugen);
-    erzeugenPane.add(buttonErzeugen);
-    buttonErzeugen.addActionListener(erzeugenActionListener);
-    buttonErzeugen.setPreferredSize(dimensionButton);
-    umbenennenPane.setBorder(BorderFactory.createTitledBorder(res.getString("rename_category")));
-    textUmbenennen = new DeleteableTextField(15) {
-      private static final long serialVersionUID = 1L;
-      protected Document createDefaultModel() {
-        return new KategorieDocument();
-      }
-    };
-    ActionListener umbenennenActionListener = new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        umbenennen();
-      }
-    };
-    textUmbenennen.addActionListener(umbenennenActionListener);
-    umbenennenPane.add(textUmbenennen);
-    umbenennenPane.add(buttonUmbenennen);
-    buttonUmbenennen.addActionListener(umbenennenActionListener);
-    unterkategorienVerwenden.addItemListener(new ItemListener() {
-      public void itemStateChanged(ItemEvent e)  {
-        treeErzeugen();
-      }
-    });
-    eastPane.setLayout(new BoxLayout(eastPane, BoxLayout.Y_AXIS));
-    eastPane.add(erzeugenPane);
-    eastPane.add(umbenennenPane);
-    eastPane.add(unterkategorienVerwenden);
-    buttonAbbruch.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        setVisible(false);
-      }
-    });
-    buttonAbbruch.setPreferredSize(dimensionButton);
-    buttonPane.add(buttonAbbruch);
-    Container contentPane = getContentPane();
-    contentPane.add(scrollPane, BorderLayout.WEST);
-    contentPane.add(eastPane, BorderLayout.EAST);
-    contentPane.add(buttonPane, BorderLayout.SOUTH);
-  }
+	private final Haushalt haushalt;
+	protected final Datenbasis db;
+	private JScrollPane scrollPane;
+	private JTree tree;
+	private DefaultTreeModel treeModel;
+	private final DefaultTreeCellRenderer cellRenderer;
+	protected DefaultMutableTreeNode root;
+	private final JPanel eastPane = new JPanel();
+	private final JPanel erzeugenPane = new JPanel();
+	private final DeleteableTextField textErzeugen;
+	private final JButton buttonErzeugen = new JButton(res.getString("button_create"));
+	private final JPanel umbenennenPane = new JPanel();
+	private final DeleteableTextField textUmbenennen;
+	private final JButton buttonUmbenennen = new JButton(res.getString("button_rename"));
+	protected final JCheckBox unterkategorienVerwenden = new JCheckBox(res.getString("use_subcategories"), true);
+	private final JPanel buttonPane = new JPanel();
+	private final JButton buttonAbbruch = new JButton(res.getString("button_close"));
 
-  /**
-   * Zeigt den Dialog auf dem Bildschirm an, wenn er noch nicht sichtbar ist.
-   */
-  public void showDialog() {
-    setLocationRelativeTo(getOwner());
-    pack();
-    setVisible(true);
-  }
+	public DlgKategorienBearbeiten(final Haushalt haushalt, final Datenbasis datenbasis) throws HeadlessException {
+		super(haushalt.getFrame(), res.getString("edit_category"), true); // =
+																			// modal
+		this.haushalt = haushalt;
+		this.db = datenbasis;
+		this.scrollPane = new JScrollPane();
+		final ImageIcon unterkatIcon = haushalt.bildLaden("Reifen16.png");
+		final ImageIcon hauptkatIcon = haushalt.bildLaden("Auto16.png");
+		this.cellRenderer = new DefaultTreeCellRenderer() {
 
-  protected void treeErzeugen() {
-    if(tree != null)
-      scrollPane.getViewport().remove(tree);
-    root = new DefaultMutableTreeNode(res.getString("categories"));
-    EinzelKategorie[] kategorien = db.getKategorien(unterkategorienVerwenden.isSelected());
-    DefaultMutableTreeNode haupt = null;
-    for(int i=0; i<kategorien.length; i++) {
-      if(kategorien[i].isHauptkategorie()) {
-        haupt = new DefaultMutableTreeNode(kategorien[i].getName());
-        root.add(haupt);
-      }
-      else
-        haupt.add(new DefaultMutableTreeNode(kategorien[i].getName()));
-      if(DEBUG)
-        System.out.println(""+kategorien[i]+" hinzugefügt.");
-    }
-    treeModel = new DefaultTreeModel(root);
-    tree = new JTree(treeModel);
-    TreeSelectionModel selectionModel = tree.getSelectionModel();
-    selectionModel.setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
-    selectionModel.addTreeSelectionListener(this);
-    tree.setCellRenderer(cellRenderer);
-    scrollPane.getViewport().add(tree);
-    }
+			private static final long serialVersionUID = 1L;
 
-  protected void erzeugen() {
-    if(textErzeugen.getText().equals("")) {
-      JOptionPane.showMessageDialog(haushalt.getFrame(),
-      res.getString("message_no_category_name"));
-      return;
-    }
-    DefaultMutableTreeNode node = (DefaultMutableTreeNode)tree.getLastSelectedPathComponent();
-    if((node == null) || (node.getParent() == null)) {
-      if(!db.isKategorie(textErzeugen.getText(), null)) {
-        // Erzeuge neue Hauptkategorie:
-	      EinzelKategorie kategorie = db.findeOderErzeugeKategorie(textErzeugen.getText(), null);
-	      DefaultMutableTreeNode child = new DefaultMutableTreeNode(kategorie.getHauptkategorie().getName());
-	      treeModel.insertNodeInto(child, root, root.getChildCount());
-        tree.scrollPathToVisible(new TreePath(child.getPath()));
-        textErzeugen.setText("");
-      }
-      else {
-        JOptionPane.showMessageDialog(haushalt.getFrame(),
-        res.getString("message_category_exists"));
-      }
-      return;
-    }
-    if(node.getParent() != root) {
-      JOptionPane.showMessageDialog(haushalt.getFrame(),
-      res.getString("message_no_major_category_selected"));
-      return;
-    }
-    if(!unterkategorienVerwenden.isSelected()) {
-      JOptionPane.showMessageDialog(haushalt.getFrame(),
-      res.getString("message_activate_subcategories"));
-      return;
-    }
-    EinzelKategorie hauptKategorie = db.findeOderErzeugeKategorie((String)node.getUserObject(), null);
-    if(!db.isKategorie(textErzeugen.getText(), hauptKategorie)) {
-      // Erzeugt neue Unterkategorie:
-	    EinzelKategorie kategorie = db.findeOderErzeugeKategorie(textErzeugen.getText(), hauptKategorie);
-	    DefaultMutableTreeNode child = new DefaultMutableTreeNode(kategorie.getName());
-	    treeModel.insertNodeInto(child, node, node.getChildCount());
-      tree.scrollPathToVisible(new TreePath(child.getPath()));
-      textErzeugen.setText("");
-    }
-    else {
-      JOptionPane.showMessageDialog(haushalt.getFrame(),
-          res.getString("message_category_exists"));
-    }
-  }
-  
-  protected void umbenennen() {
-    if(textUmbenennen.getText().equals("")) {
-      JOptionPane.showMessageDialog(haushalt.getFrame(),
-      res.getString("message_category_is_empty"));
-      return;
-    }
-    DefaultMutableTreeNode node = (DefaultMutableTreeNode)tree.getLastSelectedPathComponent();
-    if((node == null) || (node.getParent() == null))
-      return;
-    EinzelKategorie hauptkategorie;
-    if(node.getParent() == root) {
-      hauptkategorie = null;
-    }
-    else {
-	    String name = (String)((DefaultMutableTreeNode) node.getParent()).getUserObject();
-	    hauptkategorie = db.findeOderErzeugeKategorie(name, null);
-    }
-    if(db.isKategorie(textUmbenennen.getText(), hauptkategorie)) {
-      JOptionPane.showMessageDialog(haushalt.getFrame(),
-      res.getString("message_category_exists"));
-      return;
-    }
-    EinzelKategorie kategorie = db.findeOderErzeugeKategorie(""+node.getUserObject(), hauptkategorie);
-    kategorie.setName(textUmbenennen.getText());
-    node.setUserObject(textUmbenennen.getText());
-    treeModel.nodeChanged(node);
-  }
-  
-  private static class KategorieDocument extends PlainDocument {
-    private static final long serialVersionUID = 1L;
-    public void insertString(int offs, String str, AttributeSet a) throws BadLocationException {
-      char[] source = str.toCharArray();
-      int anzChar = source.length;
-      char[] result = new char[anzChar];
-      int j = 0;
+			@Override
+			public Component getTreeCellRendererComponent(
+					final JTree l_tree,
+					final Object value,
+					final boolean sel,
+					final boolean expanded,
+					final boolean leaf,
+					final int row,
+					final boolean l_hasFocus) {
 
-      for (int i = 0; i < anzChar; i++) {
-        if (Character.isLetterOrDigit(source[i]) || (source[i] == '-') || (source[i] == ' '))
-          result[j++] = source[i];
-      }
-      super.insertString(offs, new String(result, 0, j), a);
-    }
-  }
+				super.getTreeCellRendererComponent(l_tree, value, sel, expanded, leaf, row, l_hasFocus);
+				final DefaultMutableTreeNode node = (DefaultMutableTreeNode) value;
+				if (node.getParent() == null) {
+					setIcon(null);
+					setToolTipText(null);
+				}
+				else if (node.getParent() == DlgKategorienBearbeiten.this.root) {
+					setIcon(hauptkatIcon);
+					setToolTipText(res.getString("major_category"));
+				}
+				else {
+					setIcon(unterkatIcon);
+					setToolTipText(res.getString("subcategory"));
+				}
+				return this;
+			}
+		};
+		treeErzeugen();
+		final Dimension dimensionButton = this.buttonUmbenennen.getPreferredSize();
+		this.erzeugenPane.setBorder(BorderFactory.createTitledBorder(res.getString("create_category")));
+		this.textErzeugen = new DeleteableTextField(15) {
 
-  // -- Methoden des Interface 'TreeSelectionListener' ----------------------------
-  
-  public void valueChanged(TreeSelectionEvent e) {
-    DefaultMutableTreeNode node = (DefaultMutableTreeNode)tree.getLastSelectedPathComponent();
-    if(node == root)
-      textUmbenennen.setText("");
-    else
-      textUmbenennen.setText(""+node.getUserObject());
-  }
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			protected Document createDefaultModel() {
+				return new KategorieDocument();
+			}
+		};
+		final ActionListener erzeugenActionListener = new ActionListener() {
+
+			public void actionPerformed(final ActionEvent e) {
+				erzeugen();
+			}
+		};
+		this.textErzeugen.addActionListener(erzeugenActionListener);
+		this.erzeugenPane.add(this.textErzeugen);
+		this.erzeugenPane.add(this.buttonErzeugen);
+		this.buttonErzeugen.addActionListener(erzeugenActionListener);
+		this.buttonErzeugen.setPreferredSize(dimensionButton);
+		this.umbenennenPane.setBorder(BorderFactory.createTitledBorder(res.getString("rename_category")));
+		this.textUmbenennen = new DeleteableTextField(15) {
+
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			protected Document createDefaultModel() {
+				return new KategorieDocument();
+			}
+		};
+		final ActionListener umbenennenActionListener = new ActionListener() {
+
+			public void actionPerformed(final ActionEvent e) {
+				umbenennen();
+			}
+		};
+		this.textUmbenennen.addActionListener(umbenennenActionListener);
+		this.umbenennenPane.add(this.textUmbenennen);
+		this.umbenennenPane.add(this.buttonUmbenennen);
+		this.buttonUmbenennen.addActionListener(umbenennenActionListener);
+		this.unterkategorienVerwenden.addItemListener(new ItemListener() {
+
+			public void itemStateChanged(final ItemEvent e) {
+				treeErzeugen();
+			}
+		});
+		this.eastPane.setLayout(new BoxLayout(this.eastPane, BoxLayout.Y_AXIS));
+		this.eastPane.add(this.erzeugenPane);
+		this.eastPane.add(this.umbenennenPane);
+		this.eastPane.add(this.unterkategorienVerwenden);
+		this.buttonAbbruch.addActionListener(new ActionListener() {
+
+			public void actionPerformed(final ActionEvent e) {
+				setVisible(false);
+			}
+		});
+		this.buttonAbbruch.setPreferredSize(dimensionButton);
+		this.buttonPane.add(this.buttonAbbruch);
+		final Container contentPane = getContentPane();
+		contentPane.add(this.scrollPane, BorderLayout.WEST);
+		contentPane.add(this.eastPane, BorderLayout.EAST);
+		contentPane.add(this.buttonPane, BorderLayout.SOUTH);
+	}
+
+	/**
+	 * Zeigt den Dialog auf dem Bildschirm an, wenn er noch nicht sichtbar ist.
+	 */
+	public void showDialog() {
+		setLocationRelativeTo(getOwner());
+		pack();
+		setVisible(true);
+	}
+
+	protected void treeErzeugen() {
+		if (this.tree != null) {
+			this.scrollPane.getViewport().remove(this.tree);
+		}
+		this.root = new DefaultMutableTreeNode(res.getString("categories"));
+		final EinzelKategorie[] kategorien = this.db.getKategorien(this.unterkategorienVerwenden.isSelected());
+		DefaultMutableTreeNode haupt = null;
+		for (int i = 0; i < kategorien.length; i++) {
+			if (kategorien[i].isHauptkategorie()) {
+				haupt = new DefaultMutableTreeNode(kategorien[i].getName());
+				this.root.add(haupt);
+			}
+			else {
+				haupt.add(new DefaultMutableTreeNode(kategorien[i].getName()));
+			}
+			if (DEBUG) {
+				System.out.println("" + kategorien[i] + " hinzugefügt.");
+			}
+		}
+		this.treeModel = new DefaultTreeModel(this.root);
+		this.tree = new JTree(this.treeModel);
+		final TreeSelectionModel selectionModel = this.tree.getSelectionModel();
+		selectionModel.setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+		selectionModel.addTreeSelectionListener(this);
+		this.tree.setCellRenderer(this.cellRenderer);
+		this.scrollPane.getViewport().add(this.tree);
+	}
+
+	protected void erzeugen() {
+		if (this.textErzeugen.getText().equals("")) {
+			JOptionPane.showMessageDialog(this.haushalt.getFrame(),
+					res.getString("message_no_category_name"));
+			return;
+		}
+		final DefaultMutableTreeNode node = (DefaultMutableTreeNode) this.tree.getLastSelectedPathComponent();
+		if ((node == null) || (node.getParent() == null)) {
+			if (!this.db.isKategorie(this.textErzeugen.getText(), null)) {
+				// Erzeuge neue Hauptkategorie:
+				final EinzelKategorie kategorie = this.db.findeOderErzeugeKategorie(this.textErzeugen.getText(), null);
+				final DefaultMutableTreeNode child = new DefaultMutableTreeNode(kategorie.getHauptkategorie().getName());
+				this.treeModel.insertNodeInto(child, this.root, this.root.getChildCount());
+				this.tree.scrollPathToVisible(new TreePath(child.getPath()));
+				this.textErzeugen.setText("");
+			}
+			else {
+				JOptionPane.showMessageDialog(this.haushalt.getFrame(),
+						res.getString("message_category_exists"));
+			}
+			return;
+		}
+		if (node.getParent() != this.root) {
+			JOptionPane.showMessageDialog(this.haushalt.getFrame(),
+					res.getString("message_no_major_category_selected"));
+			return;
+		}
+		if (!this.unterkategorienVerwenden.isSelected()) {
+			JOptionPane.showMessageDialog(this.haushalt.getFrame(),
+					res.getString("message_activate_subcategories"));
+			return;
+		}
+		final EinzelKategorie hauptKategorie = this.db.findeOderErzeugeKategorie((String) node.getUserObject(), null);
+		if (!this.db.isKategorie(this.textErzeugen.getText(), hauptKategorie)) {
+			// Erzeugt neue Unterkategorie:
+			final EinzelKategorie kategorie = this.db.findeOderErzeugeKategorie(this.textErzeugen.getText(),
+					hauptKategorie);
+			final DefaultMutableTreeNode child = new DefaultMutableTreeNode(kategorie.getName());
+			this.treeModel.insertNodeInto(child, node, node.getChildCount());
+			this.tree.scrollPathToVisible(new TreePath(child.getPath()));
+			this.textErzeugen.setText("");
+		}
+		else {
+			JOptionPane.showMessageDialog(this.haushalt.getFrame(),
+					res.getString("message_category_exists"));
+		}
+	}
+
+	protected void umbenennen() {
+		if (this.textUmbenennen.getText().equals("")) {
+			JOptionPane.showMessageDialog(this.haushalt.getFrame(),
+					res.getString("message_category_is_empty"));
+			return;
+		}
+		final DefaultMutableTreeNode node = (DefaultMutableTreeNode) this.tree.getLastSelectedPathComponent();
+		if ((node == null) || (node.getParent() == null)) {
+			return;
+		}
+		EinzelKategorie hauptkategorie;
+		if (node.getParent() == this.root) {
+			hauptkategorie = null;
+		}
+		else {
+			final String name = (String) ((DefaultMutableTreeNode) node.getParent()).getUserObject();
+			hauptkategorie = this.db.findeOderErzeugeKategorie(name, null);
+		}
+		if (this.db.isKategorie(this.textUmbenennen.getText(), hauptkategorie)) {
+			JOptionPane.showMessageDialog(this.haushalt.getFrame(),
+					res.getString("message_category_exists"));
+			return;
+		}
+		final EinzelKategorie kategorie = this.db.findeOderErzeugeKategorie("" + node.getUserObject(), hauptkategorie);
+		kategorie.setName(this.textUmbenennen.getText());
+		node.setUserObject(this.textUmbenennen.getText());
+		this.treeModel.nodeChanged(node);
+	}
+
+	private static class KategorieDocument extends PlainDocument {
+
+		private static final long serialVersionUID = 1L;
+
+		@Override
+		public void insertString(final int offs, final String str, final AttributeSet a) throws BadLocationException {
+			final char[] source = str.toCharArray();
+			final int anzChar = source.length;
+			final char[] result = new char[anzChar];
+			int j = 0;
+
+			for (int i = 0; i < anzChar; i++) {
+				if (Character.isLetterOrDigit(source[i]) || (source[i] == '-') || (source[i] == ' ')) {
+					result[j++] = source[i];
+				}
+			}
+			super.insertString(offs, new String(result, 0, j), a);
+		}
+	}
+
+	// -- Methoden des Interface 'TreeSelectionListener'
+	// ----------------------------
+
+	public void valueChanged(final TreeSelectionEvent e) {
+		final DefaultMutableTreeNode node = (DefaultMutableTreeNode) this.tree.getLastSelectedPathComponent();
+		if (node == this.root) {
+			this.textUmbenennen.setText("");
+		}
+		else {
+			this.textUmbenennen.setText("" + node.getUserObject());
+		}
+	}
 }
