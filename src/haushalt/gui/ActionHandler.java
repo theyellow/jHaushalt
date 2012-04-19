@@ -67,23 +67,12 @@ public class ActionHandler {
 	};
 	// 1:
 	final private Object[][] menuBearbeitenText = {
-<<<<<<< HEAD
-			{"neueBuchungErstellen", res.getString("new_booking")+"...", "AddBuchung", res.getString("new_booking_legend"), new Integer(KeyEvent.VK_C)},
-			{"loeschen", res.getString("delete"), "Delete", res.getString("delete_legend"), new Integer(KeyEvent.VK_D)},
-		{"umbuchen", res.getString("rebook")+"...", "Umbuchung", res.getString("rebook_legend"), new Integer(KeyEvent.VK_U)},
-    {"splitten", res.getString("split")+"...", "Splitten", res.getString("split_legend"), new Integer(KeyEvent.VK_P)},
-    {"umwandeln", res.getString("convert")+"...", "Umwandeln", res.getString("convert_legend"), new Integer(KeyEvent.VK_W)},
-		{"registerBearbeiten", res.getString("edit_registers")+"...", "Register", res.getString("edit_registers_legend"), new Integer(KeyEvent.VK_R)},
-		{"kategorienBearbeiten", res.getString("edit_category")+"...", "Auto", res.getString("edit_category_legend"), new Integer(KeyEvent.VK_K)},
-		{"suchen", res.getString("find")+"...", "Find", res.getString("find_legend"), null},
-		{"alteBuchungenLoeschen", res.getString("delete_old_bookings")+"...", null, res.getString("delete_old_bookings_legend"), new Integer(KeyEvent.VK_E)},
-		{"kategorieErsetzen", res.getString("replace_category")+"...", null, res.getString("replace_category_legend"), null},
-    {"kategorienBereinigen", res.getString("clean_categories")+"...", null, res.getString("clean_categories_legend"), new Integer(KeyEvent.VK_B)},
-    {"registerVereinigen", res.getString("join_register")+"...", null, res.getString("join_register_legend"), new Integer(KeyEvent.VK_V)}
-=======
+
+			{ "neueBuchungErstellen", res.getString("new_booking") + "...", "AddBuchung",
+					res.getString("new_booking_legend"), new Integer(KeyEvent.VK_C) },
+			{ "loeschen", res.getString("delete"), "Delete", res.getString("delete_legend"), new Integer(KeyEvent.VK_D) },
 			{ "umbuchen", res.getString("rebook") + "...", "Umbuchung", res.getString("rebook_legend"),
 					new Integer(KeyEvent.VK_U) },
-			{ "loeschen", res.getString("delete"), "Delete", res.getString("delete_legend"), new Integer(KeyEvent.VK_D) },
 			{ "splitten", res.getString("split") + "...", "Splitten", res.getString("split_legend"),
 					new Integer(KeyEvent.VK_P) },
 			{ "umwandeln", res.getString("convert") + "...", "Umwandeln", res.getString("convert_legend"),
@@ -101,7 +90,7 @@ public class ActionHandler {
 					res.getString("clean_categories_legend"), new Integer(KeyEvent.VK_B) },
 			{ "registerVereinigen", res.getString("join_register") + "...", null,
 					res.getString("join_register_legend"), new Integer(KeyEvent.VK_V) }
->>>>>>> Just code cleaning and formatting !
+
 	};
 	// 2:
 	final private Object[][] menuAusgabeText = {
