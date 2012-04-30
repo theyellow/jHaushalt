@@ -78,7 +78,7 @@ public class EuroField extends DeleteableTextField {
 			int j = 0;
 
 			for (int i = 0; i < anzChar; i++) {
-				if (Character.isDigit(source[i]) || (source[i] == '€') || (source[i] == '-') ||
+				if (Character.isDigit(source[i]) || ("€".equals(source[i])) || (source[i] == '-') ||
 						(source[i] == '+') || (source[i] == ' ') || (source[i] == '.') || (source[i] == ',')) {
 					result[j++] = source[i];
 				}

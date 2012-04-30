@@ -61,13 +61,16 @@ public class Euro implements Cloneable, Comparable<Euro> {
 		setWert(wert);
 	}
 
-	public Euro(final String wert) {
+	public Euro(String wert) {
 		final Locale locale = res.getLocale();
 		final NumberFormat nf = NumberFormat.getInstance(locale);
 		nf.setMinimumFractionDigits(2);
 		nf.setMaximumFractionDigits(2);
 		if (wert != "") {
 			try {
+				if (wert.trim().startsWith("+")) {
+					wert = wert.trim().substring(1).trim();
+				}
 				setWert(nf.parse(wert).doubleValue());
 			}
 			catch (final ParseException e) {
