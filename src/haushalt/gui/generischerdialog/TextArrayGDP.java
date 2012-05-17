@@ -31,7 +31,7 @@ import javax.swing.JComponent;
 public class TextArrayGDP extends AbstractGDPane {
 
 	private static final long serialVersionUID = 1L;
-	protected final JComboBox comboBox;
+	private final JComboBox comboBox;
 
 	public TextArrayGDP(final String textAnweisung, final String[] texte, final String auswahl) {
 		super(textAnweisung);
@@ -51,7 +51,7 @@ public class TextArrayGDP extends AbstractGDPane {
 
 	@Override
 	protected void refreshWert() {
-		this.wert = this.comboBox.getSelectedItem();
+		setWert(this.comboBox.getSelectedItem());
 	}
 
 	@Override
@@ -67,6 +67,10 @@ public class TextArrayGDP extends AbstractGDPane {
 	@Override
 	public void speichern(final DataOutputStream out) throws IOException {
 		out.writeUTF((String) this.comboBox.getSelectedItem());
+	}
+
+	protected JComboBox getComboBox() {
+		return comboBox;
 	}
 
 }

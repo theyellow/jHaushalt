@@ -20,7 +20,6 @@ import haushalt.daten.zeitraum.AbstractZeitraum;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.util.logging.Logger;
 
 /**
  * Basisklasse für die Buchungsarten Umbuchung, SplitBuchung und
@@ -35,14 +34,14 @@ import java.util.logging.Logger;
  * 2004.08.22 Erste Version
  */
 
-abstract public class AbstractBuchung implements Cloneable, Comparable<Object> {
-
-	private static final Logger LOGGER = Logger.getLogger(AbstractBuchung.class.getName());
-
-	// -- Buchungsdatum
-	// ----------------------------------------------------------
+public abstract class AbstractBuchung implements Cloneable, Comparable<Object> {
 
 	private Datum datum = new Datum();
+
+	// -- Buchungstext
+	// -----------------------------------------------------------
+
+	private String text = "";
 
 	/**
 	 * Setzt das Buchungsdatum
@@ -62,11 +61,6 @@ abstract public class AbstractBuchung implements Cloneable, Comparable<Object> {
 	public Datum getDatum() {
 		return this.datum;
 	}
-
-	// -- Buchungstext
-	// -----------------------------------------------------------
-
-	private String text = "";
 
 	/**
 	 * Setzt den Buchungstext
@@ -119,57 +113,57 @@ abstract public class AbstractBuchung implements Cloneable, Comparable<Object> {
 		return false;
 	}
 
-	// -- Kategorie
+	// -- IKategorie
 	// --------------------------------------------------------------
 
 	/**
-	 * Setzt die Kategorie der Buchung.
-	 * Im Fall einer gesplitteten Buchung ist die Kategorie ein ListArray der
-	 * einzelnen Kategorien. Bei einer Umbuchung ist die Kategorie das
+	 * Setzt die IKategorie der Buchung.
+	 * Im Fall einer gesplitteten Buchung ist die IKategorie ein ListArray der
+	 * einzelnen Kategorien. Bei einer Umbuchung ist die IKategorie das
 	 * "Partner"-Register.
 	 * 
 	 * @param kategorie
-	 *            neue Kategorie der Buchung
+	 *            neue IKategorie der Buchung
 	 */
-	abstract public void setKategorie(Kategorie kategorie);
+	public abstract void setKategorie(IKategorie kategorie);
 
 	/**
-	 * Liefert die Kategorie der Buchung.
-	 * Im Fall einer gesplitteten Buchung ist die Kategorie ein ListArray der
-	 * einzelnen Kategorien. Bei einer Umbuchung ist die Kategorie das
+	 * Liefert die IKategorie der Buchung.
+	 * Im Fall einer gesplitteten Buchung ist die IKategorie ein ListArray der
+	 * einzelnen Kategorien. Bei einer Umbuchung ist die IKategorie das
 	 * "Partner"-Register.
 	 * 
-	 * @return Kategorie der Buchung
+	 * @return IKategorie der Buchung
 	 */
-	abstract public Kategorie getKategorie();
+	public abstract IKategorie getKategorie();
 
 	/**
-	 * Ersetzt eine alte Kategorie durch eine neue.
+	 * Ersetzt eine alte IKategorie durch eine neue.
 	 * Bei einer gesplitteten Buchung werden alle Einzel-Kategorien überprüft
 	 * und
 	 * ggf. ersetzt. Bei einer Umbuchung erfolgt keine Ersetzung.<br>
-	 * Wenn die alte Kategorie <b>null</b> ist, wird jede
-	 * beliebige Kategorie ersetzt.
+	 * Wenn die alte IKategorie <b>null</b> ist, wird jede
+	 * beliebige IKategorie ersetzt.
 	 * 
 	 * @param alteKategorie
-	 *            Kategorie die ersetzt werden soll
+	 *            IKategorie die ersetzt werden soll
 	 * @param neueKategorie
-	 *            neue Kategorie
+	 *            neue IKategorie
 	 * @return Anzahl ersetzter Kategorien
 	 */
-	abstract public int ersetzeKategorie(EinzelKategorie alteKategorie, EinzelKategorie neueKategorie);
+	public abstract int ersetzeKategorie(EinzelKategorie alteKategorie, EinzelKategorie neueKategorie);
 
 	/**
-	 * Überprüft ob die Buchung teil einer Kategorie ist
+	 * Überprüft ob die Buchung teil einer IKategorie ist
 	 * 
 	 * @param kategorie
-	 *            Kategorie auf die überprüft wird
+	 *            IKategorie auf die überprüft wird
 	 * @param unterkategorienVerwenden
 	 *            false, wenn nur Hauptkategorien betrachtet werden
 	 * @return true, wenn die Buchung (oder Teile der Buchung) zu der angegeben
-	 *         Kategorie gehören
+	 *         IKategorie gehören
 	 */
-	abstract public boolean istInKategorie(EinzelKategorie kategorie, boolean unterkategorienVerwenden);
+	public abstract boolean istInKategorie(EinzelKategorie kategorie, boolean unterkategorienVerwenden);
 
 	// -- Buchungswert
 	// -----------------------------------------------------------
@@ -182,35 +176,35 @@ abstract public class AbstractBuchung implements Cloneable, Comparable<Object> {
 	 * @param wert
 	 *            Buchungswert
 	 */
-	abstract public void setWert(Euro wert);
+	public abstract void setWert(Euro wert);
 
 	/**
 	 * Liefert den Buchungswert.
 	 * 
 	 * @return Buchungswert
 	 */
-	abstract public Euro getWert();
+	public abstract Euro getWert();
 
 	// -- Auswertung
 	// -------------------------------------------------------------
 
 	/**
-	 * Addiert zur der Kategorie / zu den Kategorien der Buchung der Wert der
+	 * Addiert zur der IKategorie / zu den Kategorien der Buchung der Wert der
 	 * Buchung hinzu.
 	 */
-	abstract public void bildeKategorieSumme(AbstractZeitraum zeitraum, boolean unterkat);
+	public abstract void bildeKategorieSumme(AbstractZeitraum zeitraum, boolean unterkat);
 
 	/**
-	 * Liefert den Wert der Buchung, wenn die Buchung die passende Kategorie
+	 * Liefert den Wert der Buchung, wenn die Buchung die passende IKategorie
 	 * besitzt.
 	 * 
 	 * @param kategorie
-	 *            gesuchte Kategorie
+	 *            gesuchte IKategorie
 	 * @param unterkat
 	 *            Unterkategorien werden verwendet
 	 * @return Wert der Buchung, wenn die Parameter passen
 	 */
-	abstract public Euro getKategorieWert(EinzelKategorie kategorie, boolean unterkat);
+	public abstract Euro getKategorieWert(EinzelKategorie kategorie, boolean unterkat);
 
 	// -- E/A-Funktionen
 	// ---------------------------------------------------------
@@ -233,12 +227,12 @@ abstract public class AbstractBuchung implements Cloneable, Comparable<Object> {
 	 * @param out
 	 *            Ausgabe-Stream
 	 */
-	abstract public void speichern(DataOutputStream out) throws IOException;
+	public abstract void speichern(DataOutputStream out) throws IOException;
 
 	// -- Methode des Interface 'Comparable'
 	// -------------------------------------
 
-	public int compareTo(final Object obj) throws ClassCastException {
+	public int compareTo(final Object obj) {
 		if (obj.getClass() == Datum.class) {
 			return this.datum.compareTo((Datum) obj);
 		}

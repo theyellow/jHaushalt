@@ -25,7 +25,7 @@ import java.util.ArrayList;
 /*
  * 2006.02.10 Erste Version
  */
-public class MehrfachKategorie extends ArrayList<EinzelKategorie> implements Kategorie {
+public class MehrfachKategorie extends ArrayList<EinzelKategorie> implements IKategorie {
 
 	private static final long serialVersionUID = 1L;
 
@@ -52,7 +52,7 @@ public class MehrfachKategorie extends ArrayList<EinzelKategorie> implements Kat
 		return text;
 	}
 
-	public int compareTo(final Kategorie kategorie) {
+	public int compareTo(final IKategorie kategorie) {
 		return toString().compareTo(kategorie.toString());
 	}
 

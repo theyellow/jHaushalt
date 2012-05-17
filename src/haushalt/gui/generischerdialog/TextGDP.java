@@ -42,7 +42,7 @@ public class TextGDP extends AbstractGDPane {
 
 	@Override
 	protected void refreshWert() {
-		this.wert = this.textField.getText();
+		setWert(this.textField.getText());
 	}
 
 	@Override

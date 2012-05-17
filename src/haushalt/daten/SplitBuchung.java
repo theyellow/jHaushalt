@@ -93,11 +93,11 @@ public class SplitBuchung extends AbstractBuchung {
 		return new StandardBuchung(getDatum(), getText(), this.splitKategorie.get(0), this.splitBetrag.get(0));
 	}
 
-	// -- Kategorie
+	// -- IKategorie
 	// --------------------------------------------------------------
 
 	@Override
-	public void setKategorie(final Kategorie kategorie) {
+	public void setKategorie(final IKategorie kategorie) {
 		this.splitKategorie = (MehrfachKategorie) kategorie;
 	}
 
@@ -106,7 +106,7 @@ public class SplitBuchung extends AbstractBuchung {
 	}
 
 	@Override
-	public Kategorie getKategorie() {
+	public IKategorie getKategorie() {
 		return this.splitKategorie;
 	}
 
@@ -234,7 +234,7 @@ public class SplitBuchung extends AbstractBuchung {
 			LOGGER.warning("Cloning error. This should never happen.");
 		}
 		for (int i = 0; i < getAnzahl(); i++) {
-			// Kategorien NICHT clonen, da dann nicht in der Kategorie-Liste
+			// Kategorien NICHT clonen, da dann nicht in der IKategorie-Liste
 			kopie.add(this.splitKategorie.get(i), (Euro) this.splitBetrag.get(i).clone());
 		}
 		setDatum(clonedDatum);

@@ -39,13 +39,13 @@ public class RegisterGDP extends TextArrayGDP {
 	@Override
 	public void refreshRegisterUndKategorien() {
 		final String[] register = this.db.getRegisterNamen();
-		final String regname = (String) this.comboBox.getSelectedItem();
-		this.comboBox.removeAllItems();
+		final String regname = (String) getComboBox().getSelectedItem();
+		getComboBox().removeAllItems();
 		for (int i = 0; i < register.length; i++) {
-			this.comboBox.addItem(register[i]);
+			getComboBox().addItem(register[i]);
 		}
 		if (regname != null) {
-			this.comboBox.setSelectedItem(regname);
+			getComboBox().setSelectedItem(regname);
 		}
 	}
 

@@ -44,13 +44,13 @@ import javax.swing.JPanel;
 public class GenerischerDialog extends JDialog {
 
 	private static final long serialVersionUID = 1L;
-	private static final TextResource res = TextResource.get();
+	private static final TextResource RES = TextResource.get();
 
 	private final JPanel paneContainer = new JPanel();
 	private final JPanel paneButton = new JPanel();
-	private final JButton buttonOK = new JButton(res.getString("button_ok"));
-	private final JButton buttonAbbruch = new JButton(res.getString("button_cancel"));
-	protected boolean OK = false;
+	private final JButton buttonOK = new JButton(RES.getString("button_ok"));
+	private final JButton buttonAbbruch = new JButton(RES.getString("button_cancel"));
+	private boolean ok = false;
 	private final GDFocusTraversalPolicy policy;
 
 	public GenerischerDialog(final String text, final Frame owner) {
@@ -69,14 +69,14 @@ public class GenerischerDialog extends JDialog {
 		this.buttonOK.addActionListener(new ActionListener() {
 
 			public void actionPerformed(final ActionEvent e) {
-				GenerischerDialog.this.OK = true;
+				GenerischerDialog.this.ok = true;
 				setVisible(false);
 			}
 		});
 		this.buttonAbbruch.addActionListener(new ActionListener() {
 
 			public void actionPerformed(final ActionEvent e) {
-				GenerischerDialog.this.OK = false;
+				GenerischerDialog.this.ok = false;
 				setVisible(false);
 			}
 		});
@@ -86,7 +86,7 @@ public class GenerischerDialog extends JDialog {
 	public boolean showDialog() {
 		pack();
 		setVisible(true);
-		return this.OK;
+		return this.ok;
 	}
 
 	public void addPane(final AbstractGDPane pane) {

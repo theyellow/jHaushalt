@@ -41,10 +41,10 @@ import javax.swing.JComponent;
 public class EineKategorieGDP extends AbstractGDPane {
 
 	private static final long serialVersionUID = 1L;
-	private static final TextResource res = TextResource.get();
+	private static final TextResource RES = TextResource.get();
 
 	private final JComboBox comboBox;
-	private final JCheckBox checkBox = new JCheckBox(res.getString("use_subcategories"), true);
+	private final JCheckBox checkBox = new JCheckBox(RES.getString("use_subcategories"), true);
 	private final Datenbasis db;
 
 	public EineKategorieGDP(final String text, final Datenbasis datenbasis, final EinzelKategorie kategorie) {
@@ -78,7 +78,7 @@ public class EineKategorieGDP extends AbstractGDPane {
 
 	@Override
 	protected void refreshWert() {
-		this.wert = this.comboBox.getSelectedItem();
+		setWert(this.comboBox.getSelectedItem());
 	}
 
 	@Override
@@ -92,8 +92,7 @@ public class EineKategorieGDP extends AbstractGDPane {
 		if (kategorie != null) {
 			if (!kategorie.isHauptkategorie() && !unterkategorienVerwenden()) {
 				this.comboBox.setSelectedItem(kategorie.getHauptkategorie());
-			}
-			else {
+			} else {
 				this.comboBox.setSelectedItem(kategorie);
 			}
 		}

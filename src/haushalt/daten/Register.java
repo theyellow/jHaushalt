@@ -19,6 +19,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.logging.Logger;
 
 /**
  * Die Register dienen als Container für die Buchung. Beispiele
@@ -46,6 +47,7 @@ import java.util.ArrayList;
 public class Register implements Comparable<Register> {
 
 	private static final boolean DEBUG = false;
+	private static final Logger LOGGER = Logger.getLogger(Register.class.getName());
 
 	private String name;
 	private final ArrayList<AbstractBuchung> buchungen;
@@ -150,14 +152,21 @@ public class Register implements Comparable<Register> {
 		}
 		if (pos == size) { // ans Ende
 			this.buchungen.add(buchung);
-		}
-		else { // neue Buchung einfuegen
+		} else { // neue Buchung einfuegen
 			this.buchungen.add(pos, buchung);
 		}
 		if (DEBUG) {
-			System.out.println("Register " + this.name + ": Buchung " + buchung.getDatum() + "/" + buchung.getText()
-					+ "/"
-					+ buchung.getWert() + " an Positon " + (pos + 1) + " einsortiert.");
+			LOGGER.info("Register "
+				+ this.name
+				+ ": Buchung "
+				+ buchung.getDatum()
+				+ "/"
+				+ buchung.getText()
+				+ "/"
+				+ buchung.getWert()
+				+ " an Positon "
+				+ (pos + 1)
+				+ " einsortiert.");
 		}
 		return pos;
 	}
@@ -193,34 +202,29 @@ public class Register implements Comparable<Register> {
 					// Umbuchung: alte Selbstbuchung
 					umbuchung.setKategorie(new UmbuchungKategorie(this, this));
 					// -> automatisch löschen und neu einfügen
-				}
-				else {
+				} else {
 					// normale Umbuchung
 					Register neueQuelle;
 					Register neuesZiel;
 					if (alteKategorie.getQuelle() == registerZumLoeschen) {
 						neueQuelle = this;
-					}
-					else {
+					} else {
 						neueQuelle = alteKategorie.getQuelle();
 					}
 					if (alteKategorie.getZiel() == registerZumLoeschen) {
 						neuesZiel = this;
-					}
-					else {
+					} else {
 						neuesZiel = alteKategorie.getZiel();
 					}
 					if (neueQuelle != neuesZiel) {
 						umbuchung.setKategorie(new UmbuchungKategorie(neueQuelle, neuesZiel));
-					}
-					else {
+					} else {
 						// sonst loeschen:
 						neueQuelle.loescheUmbuchung(umbuchung);
 						registerZumLoeschen.buchungen.remove(0);
 					}
 				}
-			}
-			else {
+			} else {
 				// StandardBuchung + SplitBuchung
 				einsortierenBuchung(registerZumLoeschen.buchungen.get(0));
 				registerZumLoeschen.buchungen.remove(0);
@@ -237,8 +241,7 @@ public class Register implements Comparable<Register> {
 	public Euro getSaldo(final Datum datum) {
 		Euro saldo = new Euro();
 		int i = 0;
-		while ((i < this.buchungen.size()) &&
-				(datum.compareTo(getBuchung(i).getDatum()) > 0)) {
+		while ((i < this.buchungen.size()) && (datum.compareTo(getBuchung(i).getDatum()) > 0)) {
 			if (getBuchung(i).getClass() == Umbuchung.class) {
 				final UmbuchungKategorie kategorie = (UmbuchungKategorie) getBuchung(i).getKategorie();
 				if ((kategorie.getQuelle() == this) && !kategorie.isSelbstbuchung()) {
@@ -246,12 +249,10 @@ public class Register implements Comparable<Register> {
 					// Falls dieses Register Quelle einer Umbuchung ist:
 					// Subtrahieren!
 					// Selbstbuchugen aber nicht!
-				}
-				else {
+				} else {
 					saldo.sum(getBuchung(i).getWert());
 				}
-			}
-			else { // StandardBuchung + SplitBuchung
+			} else { // StandardBuchung + SplitBuchung
 				saldo.sum(getBuchung(i).getWert());
 			}
 			i++;
@@ -275,12 +276,10 @@ public class Register implements Comparable<Register> {
 					// Falls dieses Register Quelle einer Umbuchung ist:
 					// Subtrahieren!
 					// Selbstbuchugen aber nicht!
-				}
-				else {
+				} else {
 					saldo.sum(getBuchung(i).getWert());
 				}
-			}
-			else { // StandardBuchung + SplitBuchung
+			} else { // StandardBuchung + SplitBuchung
 				saldo.sum(getBuchung(i).getWert());
 			}
 		}
@@ -297,14 +296,12 @@ public class Register implements Comparable<Register> {
 			if (typ.equals("Umbuchung")) {
 				final Umbuchung umbuchung = new Umbuchung();
 				umbuchung.laden(in, db, this);
-			}
-			else if (typ.equals("StandardBuchung2")) {
+			} else if (typ.equals("StandardBuchung2")) {
 				final StandardBuchung standardBuchung = new StandardBuchung();
 				standardBuchung.laden(in, db);
 				einsortierenBuchung(standardBuchung);
 				db.buchungMerken(standardBuchung);
-			}
-			else if (typ.equals("StandardBuchung")) {
+			} else if (typ.equals("StandardBuchung")) {
 				final Datum datum = new Datum();
 				datum.laden(in);
 				final String text = in.readUTF();
@@ -316,8 +313,7 @@ public class Register implements Comparable<Register> {
 					final StandardBuchung standardBuchung = new StandardBuchung(datum, text, kategorie, betrag);
 					einsortierenBuchung(standardBuchung);
 					db.buchungMerken(standardBuchung);
-				}
-				else {
+				} else {
 					final SplitBuchung buchung = new SplitBuchung(datum, text);
 					for (int j = 0; j < anz; j++) {
 						final String kategorie = in.readUTF();
@@ -328,22 +324,19 @@ public class Register implements Comparable<Register> {
 					einsortierenBuchung(buchung);
 					db.buchungMerken(buchung);
 				}
-			}
-			else if (typ.equals("SplitBuchung")) {
+			} else if (typ.equals("SplitBuchung")) {
 				final SplitBuchung splitBuchung = new SplitBuchung();
 				splitBuchung.laden(in, db);
 				einsortierenBuchung(splitBuchung);
 				db.buchungMerken(splitBuchung);
-			}
-			else if (!typ.equals("Dummy")) {
+			} else if (!typ.equals("Dummy")) {
 				throw new IOException("Register.laden: Unbekannter Buchungstyp: " + typ);
 				// "Dummy"-Buchung wird ignoriert!
 			}
 		}
 	}
 
-	public void speichern(final DataOutputStream out)
-			throws IOException {
+	public void speichern(final DataOutputStream out) throws IOException {
 		out.writeUTF(this.name);
 		out.writeInt(this.buchungen.size());
 		for (int i = 0; i < this.buchungen.size(); i++) {
@@ -356,14 +349,12 @@ public class Register implements Comparable<Register> {
 					// "Dummy"-Buchung wird geschrieben damit die Anzahl stimmt!
 					// Selbstbuchungen dennoch schreiben!
 					if (DEBUG) {
-						System.out.println("Register " + this.name + ": Dummy-Buchung gespeichert.");
+						LOGGER.info("Register " + this.name + ": Dummy-Buchung gespeichert.");
 					}
-				}
-				else {
+				} else {
 					buchung.speichern(out);
 				}
-			}
-			else {
+			} else {
 				buchung.speichern(out);
 			}
 		}

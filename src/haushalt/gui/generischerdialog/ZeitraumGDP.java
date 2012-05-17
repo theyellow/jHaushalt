@@ -22,6 +22,7 @@ import haushalt.gui.ZeitraumComboBox;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.logging.Logger;
 
 import javax.swing.JComponent;
 import javax.swing.text.AttributeSet;
@@ -36,8 +37,8 @@ import javax.swing.text.PlainDocument;
 
 public class ZeitraumGDP extends AbstractGDPane {
 
-	private static final boolean DEBUG = false;
 	private static final long serialVersionUID = 1L;
+	private static final Logger LOGGER = Logger.getLogger(ZeitraumGDP.class.getName());
 
 	private final ZeitraumComboBox comboBox;
 	private final DeleteableTextField textField;
@@ -61,7 +62,7 @@ public class ZeitraumGDP extends AbstractGDPane {
 
 	@Override
 	protected void refreshWert() {
-		this.wert = this.comboBox.getZeitraum(this.textField.getText());
+		setWert(this.comboBox.getZeitraum(this.textField.getText()));
 	}
 
 	@Override
@@ -87,21 +88,16 @@ public class ZeitraumGDP extends AbstractGDPane {
 		private static final long serialVersionUID = 1L;
 
 		@Override
-		public void insertString(final int offs, final String str, final AttributeSet a)
-				throws BadLocationException {
+		public void insertString(final int offs, final String str, final AttributeSet a) throws BadLocationException {
 			final char[] source = str.toCharArray();
 			final char[] result = new char[source.length];
 			int j = 0;
 
 			for (int i = 0; i < source.length; i++) {
-				if ((Character.isDigit(source[i])) ||
-						(source[i] == '/') ||
-						(source[i] == '-') ||
-						(source[i] == '.')) {
+				if ((Character.isDigit(source[i])) || (source[i] == '/') || (source[i] == '-') || (source[i] == '.')) {
 					result[j++] = source[i];
-				}
-				else if (DEBUG) {
-					System.out.println("-I- Falsches Zeichen: " + source[i]);
+				} else {
+					LOGGER.warning("-I- Falsches Zeichen: " + source[i]);
 				}
 			}
 

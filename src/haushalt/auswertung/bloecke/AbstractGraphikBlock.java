@@ -26,14 +26,12 @@ import java.awt.Graphics2D;
  * 2010.11.23 Graphics2D in der Methode 'print' verwendet
  * 2004.08.22 Erste Version (2.0)
  */
-abstract public class AbstractGraphikBlock
-		extends AbstractBlock {
+public abstract class AbstractGraphikBlock extends AbstractBlock {
 
-	abstract protected int getHoehe(int breite);
+	protected abstract int getHoehe(int breite);
 
 	@Override
-	public int print(final Graphics2D g2d, final int zeile, final int xStart, final int yStart, final int hoehe,
-			final int breite) {
+	public int print(final Graphics2D g2d, final int zeile, final int xStart, final int yStart, final int hoehe, final int breite) {
 		if (zeile > 0) {
 			return -1;
 		}

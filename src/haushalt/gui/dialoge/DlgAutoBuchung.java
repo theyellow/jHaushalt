@@ -71,20 +71,20 @@ import javax.swing.table.TableColumnModel;
 public class DlgAutoBuchung extends JDialog {
 
 	private static final long serialVersionUID = 1L;
-	private static final TextResource res = TextResource.get();
+	private static final TextResource RES = TextResource.get();
 
 	// GUI-Komponenten
 	private final DatumField datum = new DatumField();
 	private final JPanel buttonPane = new JPanel();
-	private final JButton buttonOK = new JButton(res.getString("button_ok"));
+	private final JButton buttonOK = new JButton(RES.getString("button_ok"));
 	private final JButton buttonDelete;
-	protected final AutoStandardBuchungTableModel standardTableModel;
-	protected final JTable standardTable;
-	protected final AutoUmbuchungTableModel umbuchungTableModel;
-	protected final JTable umbuchungTable;
+	private final AutoStandardBuchungTableModel standardTableModel;
+	private final JTable standardTable;
+	private final AutoUmbuchungTableModel umbuchungTableModel;
+	private final JTable umbuchungTable;
 
 	public DlgAutoBuchung(final Haushalt haushalt, final Datenbasis db) {
-		super(haushalt.getFrame(), res.getString("automatic_booking"), true);
+		super(haushalt.getFrame(), RES.getString("automatic_booking"), true);
 
 		// Table für Standard-Buchungen initialisieren
 		this.standardTableModel = new AutoStandardBuchungTableModel(db);
@@ -126,12 +126,12 @@ public class DlgAutoBuchung extends JDialog {
 		});
 
 		// Action erzeugen
-		final Action action = new AbstractAction(res.getString("button_delete"), haushalt.bildLaden("Delete16.png")) {
+		final Action action = new AbstractAction(RES.getString("button_delete"), haushalt.bildLaden("Delete16.png")) {
 
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(final ActionEvent e) {
-				if (e.getActionCommand().equals(res.getString("button_delete"))) {
+				if (e.getActionCommand().equals(RES.getString("button_delete"))) {
 					if (DlgAutoBuchung.this.standardTable.getCellEditor() != null) {
 						DlgAutoBuchung.this.standardTable.getCellEditor().cancelCellEditing();
 					}
@@ -141,37 +141,36 @@ public class DlgAutoBuchung extends JDialog {
 					final int rowStd = DlgAutoBuchung.this.standardTable.getSelectedRow();
 					final int rowUmb = DlgAutoBuchung.this.umbuchungTable.getSelectedRow();
 					if ((rowStd == -1) && (rowUmb == -1)) {
-						JOptionPane.showMessageDialog(haushalt.getFrame(),
-								res.getString("no_row_selected"),
-								"Alt-D: " + res.getString("automatic_booking"),
+						JOptionPane.showMessageDialog(
+								haushalt.getFrame(),
+								RES.getString("no_row_selected"),
+								"Alt-D: " + RES.getString("automatic_booking"),
 								JOptionPane.WARNING_MESSAGE);
-					}
-					else if (rowStd != -1) {
+					} else if (rowStd != -1) {
 						if (rowStd == DlgAutoBuchung.this.standardTableModel.getRowCount() - 1) {
-							JOptionPane.showMessageDialog(haushalt.getFrame(),
-									res.getString("can_not_delete_input_row"),
-									"Alt-D: " + res.getString("automatic_booking"),
+							JOptionPane.showMessageDialog(
+									haushalt.getFrame(),
+									RES.getString("can_not_delete_input_row"),
+									"Alt-D: " + RES.getString("automatic_booking"),
 									JOptionPane.WARNING_MESSAGE);
-						}
-						else {
+						} else {
 							DlgAutoBuchung.this.standardTableModel.entferneZeile(rowStd);
 						}
-					}
-					else {
+					} else {
 						if (rowUmb == DlgAutoBuchung.this.umbuchungTableModel.getRowCount() - 1) {
-							JOptionPane.showMessageDialog(haushalt.getFrame(),
-									res.getString("can_not_delete_input_row"),
-									"Alt-D: " + res.getString("automatic_booking"),
+							JOptionPane.showMessageDialog(
+									haushalt.getFrame(),
+									RES.getString("can_not_delete_input_row"),
+									"Alt-D: " + RES.getString("automatic_booking"),
 									JOptionPane.WARNING_MESSAGE);
-						}
-						else {
+						} else {
 							DlgAutoBuchung.this.umbuchungTableModel.entferneZeile(rowUmb);
 						}
 					}
 				}
 			}
 		};
-		action.putValue(Action.SHORT_DESCRIPTION, res.getString("legend_delete_automatic_booking"));
+		action.putValue(Action.SHORT_DESCRIPTION, RES.getString("legend_delete_automatic_booking"));
 		final KeyStroke key = KeyStroke.getKeyStroke(KeyEvent.VK_D, ActionEvent.CTRL_MASK);
 		action.putValue(Action.ACCELERATOR_KEY, key);
 		action.putValue(Action.MNEMONIC_KEY, new Integer(KeyEvent.VK_D));
@@ -187,7 +186,7 @@ public class DlgAutoBuchung extends JDialog {
 		columnModel.getColumn(3).setCellEditor(new DefaultCellEditor(euroField));
 		final JComboBox comboBox1 = new JComboBox(db.getRegisterNamen());
 		columnModel.getColumn(4).setCellEditor(new DefaultCellEditor(comboBox1));
-		final JComboBox comboBox2 = new JComboBox(res.getAutoBuchungIntervallNamen());
+		final JComboBox comboBox2 = new JComboBox(RES.getAutoBuchungIntervallNamen());
 		columnModel.getColumn(5).setCellEditor(new DefaultCellEditor(comboBox2));
 
 		// Cell-Editoren für Umbuchungen erzeugen
@@ -209,10 +208,10 @@ public class DlgAutoBuchung extends JDialog {
 
 		final Container contentPane = getContentPane();
 		final JScrollPane northPane = new JScrollPane(this.standardTable);
-		northPane.setBorder(BorderFactory.createTitledBorder(res.getString("standard_bookings")));
+		northPane.setBorder(BorderFactory.createTitledBorder(RES.getString("standard_bookings")));
 		contentPane.add(northPane, BorderLayout.NORTH);
 		final JScrollPane centerPane = new JScrollPane(this.umbuchungTable);
-		centerPane.setBorder(BorderFactory.createTitledBorder(res.getString("rebookings")));
+		centerPane.setBorder(BorderFactory.createTitledBorder(RES.getString("rebookings")));
 		contentPane.add(centerPane, BorderLayout.CENTER);
 		contentPane.add(this.buttonPane, BorderLayout.SOUTH);
 		this.buttonOK.addActionListener(new ActionListener() {
@@ -221,14 +220,15 @@ public class DlgAutoBuchung extends JDialog {
 				setVisible(false);
 				final int anzahl = db.ausfuehrenAutoBuchungen(new Datum(DlgAutoBuchung.this.datum.getText()));
 				if (anzahl > 0) {
-					JOptionPane.showMessageDialog(
-							haushalt.getFrame(),
-							res.getString("executed_automatic_bookings1") + " " + anzahl + " "
-									+ res.getString("executed_automatic_bookings2"));
+					JOptionPane.showMessageDialog(haushalt.getFrame(), RES.getString("executed_automatic_bookings1")
+						+ " "
+						+ anzahl
+						+ " "
+						+ RES.getString("executed_automatic_bookings2"));
 				}
 			}
 		});
-		this.buttonPane.add(new JLabel(res.getString("execute_until")));
+		this.buttonPane.add(new JLabel(RES.getString("execute_until")));
 		this.buttonPane.add(this.datum);
 		this.buttonDelete = new JButton(action);
 		this.buttonPane.add(this.buttonDelete);

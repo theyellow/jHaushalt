@@ -50,8 +50,7 @@ public class Quartal extends AbstractZeitraum {
 			if (this.quartal > 4) {
 				this.quartal = 4;
 			}
-		}
-		catch (final Exception e) {
+		} catch (final Exception e) {
 			// Fehler! -> Standardwerte.
 		}
 	}
@@ -80,18 +79,20 @@ public class Quartal extends AbstractZeitraum {
 	private static Datum getQuartalsBeginn(final int quartal, final int jahr) {
 		int monat = 1;
 		switch (quartal) {
-		case 1:
-			monat = 1;
-			break;
-		case 2:
-			monat = 4;
-			break;
-		case 3:
-			monat = 7;
-			break;
-		case 4:
-			monat = 10;
-			break;
+			case 1:
+				monat = 1;
+				break;
+			case 2:
+				monat = 4;
+				break;
+			case 3:
+				monat = 7;
+				break;
+			case 4:
+				monat = 10;
+				break;
+			default:
+				break;
 		}
 		return new Datum(1, monat, jahr);
 	}

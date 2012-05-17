@@ -47,6 +47,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.logging.Logger;
 
 import javax.print.attribute.HashPrintRequestAttributeSet;
 import javax.print.attribute.ResolutionSyntax;
@@ -86,31 +87,43 @@ public abstract class AbstractBlockAuswertung extends AbstractAuswertung {
 
 	private static final long serialVersionUID = 1L;
 	private static final boolean DEBUG = false;
-	private static final TextResource res = TextResource.get();
+	private static final TextResource RES = TextResource.get();
+	private static final Logger LOGGER = Logger.getLogger(AbstractBlockAuswertung.class.getName());
 
-	protected final Haushalt haushalt;
+	private final Haushalt haushalt;
 	private final ArrayList<AbstractBlock> bloecke = new ArrayList<AbstractBlock>();
 	private final Image wasserzeichen;
+
+	private int seitenZaehler = 0;
+	private int blockZaehler = 0;
+	private int zeilenZaehler = 0;
+	private int blockStart = 0;
+	private int zeilenStart = 0;
+
+
+	private AbstractGDPane[] panes;
+	private TextGDP namenPane;
+	private GenerischerDialog dlgEigenschaften;
 
 	public AbstractBlockAuswertung(final Haushalt haushalt, final Datenbasis db, final String name) {
 		super(db, name);
 		this.haushalt = haushalt;
 		final URLClassLoader urlLoader = (URLClassLoader) getClass().getClassLoader();
-		final URL fileLoc = urlLoader.findResource("res/jhh-grau.gif");
+		final URL fileLoc = urlLoader.findResource("RES/jhh-grau.gif");
 		this.wasserzeichen = Toolkit.getDefaultToolkit().createImage(fileLoc);
 	}
 
 	public void addDokumentenBlock(final AbstractBlock block) {
 		this.bloecke.add(block);
 		if (DEBUG) {
-			System.out.println("AbstractBlockAuswertung: Block hinzugefügt.");
+			LOGGER.info("AbstractBlockAuswertung: Block hinzugefügt.");
 		}
 	}
 
 	public void loescheBloecke() {
 		this.bloecke.clear();
 		if (DEBUG) {
-			System.out.println("AbstractBlockAuswertung: Alle Blöcke gelöscht.");
+			LOGGER.info("AbstractBlockAuswertung: Alle Blöcke gelöscht.");
 		}
 	}
 
@@ -128,19 +141,15 @@ public abstract class AbstractBlockAuswertung extends AbstractAuswertung {
 		revalidate();
 	}
 
-	private int seitenZaehler = 0;
-	private int blockZaehler = 0;
-	private int zeilenZaehler = 0;
-	private int blockStart = 0;
-	private int zeilenStart = 0;
 
 	@Override
 	public int print(final Graphics g, final PageFormat seitenFormat, final int gesuchteSeite) throws PrinterException {
 		if (DEBUG) {
-			System.out.println("AbstractBlockAuswertung: Drucke Seite " + gesuchteSeite);
-			System.out.println("AbstractBlockAuswertung: Pagesize = " +
+			LOGGER.info("AbstractBlockAuswertung: Drucke Seite " + gesuchteSeite);
+			LOGGER.info("AbstractBlockAuswertung: Pagesize = "
+				+
 					seitenFormat.getImageableWidth() + " x " + seitenFormat.getImageableHeight());
-			System.out.println("AbstractBlockAuswertung: PanelSize = " + getSize());
+			LOGGER.info("AbstractBlockAuswertung: PanelSize = " + getSize());
 		}
 		if (gesuchteSeite == 0) {
 			// Die erste Seite ist gewünscht => alle Zähler zurücksetzen
@@ -213,7 +222,7 @@ public abstract class AbstractBlockAuswertung extends AbstractAuswertung {
 		int verbrauchteHoehe;
 		do {
 			if (DEBUG) {
-				System.out.println("AbstractBlockAuswertung: Block " + this.blockZaehler + " wird gedruckt.");
+				LOGGER.info("AbstractBlockAuswertung: Block " + this.blockZaehler + " wird gedruckt.");
 			}
 			final AbstractBlock block = this.bloecke.get(this.blockZaehler);
 			// Aktuelle Zeile ausgeben:
@@ -252,11 +261,8 @@ public abstract class AbstractBlockAuswertung extends AbstractAuswertung {
 		return PAGE_EXISTS;
 	}
 
-	protected AbstractGDPane[] panes;
-	private TextGDP namenPane;
-	private GenerischerDialog dlgEigenschaften;
 
-	abstract protected String berechneAuswertung(Object[] werte);
+	protected abstract String berechneAuswertung(Object[] werte);
 
 	/**
 	 * Ermöglicht die Auswertung neu zu berechnen, wenn sich die allgemeinen
@@ -269,12 +275,12 @@ public abstract class AbstractBlockAuswertung extends AbstractAuswertung {
 		if (this.panes != null) {
 			werte = new Object[this.panes.length];
 			for (int i = 0; i < this.panes.length; i++) {
-				werte[i] = this.panes[i].getWert();
+				werte[i] = this.panes[i].getRefreshedWert();
 			}
 		}
 		final String titel = berechneAuswertung(werte);
 		if (DEBUG) {
-			System.out.println(toString() + " in " + (new Date().getTime() - start) + " ms berechnet.");
+			LOGGER.info(toString() + " in " + (new Date().getTime() - start) + " ms berechnet.");
 		}
 		return titel;
 	}
@@ -286,10 +292,10 @@ public abstract class AbstractBlockAuswertung extends AbstractAuswertung {
 			final Object[] werte = new Object[this.panes.length];
 			for (int i = 0; i < this.panes.length; i++) {
 				this.dlgEigenschaften.addPane(this.panes[i]);
-				werte[i] = this.panes[i].getWert();
+				werte[i] = this.panes[i].getRefreshedWert();
 			}
 		}
-		this.namenPane = new TextGDP(res.getString("report_name"), toString());
+		this.namenPane = new TextGDP(RES.getString("report_name"), toString());
 		this.dlgEigenschaften.addPane(this.namenPane);
 	}
 
@@ -304,12 +310,12 @@ public abstract class AbstractBlockAuswertung extends AbstractAuswertung {
 			final String titel = berechneAuswertung();
 			// Wenn der Benutzer die Auswertung nicht benannt hat, wird sie mit
 			// einem automatischen Namen versehen.
-			if (this.namenPane.getWert().toString().startsWith(res.getString("unnamed"))) {
+			if (this.namenPane.getRefreshedWert().toString().startsWith(RES.getString("unnamed"))) {
 				((JTextField) this.namenPane.getZentraleKomponente()).setText(titel);
 				setAuswertungName(titel);
 			}
 			else {
-				setAuswertungName("" + this.namenPane.getWert());
+				setAuswertungName("" + this.namenPane.getRefreshedWert());
 			}
 			return true;
 		}
@@ -351,15 +357,15 @@ public abstract class AbstractBlockAuswertung extends AbstractAuswertung {
 				final AbstractZeitraum zeitraum = new Jahr(2010);
 				final String register = "Testregister";
 				final String[][] tabelle = {
-						{ "Datum 1", "Buchungstext 1", "Kategorie 1", "Wert 1" },
-						{ "Datum 2", "Buchungstext 2", "Kategorie 2", "Wert 2" },
-						{ "Datum 3", "Buchungstext 3", "Kategorie 3", "Wert 3" },
-						{ "Datum 4", "Buchungstext 4", "Kategorie 4", "Wert 4" },
-						{ "Datum 5", "Buchungstext 5", "Kategorie 5", "Wert 5" },
-						{ "Datum 6", "Buchungstext 6", "Kategorie 6", "Wert 6" },
-						{ "Datum 7", "Buchungstext 7", "Kategorie 7", "Wert 7" },
-						{ "Datum 8", "Buchungstext 8", "Kategorie 8", "Wert 8" },
-						{ "Datum 9", "Buchungstext 9", "Kategorie 9", "Wert 9" }
+						{ "Datum 1", "Buchungstext 1", "IKategorie 1", "Wert 1" },
+						{ "Datum 2", "Buchungstext 2", "IKategorie 2", "Wert 2" },
+						{ "Datum 3", "Buchungstext 3", "IKategorie 3", "Wert 3" },
+						{ "Datum 4", "Buchungstext 4", "IKategorie 4", "Wert 4" },
+						{ "Datum 5", "Buchungstext 5", "IKategorie 5", "Wert 5" },
+						{ "Datum 6", "Buchungstext 6", "IKategorie 6", "Wert 6" },
+						{ "Datum 7", "Buchungstext 7", "IKategorie 7", "Wert 7" },
+						{ "Datum 8", "Buchungstext 8", "IKategorie 8", "Wert 8" },
+						{ "Datum 9", "Buchungstext 9", "IKategorie 9", "Wert 9" }
 				};
 				final String fontname = "SansSerif";
 				final Euro summe = new Euro(99.99);
@@ -383,7 +389,7 @@ public abstract class AbstractBlockAuswertung extends AbstractAuswertung {
 				block2.setLinienFarbe("Weiß");
 				block2.setAusrichtung(attribute);
 				addDokumentenBlock(block2);
-				final String[][] text = { { "", res.getString("total") + ":", "", "" + summe } };
+				final String[][] text = { { "", RES.getString("total") + ":", "", "" + summe } };
 				final TabellenBlock block3 = new TabellenBlock(text);
 				block3.setFont(new Font(fontname, Font.ITALIC, 12));
 				block3.setRelTabs(relTabs);
@@ -418,9 +424,16 @@ public abstract class AbstractBlockAuswertung extends AbstractAuswertung {
 				job.print();
 			}
 			catch (final PrinterException e) {
-				e.printStackTrace();
+				LOGGER.warning(e.getMessage());
 			}
 		}
 	}
 
+	protected Haushalt getHaushalt() {
+		return haushalt;
+	}
+
+	protected AbstractGDPane[] getPanes() {
+		return panes;
+	}
 }

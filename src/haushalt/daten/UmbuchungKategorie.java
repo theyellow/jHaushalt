@@ -27,7 +27,7 @@ import java.util.logging.Logger;
  * 2006.02.10 Erste Version
  */
 
-public class UmbuchungKategorie implements Kategorie, Cloneable {
+public class UmbuchungKategorie implements IKategorie, Cloneable {
 
 	private static final Logger LOGGER = Logger.getLogger(UmbuchungKategorie.class.getName());
 	private static final long serialVersionUID = 1L;
@@ -57,7 +57,7 @@ public class UmbuchungKategorie implements Kategorie, Cloneable {
 		return "[" + this.quelle + "->" + this.ziel + "]";
 	}
 
-	public int compareTo(final Kategorie kategorie) {
+	public int compareTo(final IKategorie kategorie) {
 		return toString().compareTo(kategorie.toString());
 	}
 

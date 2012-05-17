@@ -29,7 +29,7 @@ import haushalt.daten.Datenbasis;
 import haushalt.daten.Datum;
 import haushalt.daten.EinzelKategorie;
 import haushalt.daten.Euro;
-import haushalt.daten.Kategorie;
+import haushalt.daten.IKategorie;
 import haushalt.daten.StandardBuchung;
 import haushalt.daten.Umbuchung;
 import haushalt.daten.UmbuchungKategorie;
@@ -229,7 +229,7 @@ public class RegisterTableModel extends AbstractTableModel {
 			}
 			break;
 		case 2:
-			buchung.setKategorie((Kategorie) value);
+			buchung.setKategorie((IKategorie) value);
 			this.db.buchungMerken(buchung);
 			break;
 		case 3:

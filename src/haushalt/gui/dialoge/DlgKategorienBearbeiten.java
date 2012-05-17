@@ -25,11 +25,11 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
-import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.util.logging.Logger;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -65,8 +65,8 @@ import javax.swing.tree.TreeSelectionModel;
  * 2008.03.31 BugFix: Kategoriennamen mit Leerzeichen ermöglicht
  * 2007.05.29 Internationalisierung
  * 2006.02.14 Löschen des TextFields nach an dem Anlegen einer
- * neuen Kategorie und Sicherstellen, dass die neue
- * Kategorie sichtbar ist
+ * neuen IKategorie und Sicherstellen, dass die neue
+ * IKategorie sichtbar ist
  * 2006.01.27 Keine globale Änderung der Option
  * "Unterkategorien verwenden" mehr
  */
@@ -75,28 +75,29 @@ public class DlgKategorienBearbeiten extends JDialog implements TreeSelectionLis
 
 	private static final boolean DEBUG = false;
 	private static final long serialVersionUID = 1L;
-	private static final TextResource res = TextResource.get();
+	private static final TextResource RES = TextResource.get();
 
+	private static final Logger LOGGER = Logger.getLogger(DlgKategorienBearbeiten.class.getName());
 	private final Haushalt haushalt;
-	protected final Datenbasis db;
+	private final Datenbasis db;
 	private JScrollPane scrollPane;
 	private JTree tree;
 	private DefaultTreeModel treeModel;
 	private final DefaultTreeCellRenderer cellRenderer;
-	protected DefaultMutableTreeNode root;
+	private DefaultMutableTreeNode root;
 	private final JPanel eastPane = new JPanel();
 	private final JPanel erzeugenPane = new JPanel();
 	private final DeleteableTextField textErzeugen;
-	private final JButton buttonErzeugen = new JButton(res.getString("button_create"));
+	private final JButton buttonErzeugen = new JButton(RES.getString("button_create"));
 	private final JPanel umbenennenPane = new JPanel();
 	private final DeleteableTextField textUmbenennen;
-	private final JButton buttonUmbenennen = new JButton(res.getString("button_rename"));
-	protected final JCheckBox unterkategorienVerwenden = new JCheckBox(res.getString("use_subcategories"), true);
+	private final JButton buttonUmbenennen = new JButton(RES.getString("button_rename"));
+	private final JCheckBox unterkategorienVerwenden = new JCheckBox(RES.getString("use_subcategories"), true);
 	private final JPanel buttonPane = new JPanel();
-	private final JButton buttonAbbruch = new JButton(res.getString("button_close"));
+	private final JButton buttonAbbruch = new JButton(RES.getString("button_close"));
 
-	public DlgKategorienBearbeiten(final Haushalt haushalt, final Datenbasis datenbasis) throws HeadlessException {
-		super(haushalt.getFrame(), res.getString("edit_category"), true); // =
+	public DlgKategorienBearbeiten(final Haushalt haushalt, final Datenbasis datenbasis) {
+		super(haushalt.getFrame(), RES.getString("edit_category"), true); // =
 																			// modal
 		this.haushalt = haushalt;
 		this.db = datenbasis;
@@ -109,34 +110,32 @@ public class DlgKategorienBearbeiten extends JDialog implements TreeSelectionLis
 
 			@Override
 			public Component getTreeCellRendererComponent(
-					final JTree l_tree,
-					final Object value,
-					final boolean sel,
-					final boolean expanded,
-					final boolean leaf,
-					final int row,
-					final boolean l_hasFocus) {
+				final JTree lTree,
+				final Object value,
+				final boolean sel,
+				final boolean expanded,
+				final boolean leaf,
+				final int row,
+				final boolean lHasFocus) {
 
-				super.getTreeCellRendererComponent(l_tree, value, sel, expanded, leaf, row, l_hasFocus);
+				super.getTreeCellRendererComponent(lTree, value, sel, expanded, leaf, row, lHasFocus);
 				final DefaultMutableTreeNode node = (DefaultMutableTreeNode) value;
 				if (node.getParent() == null) {
 					setIcon(null);
 					setToolTipText(null);
-				}
-				else if (node.getParent() == DlgKategorienBearbeiten.this.root) {
+				} else if (node.getParent() == DlgKategorienBearbeiten.this.root) {
 					setIcon(hauptkatIcon);
-					setToolTipText(res.getString("major_category"));
-				}
-				else {
+					setToolTipText(RES.getString("major_category"));
+				} else {
 					setIcon(unterkatIcon);
-					setToolTipText(res.getString("subcategory"));
+					setToolTipText(RES.getString("subcategory"));
 				}
 				return this;
 			}
 		};
 		treeErzeugen();
 		final Dimension dimensionButton = this.buttonUmbenennen.getPreferredSize();
-		this.erzeugenPane.setBorder(BorderFactory.createTitledBorder(res.getString("create_category")));
+		this.erzeugenPane.setBorder(BorderFactory.createTitledBorder(RES.getString("create_category")));
 		this.textErzeugen = new DeleteableTextField(15) {
 
 			private static final long serialVersionUID = 1L;
@@ -157,7 +156,7 @@ public class DlgKategorienBearbeiten extends JDialog implements TreeSelectionLis
 		this.erzeugenPane.add(this.buttonErzeugen);
 		this.buttonErzeugen.addActionListener(erzeugenActionListener);
 		this.buttonErzeugen.setPreferredSize(dimensionButton);
-		this.umbenennenPane.setBorder(BorderFactory.createTitledBorder(res.getString("rename_category")));
+		this.umbenennenPane.setBorder(BorderFactory.createTitledBorder(RES.getString("rename_category")));
 		this.textUmbenennen = new DeleteableTextField(15) {
 
 			private static final long serialVersionUID = 1L;
@@ -214,19 +213,18 @@ public class DlgKategorienBearbeiten extends JDialog implements TreeSelectionLis
 		if (this.tree != null) {
 			this.scrollPane.getViewport().remove(this.tree);
 		}
-		this.root = new DefaultMutableTreeNode(res.getString("categories"));
+		this.root = new DefaultMutableTreeNode(RES.getString("categories"));
 		final EinzelKategorie[] kategorien = this.db.getKategorien(this.unterkategorienVerwenden.isSelected());
 		DefaultMutableTreeNode haupt = null;
 		for (int i = 0; i < kategorien.length; i++) {
 			if (kategorien[i].isHauptkategorie()) {
 				haupt = new DefaultMutableTreeNode(kategorien[i].getName());
 				this.root.add(haupt);
-			}
-			else {
+			} else {
 				haupt.add(new DefaultMutableTreeNode(kategorien[i].getName()));
 			}
 			if (DEBUG) {
-				System.out.println("" + kategorien[i] + " hinzugefügt.");
+				LOGGER.info("" + kategorien[i] + " hinzugefügt.");
 			}
 		}
 		this.treeModel = new DefaultTreeModel(this.root);
@@ -240,8 +238,7 @@ public class DlgKategorienBearbeiten extends JDialog implements TreeSelectionLis
 
 	protected void erzeugen() {
 		if (this.textErzeugen.getText().equals("")) {
-			JOptionPane.showMessageDialog(this.haushalt.getFrame(),
-					res.getString("message_no_category_name"));
+			JOptionPane.showMessageDialog(this.haushalt.getFrame(), RES.getString("message_no_category_name"));
 			return;
 		}
 		final DefaultMutableTreeNode node = (DefaultMutableTreeNode) this.tree.getLastSelectedPathComponent();
@@ -253,43 +250,35 @@ public class DlgKategorienBearbeiten extends JDialog implements TreeSelectionLis
 				this.treeModel.insertNodeInto(child, this.root, this.root.getChildCount());
 				this.tree.scrollPathToVisible(new TreePath(child.getPath()));
 				this.textErzeugen.setText("");
-			}
-			else {
-				JOptionPane.showMessageDialog(this.haushalt.getFrame(),
-						res.getString("message_category_exists"));
+			} else {
+				JOptionPane.showMessageDialog(this.haushalt.getFrame(), RES.getString("message_category_exists"));
 			}
 			return;
 		}
 		if (node.getParent() != this.root) {
-			JOptionPane.showMessageDialog(this.haushalt.getFrame(),
-					res.getString("message_no_major_category_selected"));
+			JOptionPane.showMessageDialog(this.haushalt.getFrame(), RES.getString("message_no_major_category_selected"));
 			return;
 		}
 		if (!this.unterkategorienVerwenden.isSelected()) {
-			JOptionPane.showMessageDialog(this.haushalt.getFrame(),
-					res.getString("message_activate_subcategories"));
+			JOptionPane.showMessageDialog(this.haushalt.getFrame(), RES.getString("message_activate_subcategories"));
 			return;
 		}
 		final EinzelKategorie hauptKategorie = this.db.findeOderErzeugeKategorie((String) node.getUserObject(), null);
 		if (!this.db.isKategorie(this.textErzeugen.getText(), hauptKategorie)) {
 			// Erzeugt neue Unterkategorie:
-			final EinzelKategorie kategorie = this.db.findeOderErzeugeKategorie(this.textErzeugen.getText(),
-					hauptKategorie);
+			final EinzelKategorie kategorie = this.db.findeOderErzeugeKategorie(this.textErzeugen.getText(), hauptKategorie);
 			final DefaultMutableTreeNode child = new DefaultMutableTreeNode(kategorie.getName());
 			this.treeModel.insertNodeInto(child, node, node.getChildCount());
 			this.tree.scrollPathToVisible(new TreePath(child.getPath()));
 			this.textErzeugen.setText("");
-		}
-		else {
-			JOptionPane.showMessageDialog(this.haushalt.getFrame(),
-					res.getString("message_category_exists"));
+		} else {
+			JOptionPane.showMessageDialog(this.haushalt.getFrame(), RES.getString("message_category_exists"));
 		}
 	}
 
 	protected void umbenennen() {
 		if (this.textUmbenennen.getText().equals("")) {
-			JOptionPane.showMessageDialog(this.haushalt.getFrame(),
-					res.getString("message_category_is_empty"));
+			JOptionPane.showMessageDialog(this.haushalt.getFrame(), RES.getString("message_category_is_empty"));
 			return;
 		}
 		final DefaultMutableTreeNode node = (DefaultMutableTreeNode) this.tree.getLastSelectedPathComponent();
@@ -299,14 +288,12 @@ public class DlgKategorienBearbeiten extends JDialog implements TreeSelectionLis
 		EinzelKategorie hauptkategorie;
 		if (node.getParent() == this.root) {
 			hauptkategorie = null;
-		}
-		else {
+		} else {
 			final String name = (String) ((DefaultMutableTreeNode) node.getParent()).getUserObject();
 			hauptkategorie = this.db.findeOderErzeugeKategorie(name, null);
 		}
 		if (this.db.isKategorie(this.textUmbenennen.getText(), hauptkategorie)) {
-			JOptionPane.showMessageDialog(this.haushalt.getFrame(),
-					res.getString("message_category_exists"));
+			JOptionPane.showMessageDialog(this.haushalt.getFrame(), RES.getString("message_category_exists"));
 			return;
 		}
 		final EinzelKategorie kategorie = this.db.findeOderErzeugeKategorie("" + node.getUserObject(), hauptkategorie);
@@ -342,8 +329,7 @@ public class DlgKategorienBearbeiten extends JDialog implements TreeSelectionLis
 		final DefaultMutableTreeNode node = (DefaultMutableTreeNode) this.tree.getLastSelectedPathComponent();
 		if (node == this.root) {
 			this.textUmbenennen.setText("");
-		}
-		else {
+		} else {
 			this.textUmbenennen.setText("" + node.getUserObject());
 		}
 	}

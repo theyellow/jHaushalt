@@ -22,7 +22,6 @@ import haushalt.gui.TextResource;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.GridLayout;
-import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -53,7 +52,7 @@ import javax.swing.JTabbedPane;
 public class DlgImport extends JDialog {
 
 	private static final long serialVersionUID = 1L;
-	private static final TextResource res = TextResource.get();
+	private static final TextResource RES = TextResource.get();
 
 	// GUI-Komponenten
 	private final JTabbedPane tabbedPane = new JTabbedPane();
@@ -61,22 +60,16 @@ public class DlgImport extends JDialog {
 	private final JPanel paneMit = new JPanel();
 	private final JPanel paneOhne = new JPanel();
 	private final JPanel buttonPane = new JPanel();
-	private final JButton buttonOK = new JButton(res.getString("button_ok"));
-	private final JButton buttonAbbruch = new JButton(res.getString("button_cancel"));
-	private final JButton buttonWeiter = new JButton(res.getString("button_continue"));
-	private final JLabel labelMit[] = {
-			new JLabel(res.getString("date")),
-			new JLabel(res.getString("posting_text")),
-			new JLabel(res.getString("category")),
-			new JLabel(res.getString("amount"))
-	};
-	private final JLabel labelOhne[] = {
-			new JLabel(res.getString("date")),
-			new JLabel(res.getString("posting_text")),
-			new JLabel(res.getString("category")),
-			new JLabel(res.getString("amount"))
-	};
-	private final JCheckBox checkBox = new JCheckBox(res.getString("first_row_contains_column_names"));
+	private final JButton buttonOK = new JButton(RES.getString("button_ok"));
+	private final JButton buttonAbbruch = new JButton(RES.getString("button_cancel"));
+	private final JButton buttonWeiter = new JButton(RES.getString("button_continue"));
+	private final JLabel[] labelMit = {
+			new JLabel(RES.getString("date")), new JLabel(RES.getString("posting_text")), new JLabel(RES.getString("category")),
+			new JLabel(RES.getString("amount"))};
+	private final JLabel[] labelOhne = {
+			new JLabel(RES.getString("date")), new JLabel(RES.getString("posting_text")), new JLabel(RES.getString("category")),
+			new JLabel(RES.getString("amount"))};
+	private final JCheckBox checkBox = new JCheckBox(RES.getString("first_row_contains_column_names"));
 	private final JComboBox[] comboBoxMit = new JComboBox[4];
 	private final JComboBox[] comboBoxOhne = new JComboBox[4];
 
@@ -86,8 +79,8 @@ public class DlgImport extends JDialog {
 	private final CsvHandler csvHandler = new CsvHandler();
 	private final CsvHandler.CsvPane csvPane;
 
-	public DlgImport(final Haushalt haushalt) throws HeadlessException {
-		super(haushalt.getFrame(), res.getString("import_csv"), true);
+	public DlgImport(final Haushalt haushalt) {
+		super(haushalt.getFrame(), RES.getString("import_csv"), true);
 		final Container contentPane = getContentPane();
 		contentPane.add(this.tabbedPane, BorderLayout.CENTER);
 		contentPane.add(this.buttonPane, BorderLayout.SOUTH);
@@ -107,10 +100,11 @@ public class DlgImport extends JDialog {
 					final int anzahlSpalten = DlgImport.this.tabelle[0].length;
 					final String[] listeMit = new String[anzahlSpalten + 1];
 					final String[] listeOhne = new String[anzahlSpalten + 1];
-					listeMit[0] = listeOhne[0] = "leer";
+					listeMit[0] = "leer";
+					listeOhne[0] = "leer";
 					for (int i = 1; i < anzahlSpalten + 1; i++) {
 						listeMit[i] = DlgImport.this.tabelle[0][i - 1];
-						listeOhne[i] = res.getString("csv_import_column") + " " + i;
+						listeOhne[i] = RES.getString("csv_import_column") + " " + i;
 					}
 					final ActionListener actionListener = new ActionListener() {
 
@@ -142,12 +136,11 @@ public class DlgImport extends JDialog {
 					DlgImport.this.tabbedPane.setSelectedIndex(1);
 					DlgImport.this.buttonWeiter.setEnabled(false);
 					DlgImport.this.buttonOK.setEnabled(true);
-				}
-				else {
+				} else {
 					JOptionPane.showMessageDialog(
 							haushalt.getFrame(),
-							res.getString("could_not_load"),
-							res.getString("error"),
+							RES.getString("could_not_load"),
+							RES.getString("error"),
 							JOptionPane.INFORMATION_MESSAGE);
 				}
 			}
@@ -164,27 +157,26 @@ public class DlgImport extends JDialog {
 		this.buttonPane.add(this.buttonOK);
 
 		this.csvPane = this.csvHandler.new CsvPane(haushalt.getFrame(), haushalt.getOrdner(), true);
-		this.tabbedPane.addTab(res.getString("choose_file"), this.csvPane);
+		this.tabbedPane.addTab(RES.getString("choose_file"), this.csvPane);
 		this.paneMit.setLayout(new GridLayout(4, 2));
 		this.paneOhne.setLayout(new GridLayout(4, 2));
 		this.paneZwei.setLayout(new BorderLayout());
 		this.paneZwei.add(this.checkBox, BorderLayout.NORTH);
 		this.paneZwei.add(this.paneOhne, BorderLayout.CENTER);
-		this.tabbedPane.addTab(res.getString("assign_columns"), this.paneZwei);
+		this.tabbedPane.addTab(RES.getString("assign_columns"), this.paneZwei);
 		this.tabbedPane.setEnabledAt(1, false);
 		this.checkBox.addItemListener(new ItemListener() {
 
 			public void itemStateChanged(final ItemEvent e) {
-				final JCheckBox checkBox = (JCheckBox) e.getSource();
-				if (checkBox.isSelected()) {
+				final JCheckBox sourceCheckBox = (JCheckBox) e.getSource();
+				if (sourceCheckBox.isSelected()) {
 					DlgImport.this.paneZwei.remove(DlgImport.this.paneOhne);
 					DlgImport.this.paneZwei.add(DlgImport.this.paneMit, BorderLayout.CENTER);
 					for (int i = 0; i < 4; i++) {
 						DlgImport.this.comboBoxMit[i].setSelectedIndex(DlgImport.this.gewaehlt[i]);
 						DlgImport.this.comboBoxMit[i].setEnabled(true);
 					}
-				}
-				else {
+				} else {
 					DlgImport.this.paneZwei.remove(DlgImport.this.paneMit);
 					DlgImport.this.paneZwei.add(DlgImport.this.paneOhne, BorderLayout.CENTER);
 					for (int i = 0; i < 4; i++) {
@@ -207,8 +199,7 @@ public class DlgImport extends JDialog {
 			for (int j = 0; j < 4; j++) {
 				if (this.gewaehlt[j] != 0) {
 					importTabelle[i - start][j] = this.tabelle[i][this.gewaehlt[j] - 1];
-				}
-				else {
+				} else {
 					importTabelle[i - start][j] = "";
 				}
 			}

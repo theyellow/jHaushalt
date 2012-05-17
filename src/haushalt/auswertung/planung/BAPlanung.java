@@ -39,17 +39,17 @@ import java.awt.Font;
  */
 public class BAPlanung extends AbstractBlockAuswertung {
 
-	private static final long serialVersionUID = 1L;
-	private static final TextResource res = TextResource.get();
+	public static final String UEBERSCHRIFT = TextResource.get().getString("forecast");
 
-	public static final String ueberschrift = res.getString("forecast");
+	private static final long serialVersionUID = 1L;
+	private static final TextResource RES = TextResource.get();
 
 	public BAPlanung(final Haushalt haushalt, final Datenbasis db, final String name) {
 		super(haushalt, db, name);
 		final AbstractGDPane[] panes = new AbstractGDPane[2];
-		panes[0] = new ZeitraumGDP(res.getString("period") + ":", new Jahr(2008));
-		panes[1] = new PlanungGDP(res.getString("forecast") + ":", new Planung(db));
-		erzeugeEigenschaften(haushalt.getFrame(), ueberschrift, panes);
+		panes[0] = new ZeitraumGDP(RES.getString("period") + ":", new Jahr(2008));
+		panes[1] = new PlanungGDP(RES.getString("forecast") + ":", new Planung(db));
+		erzeugeEigenschaften(haushalt.getFrame(), UEBERSCHRIFT, panes);
 	}
 
 	@Override
@@ -57,27 +57,25 @@ public class BAPlanung extends AbstractBlockAuswertung {
 		final AbstractZeitraum zeitraum = (AbstractZeitraum) werte[0];
 		final Planung planung = (Planung) werte[1];
 		planung.setZeitraum(zeitraum);
-		this.tabelle = planung.getVergleich();
+		setTabelle(planung.getVergleich());
 
 		// Vorhandene Blöcke löschen und neu berechnete einfügen
-		final String titel = res.getString("forecast") + " (" + zeitraum + ")";
+		final String titel = RES.getString("forecast") + " (" + zeitraum + ")";
 		loescheBloecke();
 		final TextBlock block1 = new TextBlock(titel);
-		block1.setFont(new Font(this.haushalt.getFontname(), Font.BOLD, this.haushalt.getFontgroesse() + 6));
+		block1.setFont(new Font(this.getHaushalt().getFontname(), Font.BOLD, this.getHaushalt().getFontgroesse() + 6));
 		addDokumentenBlock(block1);
 		addDokumentenBlock(new LeererBlock(1));
-		final TabellenBlock block2 = new TabellenBlock(this.tabelle);
-		block2.setFont(new Font(this.haushalt.getFontname(), Font.PLAIN, this.haushalt.getFontgroesse()));
+		final TabellenBlock block2 = new TabellenBlock(getTabelle());
+		block2.setFont(new Font(this.getHaushalt().getFontname(), Font.PLAIN, this.getHaushalt().getFontgroesse()));
 		final TabellenBlock.Ausrichtung[] attribute = {
-				TabellenBlock.Ausrichtung.LINKS,
-				TabellenBlock.Ausrichtung.RECHTS,
-				TabellenBlock.Ausrichtung.RECHTS,
-				TabellenBlock.Ausrichtung.RECHTS };
+				TabellenBlock.Ausrichtung.LINKS, TabellenBlock.Ausrichtung.RECHTS, TabellenBlock.Ausrichtung.RECHTS,
+				TabellenBlock.Ausrichtung.RECHTS};
 		block2.setAusrichtung(attribute);
 		addDokumentenBlock(block2);
 		addDokumentenBlock(new LeererBlock(1));
 		final TextBlock block3 = new TextBlock(planung.getTextHochrechnen());
-		block3.setFont(new Font(this.haushalt.getFontname(), Font.PLAIN, this.haushalt.getFontgroesse() - 2));
+		block3.setFont(new Font(this.getHaushalt().getFontname(), Font.PLAIN, this.getHaushalt().getFontgroesse() - 2));
 		addDokumentenBlock(block3);
 		return titel;
 	}

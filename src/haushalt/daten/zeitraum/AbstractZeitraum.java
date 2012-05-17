@@ -22,6 +22,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.logging.Logger;
 
 /**
  * Basisklasse für alle Zeiträume
@@ -36,23 +37,24 @@ import java.lang.reflect.InvocationTargetException;
  * 2004.08.22 Version 2.0
  */
 
-abstract public class AbstractZeitraum {
+public abstract class AbstractZeitraum {
 
 	private static final boolean DEBUG = false;
+	private static final Logger LOGGER = Logger.getLogger(AbstractZeitraum.class.getName());
 
 	/**
 	 * Liefert den ersten Tag des Zeitraums.
 	 * 
 	 * @return erster Tag des Zeitraums
 	 */
-	abstract public Datum getStartDatum();
+	public abstract Datum getStartDatum();
 
 	/**
 	 * Liefert den letzten Tag des Zeitraums.
 	 * 
 	 * @return letzter Tag des Zeitraums
 	 */
-	abstract public Datum getEndDatum();
+	public abstract Datum getEndDatum();
 
 	/**
 	 * Liefert den auf diesen Zeitraum folgenden Zeitraum mit
@@ -60,14 +62,14 @@ abstract public class AbstractZeitraum {
 	 * 
 	 * @return nächster Zeitraum
 	 */
-	abstract public AbstractZeitraum folgeZeitraum();
+	public abstract AbstractZeitraum folgeZeitraum();
 
 	/**
 	 * Liefert die Anzahl der Tage des Zeitraums.
 	 * 
 	 * @return Anzahl der Tage
 	 */
-	final public int getAnzahlTage() {
+	public final int getAnzahlTage() {
 		return (int) getEndDatum().sub(getStartDatum());
 	}
 
@@ -77,7 +79,7 @@ abstract public class AbstractZeitraum {
 	 * @return Textbeschreibung des Zeitraums
 	 */
 	@Override
-	abstract public String toString();
+	public abstract String toString();
 
 	/**
 	 * Liefert den String der zum Speichern des Zeitraums verwendet wird.
@@ -90,7 +92,7 @@ abstract public class AbstractZeitraum {
 		return toString();
 	}
 
-	final public boolean equals(final AbstractZeitraum zeitraum) {
+	public final boolean equals(final AbstractZeitraum zeitraum) {
 		if (zeitraum == null) {
 			return false;
 		}
@@ -104,7 +106,7 @@ abstract public class AbstractZeitraum {
 	}
 
 	@Override
-	final public boolean equals(final Object zeitraum) {
+	public final boolean equals(final Object zeitraum) {
 		return equals((AbstractZeitraum) zeitraum);
 	}
 
@@ -118,51 +120,42 @@ abstract public class AbstractZeitraum {
 		AbstractZeitraum zeitraum = null;
 		final Object[] parameters = new String[1];
 		parameters[0] = parameter;
-		final Class<?>[] parameterTyp = { String.class };
+		final Class<?>[] parameterTyp = {String.class};
 		try {
 			final Class<?> klasse = Class.forName(name);
 			final Constructor<?> constructor = klasse.getConstructor(parameterTyp);
 			zeitraum = (AbstractZeitraum) constructor.newInstance(parameters);
-		}
-		catch (final ClassNotFoundException e) {
-			e.printStackTrace();
-		}
-		catch (final SecurityException e) {
-			e.printStackTrace();
-		}
-		catch (final NoSuchMethodException e) {
-			e.printStackTrace();
-		}
-		catch (final IllegalArgumentException e) {
-			e.printStackTrace();
-		}
-		catch (final InstantiationException e) {
-			e.printStackTrace();
-		}
-		catch (final IllegalAccessException e) {
-			e.printStackTrace();
-		}
-		catch (final InvocationTargetException e) {
-			e.printStackTrace();
+		} catch (final ClassNotFoundException e) {
+			LOGGER.warning(e.getMessage());
+		} catch (final SecurityException e) {
+			LOGGER.warning(e.getMessage());
+		} catch (final NoSuchMethodException e) {
+			LOGGER.warning(e.getMessage());
+		} catch (final IllegalArgumentException e) {
+			LOGGER.warning(e.getMessage());
+		} catch (final InstantiationException e) {
+			LOGGER.warning(e.getMessage());
+		} catch (final IllegalAccessException e) {
+			LOGGER.warning(e.getMessage());
+		} catch (final InvocationTargetException e) {
+			LOGGER.warning(e.getMessage());
 		}
 		return zeitraum;
 	}
 
 	// -- E/A-Funktionen -------------------------------------------------------
 
-	public static AbstractZeitraum laden(final DataInputStream in)
-			throws IOException {
+	public static AbstractZeitraum laden(final DataInputStream in) throws IOException {
 		final String name = in.readUTF();
 		final String parameter = in.readUTF();
 		return erzeugeZeitraum(name, parameter);
 	}
 
-	public void speichern(final DataOutputStream out)
-			throws IOException {
+	public void speichern(final DataOutputStream out) throws IOException {
 		out.writeUTF(getClass().getName());
 		out.writeUTF(getDatenString());
 		if (DEBUG) {
-			System.out.println(getClass().getName() + "(" + getDatenString() + ")");
+			LOGGER.info(getClass().getName() + "(" + getDatenString() + ")");
 		}
 	}
 

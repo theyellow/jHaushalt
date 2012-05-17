@@ -41,7 +41,7 @@ public class FarbwahlGDP extends AbstractGDPane {
 
 	private static final long serialVersionUID = 1L;
 
-	protected final JButton farbeSelektion = new JButton();
+	private final JButton farbeSelektion = new JButton();
 
 	public FarbwahlGDP(final String textAufforderung, final JFrame frame, final Color color) {
 		super(textAufforderung);
@@ -50,7 +50,9 @@ public class FarbwahlGDP extends AbstractGDPane {
 		this.farbeSelektion.addActionListener(new ActionListener() {
 
 			public void actionPerformed(final ActionEvent e) {
-				final Color farbe = JColorChooser.showDialog(frame, textAufforderung,
+				final Color farbe = JColorChooser.showDialog(
+						frame,
+						textAufforderung,
 						FarbwahlGDP.this.farbeSelektion.getBackground());
 				if (farbe != null) {
 					FarbwahlGDP.this.farbeSelektion.setText(Integer.toHexString(farbe.getRGB()).toUpperCase());
@@ -64,7 +66,7 @@ public class FarbwahlGDP extends AbstractGDPane {
 
 	@Override
 	protected void refreshWert() {
-		this.wert = this.farbeSelektion.getBackground();
+		setWert(this.farbeSelektion.getBackground());
 	}
 
 	@Override

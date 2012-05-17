@@ -29,14 +29,14 @@ import java.awt.Graphics2D;
  * 2004.08.22 Erste Version (2.0)
  */
 
-abstract public class AbstractBlock {
+public abstract class AbstractBlock {
 
 	private Font font = new Font("SansSerif", Font.PLAIN, 12);
 	private double rand = 0.02D;
 
-	abstract public int paint(Graphics g, int xStart, int yStart, int breite);
+	public abstract int paint(Graphics g, int xStart, int yStart, int breite);
 
-	abstract public int print(Graphics2D g2d, int zeile, int xStart, int yStart, int hoehe, int breite);
+	public abstract int print(Graphics2D g2d, int zeile, int xStart, int yStart, int hoehe, int breite);
 
 	protected Font getFont() {
 		return this.font;
@@ -49,11 +49,9 @@ abstract public class AbstractBlock {
 	public void setRelRand(final double rand) {
 		if (rand > 0.5D) {
 			this.rand = 0.5D;
-		}
-		else if (rand < 0.0D) {
+		} else if (rand < 0.0D) {
 			this.rand = 0.0D;
-		}
-		else {
+		} else {
 			this.rand = rand;
 		}
 	}

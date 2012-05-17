@@ -18,6 +18,7 @@ package haushalt.gui;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.logging.Logger;
 
 import javax.swing.JTextField;
 
@@ -30,6 +31,7 @@ public class DeleteableTextField extends JTextField implements KeyListener {
 	private static final boolean DEBUG = false;
 	private static final long serialVersionUID = 1L;
 	private static int deltaste = 0;
+	private static final Logger LOGGER = Logger.getLogger(DeleteableTextField.class.getName());
 
 	public DeleteableTextField() {
 		addKeyListener(this);
@@ -54,11 +56,10 @@ public class DeleteableTextField extends JTextField implements KeyListener {
 	public void keyReleased(final KeyEvent e) {
 		if ((e.getModifiers() == deltaste) && (e.getKeyCode() == 127)) {
 			setText("");
-		}
-		else if (DEBUG) {
-			System.out.println("Klasse Event-Source: " + e.getSource().getClass());
-			System.out.println("Modifier=" + e.getModifiers());
-			System.out.println("KeyCode=" + e.getKeyCode());
+		} else if (DEBUG) {
+			LOGGER.info("Klasse Event-Source: " + e.getSource().getClass());
+			LOGGER.info("Modifier=" + e.getModifiers());
+			LOGGER.info("KeyCode=" + e.getKeyCode());
 		}
 	}
 

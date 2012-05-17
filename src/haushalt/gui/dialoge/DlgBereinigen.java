@@ -18,7 +18,7 @@ package haushalt.gui.dialoge;
 import haushalt.daten.Datenbasis;
 import haushalt.daten.EinzelKategorie;
 import haushalt.daten.Euro;
-import haushalt.daten.Kategorie;
+import haushalt.daten.IKategorie;
 import haushalt.gui.DeleteableTextField;
 import haushalt.gui.EuroRenderer;
 import haushalt.gui.Haushalt;
@@ -66,16 +66,16 @@ import javax.swing.ScrollPaneConstants;
 public class DlgBereinigen extends JDialog {
 
 	private static final long serialVersionUID = 1L;
-	private static final TextResource res = TextResource.get();
+	private static final TextResource RES = TextResource.get();
 
 	private final JComboBox comboBox = new JComboBox();
 	private final DefaultListModel listModel = new DefaultListModel();
 	private final JList list = new JList(this.listModel);
-	private final JCheckBox checkBox = new JCheckBox(res.getString("use_subcategories"), true);
+	private final JCheckBox checkBox = new JCheckBox(RES.getString("use_subcategories"), true);
 	private final Datenbasis db;
 
 	public DlgBereinigen(final Haushalt haushalt, final Datenbasis db) {
-		super(haushalt.getFrame(), res.getString("clean_categories"), true);
+		super(haushalt.getFrame(), RES.getString("clean_categories"), true);
 		this.db = db;
 		final JPanel northPane = new JPanel();
 		final JPanel southPane = new JPanel();
@@ -84,15 +84,14 @@ public class DlgBereinigen extends JDialog {
 		final TableSorter sorter = new TableSorter(tableModel);
 		final JTable table = new JTable(sorter);
 		sorter.setTableHeader(table.getTableHeader());
-		final JLabel label1 = new JLabel(res.getString("category") + ":");
-		final JLabel label2 = new JLabel(res.getString("posting_text") + ":");
+		final JLabel label1 = new JLabel(RES.getString("category") + ":");
+		final JLabel label2 = new JLabel(RES.getString("posting_text") + ":");
 		this.comboBox.addActionListener(new ActionListener() {
 
 			public void actionPerformed(final ActionEvent e) {
 				if (DlgBereinigen.this.comboBox.getSelectedIndex() == 0) {
 					tableModel.setKategorie(null);
-				}
-				else {
+				} else {
 					tableModel.setKategorie((EinzelKategorie) DlgBereinigen.this.comboBox.getSelectedItem());
 				}
 			}
@@ -105,7 +104,7 @@ public class DlgBereinigen extends JDialog {
 			}
 		});
 		table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-		table.setDefaultRenderer(Kategorie.class, new KategorieRenderer());
+		table.setDefaultRenderer(IKategorie.class, new KategorieRenderer());
 		table.setDefaultRenderer(Euro.class, new EuroRenderer());
 		this.checkBox.addItemListener(new ItemListener() {
 
@@ -114,18 +113,16 @@ public class DlgBereinigen extends JDialog {
 				tableModel.setUnterkategorien(DlgBereinigen.this.checkBox.isSelected());
 			}
 		});
-		final JButton buttonZuordnen = new JButton(res.getString("reassign_category"));
+		final JButton buttonZuordnen = new JButton(RES.getString("reassign_category"));
 		buttonZuordnen.addActionListener(new ActionListener() {
 
 			public void actionPerformed(final ActionEvent e) {
 				if (table.getSelectedRowCount() == 0) {
-					JOptionPane.showMessageDialog(haushalt.getFrame(),
-							res.getString("no_bookings_selected"));
+					JOptionPane.showMessageDialog(haushalt.getFrame(), RES.getString("no_bookings_selected"));
 					return;
 				}
 				if (DlgBereinigen.this.list.getSelectedIndex() == -1) {
-					JOptionPane.showMessageDialog(haushalt.getFrame(),
-							res.getString("no_category_selected"));
+					JOptionPane.showMessageDialog(haushalt.getFrame(), RES.getString("no_category_selected"));
 					return;
 				}
 				final EinzelKategorie neueKategorie = (EinzelKategorie) DlgBereinigen.this.list.getSelectedValue();
@@ -137,8 +134,7 @@ public class DlgBereinigen extends JDialog {
 				tableModel.setNeueKategorie(modelRows, neueKategorie);
 			}
 		});
-		final JButton buttonBearbeiten = new JButton(res.getString("edit_category_button"),
-				haushalt.bildLaden("Auto16.png"));
+		final JButton buttonBearbeiten = new JButton(RES.getString("edit_category_button"), haushalt.bildLaden("Auto16.png"));
 		buttonBearbeiten.addActionListener(new ActionListener() {
 
 			public void actionPerformed(final ActionEvent e) {
@@ -147,7 +143,7 @@ public class DlgBereinigen extends JDialog {
 				kategorienEinlesen();
 			}
 		});
-		final JButton buttonAbbruch = new JButton(res.getString("button_close"));
+		final JButton buttonAbbruch = new JButton(RES.getString("button_close"));
 		buttonAbbruch.addActionListener(new ActionListener() {
 
 			public void actionPerformed(final ActionEvent e) {
@@ -156,7 +152,7 @@ public class DlgBereinigen extends JDialog {
 		});
 		final JScrollPane scrollPane = new JScrollPane(this.list);
 		scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-		northPane.setBorder(BorderFactory.createTitledBorder(res.getString("selection_filter")));
+		northPane.setBorder(BorderFactory.createTitledBorder(RES.getString("selection_filter")));
 		northPane.setLayout(new BoxLayout(northPane, BoxLayout.LINE_AXIS));
 		northPane.add(label1);
 		northPane.add(Box.createRigidArea(new Dimension(5, 0)));
@@ -170,7 +166,7 @@ public class DlgBereinigen extends JDialog {
 		southPane.add(buttonZuordnen);
 		eastPane.add(scrollPane);
 		eastPane.add(this.checkBox);
-		eastPane.setBorder(BorderFactory.createTitledBorder(res.getString("new_category")));
+		eastPane.setBorder(BorderFactory.createTitledBorder(RES.getString("new_category")));
 		eastPane.setLayout(new BoxLayout(eastPane, BoxLayout.Y_AXIS));
 		getContentPane().add(northPane, BorderLayout.NORTH);
 		getContentPane().add(new JScrollPane(table), BorderLayout.CENTER);
@@ -184,15 +180,14 @@ public class DlgBereinigen extends JDialog {
 		this.comboBox.removeAllItems();
 		this.listModel.removeAllElements();
 		final EinzelKategorie[] kategorien = this.db.getKategorien(this.checkBox.isSelected());
-		this.comboBox.addItem(res.getString("any_category"));
+		this.comboBox.addItem(RES.getString("any_category"));
 		for (int i = 0; i < kategorien.length; i++) {
 			this.comboBox.addItem(kategorien[i]);
 			this.listModel.addElement(kategorien[i]);
 		}
 		if (selectedItem == null) {
 			this.comboBox.setSelectedItem(EinzelKategorie.SONSTIGES);
-		}
-		else {
+		} else {
 			this.comboBox.setSelectedItem(selectedItem);
 		}
 	}

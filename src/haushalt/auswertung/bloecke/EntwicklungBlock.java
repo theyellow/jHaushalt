@@ -24,6 +24,7 @@ import java.awt.Color;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.util.logging.Logger;
 
 /**
  * @author Dr. Lars H. Hahn
@@ -39,6 +40,7 @@ import java.awt.Graphics2D;
 public class EntwicklungBlock extends AbstractGraphikBlock {
 
 	private static final boolean DEBUG = false;
+	private static final Logger LOGGER = Logger.getLogger(EntwicklungBlock.class.getName());
 
 	private Euro grWert = new Euro();
 	private Euro klWert = new Euro();
@@ -48,9 +50,12 @@ public class EntwicklungBlock extends AbstractGraphikBlock {
 	private final String farbschema;
 	private final Boolean negativeWerte;
 
-	public EntwicklungBlock(final EinzelKategorie[] kategorien, final String[] zeitraumNamen, final Euro[][] werte,
-			final String farbschema,
-			final Boolean negativeWerte) {
+	public EntwicklungBlock(
+		final EinzelKategorie[] kategorien,
+		final String[] zeitraumNamen,
+		final Euro[][] werte,
+		final String farbschema,
+		final Boolean negativeWerte) {
 		this.kategorien = kategorien;
 		this.zeitraumNamen = zeitraumNamen;
 		this.werte = werte;
@@ -68,8 +73,7 @@ public class EntwicklungBlock extends AbstractGraphikBlock {
 					if (this.klWert.compareTo(werte[z][k]) > 0) {
 						this.klWert = werte[z][k];
 					}
-				}
-				else {
+				} else {
 					if (this.grWert.compareTo(werte[z][k]) < 0) {
 						this.grWert = werte[z][k];
 					}
@@ -80,7 +84,7 @@ public class EntwicklungBlock extends AbstractGraphikBlock {
 			}
 		}
 		if (DEBUG) {
-			System.out.println("EntwicklungBlock: MIN/MAX = " + this.klWert + "/" + this.grWert);
+			LOGGER.info("EntwicklungBlock: MIN/MAX = " + this.klWert + "/" + this.grWert);
 		}
 	}
 
@@ -119,8 +123,7 @@ public class EntwicklungBlock extends AbstractGraphikBlock {
 		}
 
 		// Y-Null-Linie zeichnen
-		g.drawLine(xStart + rand + breiteYAchse, (int) yOffset, xStart + rand + breiteYAchse + graphikBreite,
-				(int) yOffset);
+		g.drawLine(xStart + rand + breiteYAchse, (int) yOffset, xStart + rand + breiteYAchse + graphikBreite, (int) yOffset);
 
 		// Werte für die X-Achse berechnen und zeichnen
 		for (int i = 0; i < anzahlZeitraeume; i++) {
@@ -141,8 +144,7 @@ public class EntwicklungBlock extends AbstractGraphikBlock {
 				x[z] = xStart + rand + breiteYAchse + spaltenBreite * z;
 				if (!this.negativeWerte && (this.werte[z][k].compareTo(Euro.NULL_EURO) < 0)) {
 					y[z] = (int) (yOffset - yFaktor * -this.werte[z][k].toDouble());
-				}
-				else {
+				} else {
 					y[z] = (int) (yOffset - yFaktor * this.werte[z][k].toDouble());
 				}
 				g.fillOval(x[z] - 4, y[z] - 4, 8, 8);

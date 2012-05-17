@@ -27,6 +27,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
+import java.util.logging.Logger;
 
 import javax.swing.JPanel;
 
@@ -53,17 +54,18 @@ public abstract class AbstractAuswertung extends JPanel implements Printable {
 
 	private static final long serialVersionUID = 1L;
 	private static final boolean DEBUG = false;
-	private static final TextResource res = TextResource.get();
+	private static final Logger LOGGER = Logger.getLogger(AbstractAuswertung.class.getName());
+	private static final TextResource RES = TextResource.get();
 
 	private static int nr = 1;
 	private String name;
-	protected final Datenbasis db;
-	protected String[][] tabelle = null;
+	private final Datenbasis db;
+	private String[][] tabelle = null;
 
 	public AbstractAuswertung(final Datenbasis db, final String name) {
 		this.db = db;
 		if (name == null) {
-			this.name = res.getString("unnamed") + " (" + nr + ")";
+			this.name = RES.getString("unnamed") + " (" + nr + ")";
 			nr++;
 		}
 		else {
@@ -85,7 +87,7 @@ public abstract class AbstractAuswertung extends JPanel implements Printable {
 	public final void setAuswertungName(final String name) {
 		if (name != null) {
 			if (DEBUG) {
-				System.out.println("AbstractAuswertung: " + this.name + "->" + name);
+				LOGGER.info("AbstractAuswertung: " + this.name + "->" + name);
 			}
 			this.name = name;
 		}
@@ -104,7 +106,23 @@ public abstract class AbstractAuswertung extends JPanel implements Printable {
 		return this.tabelle;
 	}
 
-	abstract public int print(Graphics g, PageFormat pageFormat, int seite)
+	protected void setTabelle(final String[][] tabelle) {
+		this.tabelle = tabelle;
+	}
+
+	protected void setTabelleContent(final int x, final int y, final String content) {
+		tabelle[x][y] = content;
+	}
+
+	protected void setTabelleLine(final int x, final String[] content) {
+		tabelle[x] = content;
+	}
+
+	protected Datenbasis getDb() {
+		return db;
+	}
+
+	public abstract int print(Graphics g, PageFormat pageFormat, int seite)
 			throws PrinterException;
 
 	/**
@@ -113,19 +131,19 @@ public abstract class AbstractAuswertung extends JPanel implements Printable {
 	 * dass ständig (z.B. bei Größenänderungen des Fensters) die Auswertung neu
 	 * berechnet werden muss.
 	 */
-	abstract public String berechneAuswertung();
+	public abstract String berechneAuswertung();
 
 	/**
 	 * Zeigt einen Dialog in dem die Parameter der Auswertungen änderbar sind.
 	 * 
 	 * @return <code>false</code> Benutzer hat 'Abbruch' gewählt
 	 */
-	abstract public boolean zeigeEigenschaften();
+	public abstract boolean zeigeEigenschaften();
 
-	abstract public void laden(DataInputStream in)
+	public abstract void laden(DataInputStream in)
 			throws IOException;
 
-	abstract public void speichern(DataOutputStream out)
+	public abstract void speichern(DataOutputStream out)
 			throws IOException;
 
 	/**
@@ -153,11 +171,11 @@ public abstract class AbstractAuswertung extends JPanel implements Printable {
 			auswertung = (AbstractAuswertung) constructor.newInstance(parameters);
 		}
 		catch (final Exception e) {
-			System.out.println("-E- Fehler beim Erzeugen der Auswertung: " + klassenname);
-			e.printStackTrace();
+			LOGGER.info("-E- Fehler beim Erzeugen der Auswertung: " + klassenname);
+			LOGGER.warning(e.getMessage());
 		}
 		if (DEBUG) {
-			System.out.println("Auswertung " + klassenname + " erzeugt.");
+			LOGGER.info("Auswertung " + klassenname + " erzeugt.");
 		}
 		return auswertung;
 	}

@@ -16,6 +16,7 @@
 package haushalt.daten;
 
 import java.text.NumberFormat;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -29,6 +30,7 @@ import java.util.regex.Pattern;
 
 public class MathParser {
 
+	private static final Logger LOGGER = Logger.getLogger(MathParser.class.getName());
 	private final NumberFormat nf;
 
 	MathParser() {
@@ -76,8 +78,8 @@ public class MathParser {
 		nf.setMaximumFractionDigits(2);
 
 		final MathParser mp = new MathParser(nf);
-		// System.out.println( mp.parseExpr("=  - 123,2 -4,1 CHF + *0,3€ 0,5$")
+		// LOGGER.info("=  - 123,2 -4,1 CHF + *0,3€ 0,5$")
 		// );
-		System.out.println(mp.parseExpr("3.754,15"));
+		LOGGER.info("" + mp.parseExpr("3.754,15"));
 	}
 }

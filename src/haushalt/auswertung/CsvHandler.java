@@ -27,10 +27,10 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.logging.Logger;
 
 import javax.swing.Box;
 import javax.swing.JButton;
@@ -59,10 +59,11 @@ import javax.swing.filechooser.FileFilter;
 public class CsvHandler {
 
 	private static final boolean DEBUG = false;
-	private static final TextResource res = TextResource.get();
+	private static final Logger LOGGER = Logger.getLogger(CsvHandler.class.getName());
+	private static final TextResource RES = TextResource.get();
 
-	private String[][] tabelle = { { "Leer" } };
-	protected char datensatzTeiler = ';';
+	private char datensatzTeiler = ';';
+	private String[][] tabelle = {{"Leer"}};
 
 	public CsvHandler() {
 		// OK
@@ -71,7 +72,7 @@ public class CsvHandler {
 	public CsvHandler(final String[][] tabelle) {
 		this.tabelle = tabelle;
 		if (DEBUG) {
-			System.out.println("CsvHandler [" + tabelle.length + "][" + tabelle[0].length + "]");
+			LOGGER.info("CsvHandler [" + tabelle.length + "][" + tabelle[0].length + "]");
 		}
 	}
 
@@ -83,21 +84,19 @@ public class CsvHandler {
 	public CsvHandler(final DataInputStream in) {
 		try {
 			read(in);
-		}
-		catch (final IOException e) {
-			e.printStackTrace();
+		} catch (final IOException e) {
+			LOGGER.warning(e.getMessage());
 		}
 	}
 
 	private String trimZelle(String zelle) {
 		if (zelle.equals("\"\"")) {
 			zelle = "";
-		}
-		else if (zelle.startsWith("\"") && zelle.endsWith("\"")) {
+		} else if (zelle.startsWith("\"") && zelle.endsWith("\"")) {
 			zelle = zelle.substring(1, zelle.length() - 1);
 		}
 		if (DEBUG) {
-			System.out.println(zelle);
+			LOGGER.info(zelle);
 		}
 		return zelle;
 	}
@@ -110,8 +109,7 @@ public class CsvHandler {
 			for (int x = 0; x < xa; x++) {
 				if (this.tabelle[y][x] == null) {
 					t[y][x] = "";
-				}
-				else {
+				} else {
 					t[y][x] = this.tabelle[y][x];
 				}
 			}
@@ -119,8 +117,7 @@ public class CsvHandler {
 		return t;
 	}
 
-	protected void read(final DataInputStream in)
-			throws IOException, FileNotFoundException {
+	protected void read(final DataInputStream in) throws IOException {
 		ArrayList<String> neueZeile = new ArrayList<String>();
 		final ArrayList<ArrayList<String>> zeilen = new ArrayList<ArrayList<String>>();
 		String zelle = "";
@@ -138,15 +135,13 @@ public class CsvHandler {
 					}
 					neueZeile = new ArrayList<String>();
 				}
-			}
-			else if (c == this.datensatzTeiler) {
+			} else if (c == this.datensatzTeiler) {
 				if (DEBUG) {
-					System.out.print(zelle + ", ");
+					LOGGER.info(zelle + ", ");
 				}
 				neueZeile.add(trimZelle(zelle));
 				zelle = "";
-			}
-			else {
+			} else {
 				zelle += c;
 			}
 		}
@@ -156,8 +151,7 @@ public class CsvHandler {
 		}
 	}
 
-	protected void write(final DataOutputStream out)
-			throws IOException {
+	protected void write(final DataOutputStream out) throws IOException {
 		for (int y = 0; y < this.tabelle.length; y++) {
 			for (int x = 0; x < this.tabelle[y].length; x++) {
 				if (x > 0) {
@@ -165,11 +159,11 @@ public class CsvHandler {
 				}
 				out.writeBytes("\"" + this.tabelle[y][x] + "\"");
 				if (DEBUG) {
-					System.out.print(" " + this.tabelle[y][x]);
+					LOGGER.info(" " + this.tabelle[y][x]);
 				}
 			}
 			if (DEBUG) {
-				System.out.println("");
+				LOGGER.info("");
 			}
 			out.writeByte(13);
 			out.writeByte(10);
@@ -198,10 +192,9 @@ public class CsvHandler {
 
 		private static final long serialVersionUID = 1L;
 
-		protected final DeleteableTextField dateiname = new DeleteableTextField(20);
-		protected final DeleteableTextField trennzeichen = new DeleteableTextField(
-				"" + CsvHandler.this.datensatzTeiler, 2);
-		private final JButton buttonAuswahl = new JButton(res.getString("button_selection"));
+		private final DeleteableTextField dateiname = new DeleteableTextField(20);
+		private final DeleteableTextField trennzeichen = new DeleteableTextField("" + CsvHandler.this.datensatzTeiler, 2);
+		private final JButton buttonAuswahl = new JButton(RES.getString("button_selection"));
 		private final FileFilter fileFilter = new FileFilter() {
 
 			@Override
@@ -217,17 +210,17 @@ public class CsvHandler {
 
 			@Override
 			public String getDescription() {
-				return res.getString("csv_files") + " (*.csv)";
+				return RES.getString("csv_files") + " (*.csv)";
 			}
 		};
 
 		public CsvPane(final JFrame frame, final String path, final boolean laden) {
 			setLayout(new GridLayout(0, 2));
-			add(new JLabel(res.getString("filename") + ":"));
+			add(new JLabel(RES.getString("filename") + ":"));
 			add(this.dateiname);
 			add(Box.createGlue());
 			add(this.buttonAuswahl);
-			add(new JLabel(res.getString("separation_char") + ":"));
+			add(new JLabel(RES.getString("separation_char") + ":"));
 			add(this.trennzeichen);
 
 			this.buttonAuswahl.addActionListener(new ActionListener() {
@@ -239,8 +232,7 @@ public class CsvHandler {
 						if (dateidialog.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION) {
 							CsvPane.this.dateiname.setText(dateidialog.getSelectedFile().getAbsolutePath());
 						}
-					}
-					else {
+					} else {
 						if (dateidialog.showSaveDialog(frame) == JFileChooser.APPROVE_OPTION) {
 							String text = dateidialog.getSelectedFile().getAbsolutePath();
 							if (!text.toLowerCase().endsWith(".csv")) {
@@ -261,9 +253,8 @@ public class CsvHandler {
 				final DataInputStream in = new DataInputStream(fis);
 				read(in);
 				fis.close();
-			}
-			catch (final IOException ex) {
-				ex.printStackTrace();
+			} catch (final IOException ex) {
+				LOGGER.warning(ex.getMessage());
 				ok = false;
 			}
 			return ok;
@@ -278,9 +269,8 @@ public class CsvHandler {
 				write(out);
 				out.flush();
 				fos.close();
-			}
-			catch (final IOException ex) {
-				ex.printStackTrace();
+			} catch (final IOException ex) {
+				LOGGER.warning(ex.getMessage());
 				ok = false;
 			}
 			return ok;
@@ -288,24 +278,23 @@ public class CsvHandler {
 
 	}
 
-	private class CsvDateiDialog extends JDialog {
+	private final class CsvDateiDialog extends JDialog {
 
 		private static final long serialVersionUID = 1L;
 		private final CsvPane hauptPane;
 		private final JPanel buttonPane = new JPanel();
 		private final JButton buttonOK;
-		private final JButton buttonAbbruch = new JButton(res.getString("button_cancel"));
-		protected boolean ok = true;
+		private final JButton buttonAbbruch = new JButton(RES.getString("button_cancel"));
+		private boolean ok = true;
 
 		private CsvDateiDialog(final JFrame frame, final String path, final boolean laden) {
 			super(frame, true);
 			if (laden) {
-				setTitle(res.getString("csv_file_load"));
-				this.buttonOK = new JButton(res.getString("button_load"));
-			}
-			else {
-				setTitle(res.getString("csv_file_save"));
-				this.buttonOK = new JButton(res.getString("button_save"));
+				setTitle(RES.getString("csv_file_load"));
+				this.buttonOK = new JButton(RES.getString("button_load"));
+			} else {
+				setTitle(RES.getString("csv_file_save"));
+				this.buttonOK = new JButton(RES.getString("button_save"));
 			}
 			this.hauptPane = new CsvPane(frame, path, laden);
 			final Container contentPane = getContentPane();
@@ -319,8 +308,7 @@ public class CsvHandler {
 				public void actionPerformed(final ActionEvent e) {
 					if (laden) {
 						CsvDateiDialog.this.ok = CsvDateiDialog.this.hauptPane.laden();
-					}
-					else {
+					} else {
 						CsvDateiDialog.this.ok = CsvDateiDialog.this.hauptPane.speichern();
 					}
 					setVisible(false);
@@ -338,8 +326,7 @@ public class CsvHandler {
 
 	}
 
-	public static void main(final String[] args)
-			throws Exception {
+	public static void main(final String[] args) throws Exception {
 		final FileInputStream fis = new FileInputStream("test-out.csv");
 		final DataInputStream in = new DataInputStream(fis);
 		final CsvHandler handler = new CsvHandler(in);

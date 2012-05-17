@@ -43,8 +43,8 @@ public class DatumGDP extends AbstractGDPane {
 
 	@Override
 	protected void refreshWert() {
-		this.wert = new Datum(this.datumField.getText());
-		this.datumField.setText("" + this.wert); // neusetzen, da ggf. Fehler
+		setWert(new Datum(this.datumField.getText()));
+		this.datumField.setText("" + getWert()); // neusetzen, da ggf. Fehler
 													// beim Parsen
 	}
 
@@ -55,7 +55,7 @@ public class DatumGDP extends AbstractGDPane {
 
 	@Override
 	public void laden(final DataInputStream in) throws IOException {
-		final Datum datum = (Datum) getWert();
+		final Datum datum = (Datum) getRefreshedWert();
 		datum.laden(in);
 		this.datumField.setText("" + datum);
 	}
@@ -63,7 +63,7 @@ public class DatumGDP extends AbstractGDPane {
 	@Override
 	public void speichern(final DataOutputStream out) throws IOException {
 		refreshWert();
-		final Datum datum = (Datum) getWert();
+		final Datum datum = (Datum) getRefreshedWert();
 		datum.speichern(out);
 	}
 

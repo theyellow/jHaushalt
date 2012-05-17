@@ -49,20 +49,19 @@ import java.awt.Font;
 
 public class BAAbsoluterVergleich extends AbstractBlockAuswertung {
 
+	public static final String UEBERSCHRIFT = TextResource.get().getString("headline_absolute_comparison");
 	private static final long serialVersionUID = 1L;
-	private static final TextResource res = TextResource.get();
-
-	public static final String ueberschrift = res.getString("headline_absolute_comparison");
+	private static final TextResource RES = TextResource.get();
 
 	public BAAbsoluterVergleich(final Haushalt haushalt, final Datenbasis db, final String name) {
 		super(haushalt, db, name);
 		final AbstractGDPane[] panes = new AbstractGDPane[5];
-		panes[0] = new ZeitraumGDP(res.getString("first_period") + ":", new Jahr(2006));
-		panes[1] = new ZeitraumGDP(res.getString("second_period") + ":", new Jahr(2007));
-		panes[2] = new EinOderAlleRegisterGDP(res.getString("register") + ":", db, null);
-		panes[3] = new MehrereKategorienGDP(res.getString("categories") + ":", db);
-		panes[4] = new ProzentGDP(res.getString("width_first_column") + ":");
-		erzeugeEigenschaften(haushalt.getFrame(), ueberschrift, panes);
+		panes[0] = new ZeitraumGDP(RES.getString("first_period") + ":", new Jahr(2006));
+		panes[1] = new ZeitraumGDP(RES.getString("second_period") + ":", new Jahr(2007));
+		panes[2] = new EinOderAlleRegisterGDP(RES.getString("register") + ":", db, null);
+		panes[3] = new MehrereKategorienGDP(RES.getString("categories") + ":", db);
+		panes[4] = new ProzentGDP(RES.getString("width_first_column") + ":");
+		erzeugeEigenschaften(haushalt.getFrame(), UEBERSCHRIFT, panes);
 	}
 
 	@Override
@@ -73,61 +72,57 @@ public class BAAbsoluterVergleich extends AbstractBlockAuswertung {
 		final EinzelKategorie[] kategorien = (EinzelKategorie[]) werte[3];
 		final double prozentErsteSpalte = ((Integer) werte[4]).doubleValue();
 		final int anzKat = kategorien.length;
-		final boolean unterkategorienVerwenden = ((MehrereKategorienGDP) this.panes[3]).getUnterkategorienVerwenden();
-		final Euro[] summen1 = this.db.getKategorieSalden(kategorien, zeitraum1, register, unterkategorienVerwenden);
-		final Euro[] summen2 = this.db.getKategorieSalden(kategorien, zeitraum2, register, unterkategorienVerwenden);
-		this.tabelle = new String[anzKat + 2][4];
-		this.tabelle[0][0] = res.getString("category");
-		this.tabelle[0][1] = "" + zeitraum1;
-		this.tabelle[0][2] = "" + zeitraum2;
-		this.tabelle[0][3] = res.getString("difference");
-		this.tabelle[anzKat + 1][0] = res.getString("total");
+		final boolean unterkategorienVerwenden = ((MehrereKategorienGDP) this.getPanes()[3]).getUnterkategorienVerwenden();
+		final Euro[] summen1 = getDb().getKategorieSalden(kategorien, zeitraum1, register, unterkategorienVerwenden);
+		final Euro[] summen2 = getDb().getKategorieSalden(kategorien, zeitraum2, register, unterkategorienVerwenden);
+		setTabelle(new String[anzKat + 2][4]);
+		setTabelleContent(0, 0, RES.getString("category"));
+		setTabelleContent(0, 1, "" + zeitraum1);
+		setTabelleContent(0, 2, "" + zeitraum2);
+		setTabelleContent(0, 3, RES.getString("difference"));
+		setTabelleContent(anzKat + 1, 0, RES.getString("total"));
 
 		final Euro summe1 = new Euro();
 		final Euro summe2 = new Euro();
 		for (int i = 0; i < anzKat; i++) {
-			this.tabelle[i + 1][0] = "" + kategorien[i];
-			this.tabelle[i + 1][1] = "" + summen1[i];
-			this.tabelle[i + 1][2] = "" + summen2[i];
-			this.tabelle[i + 1][3] = "" + summen1[i].sub(summen2[i]);
+			setTabelleContent(i + 1, 0, "" + kategorien[i]);
+			setTabelleContent(i + 1, 1, "" + summen1[i]);
+			setTabelleContent(i + 1, 2, "" + summen2[i]);
+			setTabelleContent(i + 1, 3, "" + summen1[i].sub(summen2[i]));
 			summe1.sum(summen1[i]);
 			summe2.sum(summen2[i]);
 		}
-		this.tabelle[anzKat + 1][1] = "" + summe1;
-		this.tabelle[anzKat + 1][2] = "" + summe2;
-		this.tabelle[anzKat + 1][3] = "" + summe1.sub(summe2);
+		setTabelleContent(anzKat + 1, 1, "" + summe1);
+		setTabelleContent(anzKat + 1, 2, "" + summe2);
+		setTabelleContent(anzKat + 1, 3, "" + summe1.sub(summe2));
 
 		// Vorhandene Blöcke löschen und neu berechnete einfügen
-		String titel = res.getString("absolute_comparison") + " (" + this.tabelle[0][1] + " " + res.getString("and")
-				+ " "
-				+ this.tabelle[0][2];
+		String titel = RES.getString("absolute_comparison")
+			+ " ("
+			+ getTabelle()[0][1]
+			+ " "
+			+ RES.getString("and")
+			+ " "
+			+ getTabelle()[0][2];
 		if (register == null) {
 			titel += ")";
-		}
-		else {
+		} else {
 			titel += ", " + register + ")";
 		}
 		loescheBloecke();
 		final TextBlock block1 = new TextBlock(titel);
-		block1.setFont(new Font(this.haushalt.getFontname(), Font.BOLD, this.haushalt.getFontgroesse() + 6));
+		block1.setFont(new Font(this.getHaushalt().getFontname(), Font.BOLD, this.getHaushalt().getFontgroesse() + 6));
 		addDokumentenBlock(block1);
 		addDokumentenBlock(new LeererBlock(1));
-		final TabellenBlock block2 = new TabellenBlock(this.tabelle);
-		block2.setFont(new Font(this.haushalt.getFontname(), Font.PLAIN, this.haushalt.getFontgroesse()));
+		final TabellenBlock block2 = new TabellenBlock(getTabelle());
+		block2.setFont(new Font(this.getHaushalt().getFontname(), Font.PLAIN, this.getHaushalt().getFontgroesse()));
 		final TabellenBlock.Ausrichtung[] attribute = {
-				TabellenBlock.Ausrichtung.LINKS,
-				TabellenBlock.Ausrichtung.RECHTS,
-				TabellenBlock.Ausrichtung.RECHTS,
-				TabellenBlock.Ausrichtung.RECHTS };
+				TabellenBlock.Ausrichtung.LINKS, TabellenBlock.Ausrichtung.RECHTS, TabellenBlock.Ausrichtung.RECHTS,
+				TabellenBlock.Ausrichtung.RECHTS};
 		block2.setAusrichtung(attribute);
 		if (prozentErsteSpalte > 0.0D) {
 			final double rest = (100.0D - prozentErsteSpalte) / 3.0D;
-			final double[] relTabs = {
-					0.0D,
-					prozentErsteSpalte,
-					prozentErsteSpalte + rest,
-					prozentErsteSpalte + rest * 2.0D,
-			};
+			final double[] relTabs = {0.0D, prozentErsteSpalte, prozentErsteSpalte + rest, prozentErsteSpalte + rest * 2.0D,};
 			block2.setRelTabs(relTabs);
 		}
 		addDokumentenBlock(block2);

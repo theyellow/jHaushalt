@@ -22,6 +22,7 @@ import haushalt.daten.UmbuchungKategorie;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.util.logging.Logger;
 
 import javax.swing.JLabel;
 import javax.swing.JTable;
@@ -36,34 +37,38 @@ public class KategorieRenderer extends DefaultTableCellRenderer {
 	private static final boolean DEBUG = false;
 	private static final long serialVersionUID = 1L;
 
+	private static final Logger LOGGER = Logger.getLogger(KategorieRenderer.class.getName());
+
 	@Override
 	public Component getTableCellRendererComponent(
-			final JTable table,
-			final Object value,
-			final boolean isSelected,
-			final boolean hasFocus,
-			final int row,
-			final int col) {
+		final JTable table,
+		final Object value,
+		final boolean isSelected,
+		final boolean hasFocus,
+		final int row,
+		final int col) {
 		final JLabel comp = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, col);
 		if (value == null) {
 			comp.setBackground(Color.yellow);
-		}
-		else if (value.getClass() == EinzelKategorie.class) {
+		} else if (value.getClass() == EinzelKategorie.class) {
 			// OK
-		}
-		else if (value.getClass() == MehrfachKategorie.class) {
+			if (DEBUG) {
+				LOGGER.info("Nichts zu tun, ist EinzelKategorie");
+			}
+		} else if (value.getClass() == MehrfachKategorie.class) {
 			// OK
-		}
-		else if (value.getClass() == UmbuchungKategorie.class) {
+			if (DEBUG) {
+				LOGGER.info("Nichts zu tun, ist MehrfachKategorie");
+			}
+		} else if (value.getClass() == UmbuchungKategorie.class) {
 			final UmbuchungKategorie kategorie = (UmbuchungKategorie) value;
 			final String regname = "" + table.getModel();
 			comp.setText("" + kategorie.getPartnerRegister(regname));
-		}
-		else {
+		} else {
 			comp.setBackground(Color.yellow);
 			if (DEBUG) {
-				System.out.println("KategorieRenderer: Unbekannter Typ - " + value.getClass());
-				System.out.println("Superclass - " + value.getClass().getSuperclass());
+				LOGGER.info("KategorieRenderer: Unbekannter Typ - " + value.getClass());
+				LOGGER.info("Superclass - " + value.getClass().getSuperclass());
 			}
 		}
 		return comp;

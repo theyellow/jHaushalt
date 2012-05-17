@@ -36,13 +36,9 @@ import javax.swing.table.AbstractTableModel;
 public class SplitBetragTableModel extends AbstractTableModel {
 
 	private static final long serialVersionUID = 1L;
-	private static final TextResource res = TextResource.get();
+	private static final TextResource RES = TextResource.get();
 
-	private static final String[] spaltenNamen = {
-			res.getString("category"),
-			res.getString("amount"),
-			res.getString("total")
-	};
+	private static final String[] SPALTEN_NAMEN = {RES.getString("category"), RES.getString("amount"), RES.getString("total")};
 	private final SplitBuchung buchung;
 
 	public SplitBetragTableModel(final SplitBuchung buchung) {
@@ -55,7 +51,7 @@ public class SplitBetragTableModel extends AbstractTableModel {
 	}
 
 	public int getColumnCount() {
-		return spaltenNamen.length;
+		return SPALTEN_NAMEN.length;
 	}
 
 	public int getRowCount() {
@@ -64,33 +60,34 @@ public class SplitBetragTableModel extends AbstractTableModel {
 
 	@Override
 	public String getColumnName(final int columnIndex) {
-		return spaltenNamen[columnIndex];
+		return SPALTEN_NAMEN[columnIndex];
 	}
 
 	@Override
 	public Class<?> getColumnClass(final int col) {
 		switch (col) {
-		case 0:
-			return EinzelKategorie.class;
-		default:
-			return Euro.class;
+			case 0:
+				return EinzelKategorie.class;
+			default:
+				return Euro.class;
 		}
 	}
 
 	public Object getValueAt(final int row, final int col) {
 		if (row < this.buchung.getAnzahl()) {
 			switch (col) {
-			case 0:
-				return this.buchung.getKategorie(row);
-			case 1:
-				return this.buchung.getWert(row);
-			case 2: {
-				final Euro summe = new Euro();
-				for (int i = 0; i <= row; i++) {
-					summe.sum(this.buchung.getWert(i));
-				}
-				return summe;
-			}
+				case 0:
+					return this.buchung.getKategorie(row);
+				case 1:
+					return this.buchung.getWert(row);
+				case 2:
+					final Euro summe = new Euro();
+					for (int i = 0; i <= row; i++) {
+						summe.sum(this.buchung.getWert(i));
+					}
+					return summe;
+				default:
+					break;
 			}
 		}
 		if (col == 0) {
@@ -114,12 +111,14 @@ public class SplitBetragTableModel extends AbstractTableModel {
 		}
 
 		switch (col) {
-		case 0:
-			this.buchung.setKategorie(row, (EinzelKategorie) value);
-			break;
-		case 1:
-			this.buchung.setWert(row, new Euro("" + value));
-			break;
+			case 0:
+				this.buchung.setKategorie(row, (EinzelKategorie) value);
+				break;
+			case 1:
+				this.buchung.setWert(row, new Euro("" + value));
+				break;
+			default:
+				break;
 		}
 		fireTableDataChanged(); // Neuzeichnen der gesamten Tabelle
 	}

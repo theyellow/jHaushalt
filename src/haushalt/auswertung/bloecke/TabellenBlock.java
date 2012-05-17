@@ -20,6 +20,7 @@ import haushalt.auswertung.FarbPaletten;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.util.Arrays;
+import java.util.logging.Logger;
 
 /**
  * @author Dr. Lars H. Hahn
@@ -34,6 +35,7 @@ import java.util.Arrays;
 public class TabellenBlock extends AbstractTabelleBlock {
 
 	private static final boolean DEBUG = false;
+	private static final Logger LOGGER = Logger.getLogger(TabellenBlock.class.getName());
 
 	private final String[][] tabelle;
 	private final int spalten;
@@ -48,7 +50,7 @@ public class TabellenBlock extends AbstractTabelleBlock {
 		this.ausrichtung = new Ausrichtung[this.spalten];
 		Arrays.fill(this.ausrichtung, Ausrichtung.LINKS);
 		if (DEBUG) {
-			System.out.println("Tabellen-Block erzeugt (" + tabelle.length + "x" + this.spalten + ")");
+			LOGGER.info("Tabellen-Block erzeugt (" + tabelle.length + "x" + this.spalten + ")");
 		}
 	}
 
@@ -58,9 +60,9 @@ public class TabellenBlock extends AbstractTabelleBlock {
 		final int[] absTabs = getAbsTabs(breite);
 		for (int x = 0; x < this.spalten; x++) {
 			int zellenBreite = absTabs[x + 1] - absTabs[x];
-			g.setColor(FarbPaletten.getFarbe(zeile, this.hgFarbe));
+			g.setColor(FarbPaletten.getFarbe(zeile, this.getHgFarbe()));
 			g.fillRect(xStart + absTabs[x], yStart, zellenBreite, textHoehe);
-			g.setColor(FarbPaletten.getFarbe(zeile, this.linienFarbe));
+			g.setColor(FarbPaletten.getFarbe(zeile, this.getLinienFarbe()));
 			g.drawRect(xStart + absTabs[x], yStart, zellenBreite, textHoehe);
 
 			zellenBreite -= 4;
@@ -70,25 +72,30 @@ public class TabellenBlock extends AbstractTabelleBlock {
 			}
 			int delta = 0;
 			switch (this.ausrichtung[x]) {
-			case LINKS:
-				delta = 2;
-				break;
-			case CENTER:
-				delta = (zellenBreite - g.getFontMetrics().stringWidth(wort)) / 2 + 2;
-				break;
-			case RECHTS:
-				delta = zellenBreite - g.getFontMetrics().stringWidth(wort) + 2;
-				break;
+				case LINKS:
+					delta = 2;
+					break;
+				case CENTER:
+					delta = (zellenBreite - g.getFontMetrics().stringWidth(wort)) / 2 + 2;
+					break;
+				case RECHTS:
+					delta = zellenBreite - g.getFontMetrics().stringWidth(wort) + 2;
+					break;
+				default:
+					break;
 			}
 			g.setColor(Color.black);
 			g.drawString(wort, xStart + absTabs[x] + delta, yStart + textHoehe - g.getFontMetrics().getDescent());
 			if (DEBUG) {
-				System.out.println(wort + " @ " + (xStart + absTabs[x] + delta) + ", "
-						+ (yStart + textHoehe - g.getFontMetrics().getDescent()));
+				LOGGER.info(wort
+					+ " @ "
+					+ (xStart + absTabs[x] + delta)
+					+ ", "
+					+ (yStart + textHoehe - g.getFontMetrics().getDescent()));
 			}
 		}
 		if (DEBUG) {
-			System.out.println("Z" + zeile + ": " + this.tabelle[zeile][0]);
+			LOGGER.info("Z" + zeile + ": " + this.tabelle[zeile][0]);
 		}
 	}
 
@@ -114,18 +121,16 @@ public class TabellenBlock extends AbstractTabelleBlock {
 	public void setRelTabs(final double[] relTabs) {
 		if (relTabs.length == this.spalten) {
 			this.relTabs = relTabs;
-		}
-		else if (DEBUG) {
-			System.out.println("TabellenBlock: Falsche Anzahl Tabulatoren.");
+		} else if (DEBUG) {
+			LOGGER.info("TabellenBlock: Falsche Anzahl Tabulatoren.");
 		}
 	}
 
 	public void setAusrichtung(final Ausrichtung[] ausrichtung) {
 		if (ausrichtung.length == this.spalten) {
 			this.ausrichtung = ausrichtung;
-		}
-		else if (DEBUG) {
-			System.out.println("TabellenBlock: Ausrichtung - Falsche Anzahl.");
+		} else if (DEBUG) {
+			LOGGER.info("TabellenBlock: Ausrichtung - Falsche Anzahl.");
 		}
 	}
 

@@ -29,33 +29,41 @@ import javax.swing.JPanel;
  * @version 2.0/2004.08.22
  */
 
-abstract public class AbstractGDPane extends JPanel {
+public abstract class AbstractGDPane extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 
-	protected Object wert;
+	private Object wert;
 
 	protected AbstractGDPane(final String text) {
 		setBorder(BorderFactory.createTitledBorder(text));
 		setLayout(new FlowLayout(FlowLayout.LEFT));
 	}
 
-	public Object getWert() {
+	public Object getRefreshedWert() {
 		refreshWert();
-		return this.wert;
+		return wert;
 	}
 
-	abstract protected void refreshWert();
+	protected Object getWert() {
+		return wert;
+	}
+
+	protected void setWert(final Object wert) {
+		this.wert = wert;
+	}
+
+	protected abstract void refreshWert();
 
 	public void refreshRegisterUndKategorien() {
 		// Methode ersetzt die obenstehende; der GDP wird die
 		// Datenbasis übergeben
 	}
 
-	abstract protected JComponent getZentraleKomponente();
+	protected abstract JComponent getZentraleKomponente();
 
-	abstract public void laden(DataInputStream in) throws IOException;
+	public abstract void laden(DataInputStream in) throws IOException;
 
-	abstract public void speichern(DataOutputStream out) throws IOException;
+	public abstract void speichern(DataOutputStream out) throws IOException;
 
 }

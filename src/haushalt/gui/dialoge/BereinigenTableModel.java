@@ -21,7 +21,7 @@ import haushalt.daten.Datensatz;
 import haushalt.daten.Datum;
 import haushalt.daten.EinzelKategorie;
 import haushalt.daten.Euro;
-import haushalt.daten.Kategorie;
+import haushalt.daten.IKategorie;
 import haushalt.gui.TextResource;
 
 import java.util.ArrayList;
@@ -41,15 +41,11 @@ import javax.swing.table.AbstractTableModel;
 public class BereinigenTableModel extends AbstractTableModel {
 
 	private static final long serialVersionUID = 1L;
-	private static final TextResource res = TextResource.get();
+	private static final TextResource RES = TextResource.get();
 
 	private final String[] spaltenNamen = {
-			res.getString("date"),
-			res.getString("posting_text"),
-			res.getString("category"),
-			res.getString("amount"),
-			res.getString("register")
-	};
+			RES.getString("date"), RES.getString("posting_text"), RES.getString("category"), RES.getString("amount"),
+			RES.getString("register")};
 
 	private final Datenbasis db;
 	private EinzelKategorie kategorie = EinzelKategorie.SONSTIGES;
@@ -78,31 +74,31 @@ public class BereinigenTableModel extends AbstractTableModel {
 	@Override
 	public Class<?> getColumnClass(final int columnIndex) {
 		switch (columnIndex) {
-		case 0:
-			return Datum.class;
-		case 2:
-			return Kategorie.class;
-		case 3:
-			return Euro.class;
-		default:
-			return String.class;
+			case 0:
+				return Datum.class;
+			case 2:
+				return IKategorie.class;
+			case 3:
+				return Euro.class;
+			default:
+				return String.class;
 		}
 	}
 
 	public Object getValueAt(final int row, final int col) {
 		switch (col) {
-		case 0:
-			return this.cache.get(row).getBuchung().getDatum();
-		case 1:
-			return this.cache.get(row).getBuchung().getText();
-		case 2:
-			return this.cache.get(row).getBuchung().getKategorie();
-		case 3:
-			return this.cache.get(row).getBuchung().getWert();
-		case 4:
-			return this.cache.get(row).getRegister();
-		default:
-			return null;
+			case 0:
+				return this.cache.get(row).getBuchung().getDatum();
+			case 1:
+				return this.cache.get(row).getBuchung().getText();
+			case 2:
+				return this.cache.get(row).getBuchung().getKategorie();
+			case 3:
+				return this.cache.get(row).getBuchung().getWert();
+			case 4:
+				return this.cache.get(row).getRegister();
+			default:
+				return null;
 		}
 	}
 

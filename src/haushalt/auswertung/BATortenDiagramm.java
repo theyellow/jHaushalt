@@ -51,21 +51,21 @@ import java.awt.Font;
  */
 public class BATortenDiagramm extends AbstractBlockAuswertung {
 
-	private static final long serialVersionUID = 1L;
-	private static final TextResource res = TextResource.get();
+	public static final String UEBERSCHRIFT = TextResource.get().getString("headline_pie_chart");
 
-	public static final String ueberschrift = res.getString("headline_pie_chart");
+	private static final long serialVersionUID = 1L;
+	private static final TextResource RES = TextResource.get();
 
 	public BATortenDiagramm(final Haushalt haushalt, final Datenbasis db, final String name) {
 		super(haushalt, db, name);
 		final AbstractGDPane[] panes = new AbstractGDPane[6];
-		panes[0] = new ZeitraumGDP(res.getString("first_period") + ":", new Jahr(2007));
-		panes[1] = new ZahlGDP(res.getString("number_of_categories") + ":", new Integer(10));
-		panes[2] = new EinOderAlleRegisterGDP(res.getString("register") + ":", db, null);
-		panes[3] = new MehrereKategorienGDP(res.getString("categories") + ":", db);
-		panes[4] = new TextArrayGDP(res.getString("color_scheme") + ":", FarbPaletten.palettenNamen, "Standard");
-		panes[5] = new BooleanGDP(res.getString("display_values"), Boolean.FALSE, res.getString("in_percent"));
-		erzeugeEigenschaften(haushalt.getFrame(), ueberschrift, panes);
+		panes[0] = new ZeitraumGDP(RES.getString("first_period") + ":", new Jahr(2007));
+		panes[1] = new ZahlGDP(RES.getString("number_of_categories") + ":", new Integer(10));
+		panes[2] = new EinOderAlleRegisterGDP(RES.getString("register") + ":", db, null);
+		panes[3] = new MehrereKategorienGDP(RES.getString("categories") + ":", db);
+		panes[4] = new TextArrayGDP(RES.getString("color_scheme") + ":", FarbPaletten.getPalettenNamen(), "Standard");
+		panes[5] = new BooleanGDP(RES.getString("display_values"), Boolean.FALSE, RES.getString("in_percent"));
+		erzeugeEigenschaften(haushalt.getFrame(), UEBERSCHRIFT, panes);
 	}
 
 	@Override
@@ -87,12 +87,12 @@ public class BATortenDiagramm extends AbstractBlockAuswertung {
 		final Euro gesamtEinnahmen = new Euro();
 		final Euro gesamtAusgaben = new Euro();
 		Euro kategorieSumme;
-		final boolean unterkategorienVerwenden = ((MehrereKategorienGDP) this.panes[3]).getUnterkategorienVerwenden();
+		final boolean unterkategorienVerwenden = ((MehrereKategorienGDP) this.getPanes()[3]).getUnterkategorienVerwenden();
 		int anzahlEinnahmen = 0;
 		int anzahlAusgaben = 0;
 
 		for (int i = 0; i < anzahlKategorien; i++) {
-			kategorieSumme = this.db.getKategorieSaldo(kategorien[i], zeitraum, register, unterkategorienVerwenden);
+			kategorieSumme = getDb().getKategorieSaldo(kategorien[i], zeitraum, register, unterkategorienVerwenden);
 			if (kategorieSumme.compareTo(Euro.NULL_EURO) > 0) { // Einnahmen:
 				gesamtEinnahmen.sum(kategorieSumme);
 				for (int j = 0; j < maxAnzahlWerte; j++) {
@@ -102,8 +102,7 @@ public class BATortenDiagramm extends AbstractBlockAuswertung {
 						kategorienEinnahmen[j] = kategorien[i];
 						j = maxAnzahlWerte;
 						anzahlEinnahmen++;
-					}
-					else if (kategorieSumme.compareTo(einnahmen[j]) > 0) {
+					} else if (kategorieSumme.compareTo(einnahmen[j]) > 0) {
 						for (int k = maxAnzahlWerte - 1; k > j; k--) {
 							einnahmen[k] = einnahmen[k - 1];
 							kategorienEinnahmen[k] = kategorienEinnahmen[k - 1];
@@ -114,8 +113,7 @@ public class BATortenDiagramm extends AbstractBlockAuswertung {
 						anzahlEinnahmen++;
 					}
 				}
-			}
-			else if (kategorieSumme.compareTo(Euro.NULL_EURO) < 0) { // Ausgaben:
+			} else if (kategorieSumme.compareTo(Euro.NULL_EURO) < 0) { // Ausgaben:
 				kategorieSumme = Euro.NULL_EURO.sub(kategorieSumme);
 				gesamtAusgaben.sum(kategorieSumme);
 				for (int j = 0; j < maxAnzahlWerte; j++) {
@@ -125,8 +123,7 @@ public class BATortenDiagramm extends AbstractBlockAuswertung {
 						kategorienAusgaben[j] = kategorien[i];
 						j = maxAnzahlWerte;
 						anzahlAusgaben++;
-					}
-					else if (kategorieSumme.compareTo(ausgaben[j]) > 0) {
+					} else if (kategorieSumme.compareTo(ausgaben[j]) > 0) {
 						for (int k = maxAnzahlWerte - 1; k > j; k--) {
 							ausgaben[k] = ausgaben[k - 1];
 							kategorienAusgaben[k] = kategorienAusgaben[k - 1];
@@ -141,22 +138,19 @@ public class BATortenDiagramm extends AbstractBlockAuswertung {
 		}
 
 		// Vorhandene Blöcke löschen und neu berechnete einfügen
-		String titel = res.getString("distribution_income_expenditure") + " (" + zeitraum;
+		String titel = RES.getString("distribution_income_expenditure") + " (" + zeitraum;
 		loescheBloecke();
 		if (register == null) {
 			titel += ")";
-		}
-		else {
+		} else {
 			titel += ", " + register + ")";
 		}
 		final AbstractBlock block1 = new TextBlock(titel);
-		block1.setFont(new Font(this.haushalt.getFontname(), Font.BOLD, this.haushalt.getFontgroesse() + 6));
+		block1.setFont(new Font(this.getHaushalt().getFontname(), Font.BOLD, this.getHaushalt().getFontgroesse() + 6));
 		addDokumentenBlock(block1);
 		addDokumentenBlock(new LeererBlock(1));
-		final AbstractBlock block2 = new TortenBlock(
-				farbschema, einnahmen, gesamtEinnahmen, ausgaben, gesamtAusgaben
-				);
-		block2.setFont(new Font(this.haushalt.getFontname(), Font.PLAIN, this.haushalt.getFontgroesse()));
+		final AbstractBlock block2 = new TortenBlock(farbschema, einnahmen, gesamtEinnahmen, ausgaben, gesamtAusgaben);
+		block2.setFont(new Font(this.getHaushalt().getFontname(), Font.PLAIN, this.getHaushalt().getFontgroesse()));
 		addDokumentenBlock(block2);
 		addDokumentenBlock(new LeererBlock(1));
 
@@ -167,10 +161,8 @@ public class BATortenDiagramm extends AbstractBlockAuswertung {
 		for (int j = 0; j < anzahlEinnahmen; j++) {
 			tabelleEinnahmen[j][0] = "" + kategorienEinnahmen[j];
 			if (prozent) {
-				tabelleEinnahmen[j][1] = String.format("%1$.1f%%",
-						einnahmen[j].toDouble() * 100.0 / gesamtEinnahmen.toDouble());
-			}
-			else {
+				tabelleEinnahmen[j][1] = String.format("%1$.1f%%", einnahmen[j].toDouble() * 100.0 / gesamtEinnahmen.toDouble());
+			} else {
 				tabelleEinnahmen[j][1] = "" + einnahmen[j];
 			}
 		}
@@ -179,19 +171,17 @@ public class BATortenDiagramm extends AbstractBlockAuswertung {
 			tabelleAusgaben[j][0] = "" + kategorienAusgaben[j];
 			if (prozent) {
 				tabelleAusgaben[j][1] = ""
-						+ String.format("%1$.1f%%", ausgaben[j].toDouble() * 100.0 / gesamtAusgaben.toDouble());
-			}
-			else {
+					+ String.format("%1$.1f%%", ausgaben[j].toDouble() * 100.0 / gesamtAusgaben.toDouble());
+			} else {
 				tabelleAusgaben[j][1] = "" + ausgaben[j];
 			}
 		}
 
-		final double[] relTabs = { 0.0D, 70.0D };
+		final double[] relTabs = {0.0D, 70.0D};
 		final AbstractTabelleBlock.Ausrichtung[] attribute2 = {
-				AbstractTabelleBlock.Ausrichtung.LINKS,
-				AbstractTabelleBlock.Ausrichtung.RECHTS };
+				AbstractTabelleBlock.Ausrichtung.LINKS, AbstractTabelleBlock.Ausrichtung.RECHTS};
 		final DoppelteTabelleBlock block3 = new DoppelteTabelleBlock(tabelleEinnahmen, tabelleAusgaben);
-		block3.setFont(new Font(this.haushalt.getFontname(), Font.PLAIN, this.haushalt.getFontgroesse()));
+		block3.setFont(new Font(this.getHaushalt().getFontname(), Font.PLAIN, this.getHaushalt().getFontgroesse()));
 		block3.setRelTabs(relTabs, true);
 		block3.setRelTabs(relTabs, false);
 		block3.setAusrichtung(attribute2, true);

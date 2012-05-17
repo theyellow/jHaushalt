@@ -20,6 +20,7 @@ import haushalt.gui.DeleteableTextField;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.logging.Logger;
 
 import javax.swing.JComponent;
 import javax.swing.text.AttributeSet;
@@ -39,8 +40,8 @@ import javax.swing.text.PlainDocument;
 
 public class ZahlGDP extends AbstractGDPane {
 
-	private static final boolean DEBUG = false;
 	private static final long serialVersionUID = 1L;
+	private static final Logger LOGGER = Logger.getLogger(ZahlGDP.class.getName());
 
 	private final DeleteableTextField textField;
 
@@ -65,11 +66,11 @@ public class ZahlGDP extends AbstractGDPane {
 		if (text.equals("")) {
 			text = "1";
 		}
-		this.wert = new Integer(text);
-		if (this.wert.equals(0)) {
-			this.wert = 1;
+		setWert(new Integer(text));
+		if (getWert().equals(0)) {
+			setWert(1);
 		}
-		this.textField.setText("" + this.wert);
+		this.textField.setText("" + getWert());
 	}
 
 	@Override
@@ -94,8 +95,7 @@ public class ZahlGDP extends AbstractGDPane {
 		private static final long serialVersionUID = 1L;
 
 		@Override
-		public void insertString(final int offs, final String str, final AttributeSet a)
-				throws BadLocationException {
+		public void insertString(final int offs, final String str, final AttributeSet a) throws BadLocationException {
 			final char[] source = str.toCharArray();
 			final char[] result = new char[source.length];
 			int j = 0;
@@ -103,9 +103,8 @@ public class ZahlGDP extends AbstractGDPane {
 			for (int i = 0; i < source.length; i++) {
 				if (Character.isDigit(source[i])) {
 					result[j++] = source[i];
-				}
-				else if (DEBUG) {
-					System.out.println("-I- Falsches Zeichen: " + source[i]);
+				} else {
+					LOGGER.warning("-I- Falsches Zeichen: " + source[i]);
 				}
 			}
 

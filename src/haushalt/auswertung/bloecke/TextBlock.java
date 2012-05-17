@@ -34,6 +34,7 @@ import java.util.StringTokenizer;
 public class TextBlock extends AbstractBlock {
 
 	private final String text;
+	private List<String> printZeilen = null;
 
 	public TextBlock(final String text) {
 		this.text = text;
@@ -71,11 +72,8 @@ public class TextBlock extends AbstractBlock {
 		return zeilen.size() * g.getFontMetrics().getHeight();
 	}
 
-	private List<String> printZeilen = null;
-
 	@Override
-	public int print(final Graphics2D g2d, final int zeile, final int xStart, final int yStart, final int hoehe,
-			final int breite) {
+	public int print(final Graphics2D g2d, final int zeile, final int xStart, final int yStart, final int hoehe, final int breite) {
 		g2d.setFont(getFont());
 		final int textBreite = breite - 2 * getAbsRand(breite);
 		if (this.printZeilen == null) {

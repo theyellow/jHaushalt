@@ -20,8 +20,10 @@ import haushalt.daten.Datenbasis;
 import haushalt.daten.Datum;
 import haushalt.daten.EinzelKategorie;
 import haushalt.daten.Euro;
-import haushalt.daten.Kategorie;
+import haushalt.daten.IKategorie;
 import haushalt.gui.TextResource;
+
+import java.util.logging.Logger;
 
 import javax.swing.table.AbstractTableModel;
 
@@ -41,16 +43,12 @@ public class AutoStandardBuchungTableModel extends AbstractTableModel {
 
 	private static final boolean DEBUG = false;
 	private static final long serialVersionUID = 1L;
-	private static final TextResource res = TextResource.get();
+	private static final TextResource RES = TextResource.get();
+	private static final Logger LOGGER = Logger.getLogger(AutoStandardBuchungTableModel.class.getName());
 
 	private final String[] spaltenNamen = {
-			res.getString("date"),
-			res.getString("posting_text"),
-			res.getString("category"),
-			res.getString("amount"),
-			res.getString("register"),
-			res.getString("interval")
-	};
+			RES.getString("date"), RES.getString("posting_text"), RES.getString("category"), RES.getString("amount"),
+			RES.getString("register"), RES.getString("interval")};
 
 	private final Datenbasis db;
 
@@ -79,53 +77,53 @@ public class AutoStandardBuchungTableModel extends AbstractTableModel {
 	@Override
 	public Class<?> getColumnClass(final int columnIndex) {
 		switch (columnIndex) {
-		case 0:
-			return Datum.class;
-		case 2:
-			return EinzelKategorie.class;
-		case 3:
-			return Euro.class;
-		default:
-			return String.class;
+			case 0:
+				return Datum.class;
+			case 2:
+				return EinzelKategorie.class;
+			case 3:
+				return Euro.class;
+			default:
+				return String.class;
 		}
 	}
 
 	public Object getValueAt(final int row, final int col) {
 		if (DEBUG) {
-			System.out.println("AutoStandardBuchungTableModel: getValue @ " + row + ", " + col);
+			LOGGER.info("AutoStandardBuchungTableModel: getValue @ " + row + ", " + col);
 		}
 		if (row < this.db.getAnzahlAutoStandardBuchungen()) {
 			final AbstractBuchung buchung = this.db.getAutoStandardBuchung(row);
 			switch (col) {
-			case 0:
-				return buchung.getDatum();
-			case 1:
-				return buchung.getText();
-			case 2:
-				return buchung.getKategorie();
-			case 3:
-				return buchung.getWert();
-			case 4:
-				return this.db.getAutoStandardBuchungRegister(row);
-			default:
-				return res.getAutoBuchungIntervallName(this.db.getAutoStandardBuchungIntervall(row));
+				case 0:
+					return buchung.getDatum();
+				case 1:
+					return buchung.getText();
+				case 2:
+					return buchung.getKategorie();
+				case 3:
+					return buchung.getWert();
+				case 4:
+					return this.db.getAutoStandardBuchungRegister(row);
+				default:
+					return RES.getAutoBuchungIntervallName(this.db.getAutoStandardBuchungIntervall(row));
 			}
 		}
 
 		// Werte für die letzte Zeile gibt es noch nicht:
 		switch (col) {
-		case 0:
-			return new Datum();
-		case 1:
-			return "";
-		case 2:
-			return EinzelKategorie.SONSTIGES;
-		case 3:
-			return new Euro();
-		case 4:
-			return "";
-		default:
-			return "";
+			case 0:
+				return new Datum();
+			case 1:
+				return "";
+			case 2:
+				return EinzelKategorie.SONSTIGES;
+			case 3:
+				return new Euro();
+			case 4:
+				return "";
+			default:
+				return "";
 		}
 	}
 
@@ -137,7 +135,7 @@ public class AutoStandardBuchungTableModel extends AbstractTableModel {
 	@Override
 	public void setValueAt(final Object value, final int row, final int col) {
 		if (DEBUG) {
-			System.out.println("AutoStandardBuchungTableModel: setValue (" + value + ") @ " + row + ", " + col);
+			LOGGER.info("AutoStandardBuchungTableModel: setValue (" + value + ") @ " + row + ", " + col);
 		}
 		if (row == this.db.getAnzahlAutoStandardBuchungen()) {
 			// Wenn ein Wert in der letzten Zeile eingegeben wurde,
@@ -147,24 +145,24 @@ public class AutoStandardBuchungTableModel extends AbstractTableModel {
 		}
 		final AbstractBuchung buchung = this.db.getAutoStandardBuchung(row);
 		switch (col) {
-		case 0:
-			buchung.setDatum(new Datum("" + value));
-			break;
-		case 1:
-			buchung.setText("" + value);
-			break;
-		case 2:
-			buchung.setKategorie((Kategorie) value);
-			break;
-		case 3:
-			buchung.setWert(new Euro("" + value));
-			break;
-		case 4:
-			this.db.setAutoStandardBuchungRegister(row, "" + value);
-			break;
-		default:
-			this.db.setAutoStandardBuchungIntervall(row, res.getAutoBuchungIntervallIndex("" + value));
-			break;
+			case 0:
+				buchung.setDatum(new Datum("" + value));
+				break;
+			case 1:
+				buchung.setText("" + value);
+				break;
+			case 2:
+				buchung.setKategorie((IKategorie) value);
+				break;
+			case 3:
+				buchung.setWert(new Euro("" + value));
+				break;
+			case 4:
+				this.db.setAutoStandardBuchungRegister(row, "" + value);
+				break;
+			default:
+				this.db.setAutoStandardBuchungIntervall(row, RES.getAutoBuchungIntervallIndex("" + value));
+				break;
 		}
 		fireTableRowsUpdated(row, row);
 	}

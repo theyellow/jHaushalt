@@ -37,35 +37,27 @@ import javax.swing.table.TableModel;
  * the TableSorter appears to hold another copy of the table
  * with the rows in a different order.
  * <p/>
- * TableSorter registers itself as a listener to the underlying model, just as
- * the JTable itself would. Events recieved from the model are examined,
- * sometimes manipulated (typically widened), and then passed on to the
- * TableSorter's listeners (typically the JTable). If a change to the model has
- * invalidated the order of TableSorter's rows, a note of this is made and the
- * sorter will resort the rows the next time a value is requested.
+ * TableSorter registers itself as a listener to the underlying model, just as the JTable itself would. Events recieved from the
+ * model are examined, sometimes manipulated (typically widened), and then passed on to the TableSorter's listeners (typically the
+ * JTable). If a change to the model has invalidated the order of TableSorter's rows, a note of this is made and the sorter will
+ * resort the rows the next time a value is requested.
  * <p/>
- * When the tableHeader property is set, either by using the setTableHeader()
- * method or the two argument constructor, the table header may be used as a
- * complete UI for TableSorter. The default renderer of the tableHeader is
- * decorated with a renderer that indicates the sorting status of each column.
- * In addition, a mouse listener is installed with the following behavior:
+ * When the tableHeader property is set, either by using the setTableHeader() method or the two argument constructor, the table
+ * header may be used as a complete UI for TableSorter. The default renderer of the tableHeader is decorated with a renderer that
+ * indicates the sorting status of each column. In addition, a mouse listener is installed with the following behavior:
  * <ul>
  * <li>
- * Mouse-click: Clears the sorting status of all other columns and advances the
- * sorting status of that column through three values: {NOT_SORTED, ASCENDING,
- * DESCENDING} (then back to NOT_SORTED again).
+ * Mouse-click: Clears the sorting status of all other columns and advances the sorting status of that column through three
+ * values: {NOT_SORTED, ASCENDING, DESCENDING} (then back to NOT_SORTED again).
  * <li>
- * SHIFT-mouse-click: Clears the sorting status of all other columns and cycles
- * the sorting status of the column through the same three values, in the
- * opposite order: {NOT_SORTED, DESCENDING, ASCENDING}.
+ * SHIFT-mouse-click: Clears the sorting status of all other columns and cycles the sorting status of the column through the same
+ * three values, in the opposite order: {NOT_SORTED, DESCENDING, ASCENDING}.
  * <li>
- * CONTROL-mouse-click and CONTROL-SHIFT-mouse-click: as above except that the
- * changes to the column do not cancel the statuses of columns that are already
- * sorting - giving a way to initiate a compound sort.
+ * CONTROL-mouse-click and CONTROL-SHIFT-mouse-click: as above except that the changes to the column do not cancel the statuses of
+ * columns that are already sorting - giving a way to initiate a compound sort.
  * </ul>
  * <p/>
- * This is a long overdue rewrite of a class of the same name that first
- * appeared in the swing table demos in 1997.
+ * This is a long overdue rewrite of a class of the same name that first appeared in the swing table demos in 1997.
  * 
  * @author Philip Milne
  * @author Brendon McLean
@@ -74,16 +66,12 @@ import javax.swing.table.TableModel;
  * @version 2.0 02/27/04
  */
 
-@SuppressWarnings({ "unchecked", "serial" })
+@SuppressWarnings({"unchecked", "serial"})
 public class TableSorter extends AbstractTableModel {
-
-	protected TableModel tableModel;
 
 	public static final int DESCENDING = -1;
 	public static final int NOT_SORTED = 0;
 	public static final int ASCENDING = 1;
-
-	private static Directive EMPTY_DIRECTIVE = new Directive(-1, NOT_SORTED);
 
 	public static final Comparator<Object> COMPARABLE_COMAPRATOR = new Comparator<Object>() {
 
@@ -98,6 +86,9 @@ public class TableSorter extends AbstractTableModel {
 		}
 	};
 
+	private static final Directive EMPTY_DIRECTIVE = new Directive(-1, NOT_SORTED);
+
+	private TableModel tableModel;
 	private Row[] viewToModel;
 	private int[] modelToView;
 
@@ -161,8 +152,7 @@ public class TableSorter extends AbstractTableModel {
 		this.tableHeader = tableHeader;
 		if (this.tableHeader != null) {
 			this.tableHeader.addMouseListener(this.mouseListener);
-			this.tableHeader.setDefaultRenderer(
-					new SortableHeaderRenderer(this.tableHeader.getDefaultRenderer()));
+			this.tableHeader.setDefaultRenderer(new SortableHeaderRenderer(this.tableHeader.getDefaultRenderer()));
 		}
 	}
 
@@ -219,8 +209,7 @@ public class TableSorter extends AbstractTableModel {
 	public void setColumnComparator(final Class<?> type, final Comparator<Object> comparator) {
 		if (comparator == null) {
 			this.columnComparators.remove(type);
-		}
-		else {
+		} else {
 			this.columnComparators.put(type, comparator);
 		}
 	}
@@ -325,14 +314,11 @@ public class TableSorter extends AbstractTableModel {
 				// Define null less than everything, except null.
 				if ((o1 == null) && (o2 == null)) {
 					comparison = 0;
-				}
-				else if (o1 == null) {
+				} else if (o1 == null) {
 					comparison = -1;
-				}
-				else if (o2 == null) {
+				} else if (o2 == null) {
 					comparison = 1;
-				}
-				else {
+				} else {
 					comparison = getComparator(column).compare(o1, o2);
 				}
 				if (comparison != 0) {
@@ -388,13 +374,11 @@ public class TableSorter extends AbstractTableModel {
 			// clause avoids this problem.
 			final int column = e.getColumn();
 			if ((e.getFirstRow() == e.getLastRow())
-					&& (column != TableModelEvent.ALL_COLUMNS)
-					&& (getSortingStatus(column) == NOT_SORTED)
-					&& (TableSorter.this.modelToView != null)) {
+				&& (column != TableModelEvent.ALL_COLUMNS)
+				&& (getSortingStatus(column) == NOT_SORTED)
+				&& (TableSorter.this.modelToView != null)) {
 				final int viewIndex = getModelToView()[e.getFirstRow()];
-				fireTableChanged(new TableModelEvent(TableSorter.this,
-														viewIndex, viewIndex,
-														column, e.getType()));
+				fireTableChanged(new TableModelEvent(TableSorter.this, viewIndex, viewIndex, column, e.getType()));
 				return;
 			}
 
@@ -467,8 +451,7 @@ public class TableSorter extends AbstractTableModel {
 			// Horizontal line.
 			if (this.descending) {
 				g.setColor(color.darker().darker());
-			}
-			else {
+			} else {
 				g.setColor(color.brighter().brighter());
 			}
 			g.drawLine(dx, 0, 0, 0);
@@ -494,14 +477,20 @@ public class TableSorter extends AbstractTableModel {
 			this.tableCellRenderer = tableCellRenderer;
 		}
 
-		public Component getTableCellRendererComponent(final JTable table,
-														final Object value,
-														final boolean isSelected,
-														final boolean hasFocus,
-														final int row,
-														final int column) {
-			final Component c = this.tableCellRenderer.getTableCellRendererComponent(table,
-					value, isSelected, hasFocus, row, column);
+		public Component getTableCellRendererComponent(
+			final JTable table,
+			final Object value,
+			final boolean isSelected,
+			final boolean hasFocus,
+			final int row,
+			final int column) {
+			final Component c = this.tableCellRenderer.getTableCellRendererComponent(
+					table,
+					value,
+					isSelected,
+					hasFocus,
+					row,
+					column);
 			if (c instanceof JLabel) {
 				final JLabel l = (JLabel) c;
 				l.setHorizontalTextPosition(SwingConstants.LEFT);

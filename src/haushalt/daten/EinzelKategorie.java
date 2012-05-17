@@ -19,7 +19,7 @@ import haushalt.gui.TextResource;
 
 /**
  * Verwaltet alle Kategorien.
- * Standardmäßig steht die die Kategorie "Sonstiges" zur Verfügung.
+ * Standardmäßig steht die die IKategorie "Sonstiges" zur Verfügung.
  * 
  * @author Dr. Lars H. Hahn
  * @version 2.5/2008.01.22
@@ -30,13 +30,13 @@ import haushalt.gui.TextResource;
  * 2004.08.22 Version 2.0
  */
 
-public class EinzelKategorie implements Kategorie {
+public class EinzelKategorie implements IKategorie {
 
-	private static final TextResource res = TextResource.get();
-	public static final EinzelKategorie SONSTIGES = new EinzelKategorie(res.getString("miscellaneous"), null);
+	public static final EinzelKategorie SONSTIGES = new EinzelKategorie(TextResource.get().getString("miscellaneous"), null);
 
 	private final EinzelKategorie hauptkategorie;
 	private String name;
+	private Euro summe = new Euro();
 
 	public EinzelKategorie(final String name, final EinzelKategorie hauptkategorie) {
 		this.name = name;
@@ -82,16 +82,13 @@ public class EinzelKategorie implements Kategorie {
 		return false;
 	}
 
-	// -- Kategorie-Summe
+	// -- IKategorie-Summe
 	// -------------------------------------------------------
-
-	private Euro summe = new Euro();
 
 	public void addiereWert(final Euro wert, final boolean unterkat) {
 		if (unterkat) {
 			this.summe.sum(wert);
-		}
-		else {
+		} else {
 			getHauptkategorie().summe.sum(wert);
 		}
 	}
@@ -107,7 +104,7 @@ public class EinzelKategorie implements Kategorie {
 	// -- Methoden fuer Interface: Comparable
 	// -----------------------------------
 
-	public int compareTo(final Kategorie kategorie) {
+	public int compareTo(final IKategorie kategorie) {
 		return toString().compareToIgnoreCase(kategorie.toString());
 	}
 

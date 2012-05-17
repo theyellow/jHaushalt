@@ -44,7 +44,7 @@ import java.util.ArrayList;
 
 public class Planung {
 
-	private static final TextResource res = TextResource.get();
+	private static final TextResource RES = TextResource.get();
 
 	private AbstractZeitraum zeitraum;
 	private final ArrayList<EinzelKategorie> kategorien = new ArrayList<EinzelKategorie>();
@@ -121,8 +121,7 @@ public class Planung {
 	public void setBetrag(final int idx, final Euro wert) {
 		if (this.unterkategorien) {
 			this.betrag.set(idx, wert);
-		}
-		else {
+		} else {
 			this.betrag.set(this.hauptkategorien[idx], wert);
 		}
 	}
@@ -130,8 +129,7 @@ public class Planung {
 	public void setVerwenden(final int idx, final Boolean wert) {
 		if (this.unterkategorien) {
 			this.verwenden.set(idx, wert);
-		}
-		else {
+		} else {
 			this.verwenden.set(this.hauptkategorien[idx], wert);
 		}
 	}
@@ -160,8 +158,7 @@ public class Planung {
 				// kategorien hinzuaddiert; die Unterkategorien werden
 				// deaktiviert
 				while ((count < this.kategorien.size())
-						&&
-						(this.kategorien.get(count).istInKategorie(this.kategorien.get(this.hauptkategorien[i]), false))) {
+					&& (this.kategorien.get(count).istInKategorie(this.kategorien.get(this.hauptkategorien[i]), false))) {
 					summe.sum(this.betrag.get(count));
 					if (!this.kategorien.get(count).isHauptkategorie()) {
 						this.verwenden.set(count, Boolean.FALSE);
@@ -181,11 +178,7 @@ public class Planung {
 		final ArrayList<String[]> tabelle = new ArrayList<String[]>();
 		final Euro[] summen = this.db.getKategorieSalden(this.zeitraum, this.unterkategorien);
 		String[] zeile = {
-				res.getString("category"),
-				res.getString("forecast"),
-				res.getString("actual"),
-				res.getString("difference")
-		};
+				RES.getString("category"), RES.getString("forecast"), RES.getString("actual"), RES.getString("difference")};
 		tabelle.add(zeile);
 		final Euro summe = new Euro();
 		double faktor = 1.0D;
@@ -208,7 +201,7 @@ public class Planung {
 			}
 		}
 		zeile = new String[4];
-		zeile[0] = res.getString("total");
+		zeile[0] = RES.getString("total");
 		zeile[1] = "" + getSumme();
 		zeile[2] = "" + summe;
 		zeile[3] = "" + getSumme().sub(summe);
@@ -220,8 +213,7 @@ public class Planung {
 		final EinzelKategorie[] kat = this.db.getKategorien(true);
 		// Kategorien die es noch nicht gibt werden hinzugefügt
 		for (int i = 0; i < kat.length; i++) {
-			if ((i >= this.kategorien.size()) ||
-					(kat[i] != this.kategorien.get(i))) {
+			if ((i >= this.kategorien.size()) || (kat[i] != this.kategorien.get(i))) {
 				this.kategorien.add(i, kat[i]);
 				this.betrag.add(i, new Euro());
 				this.verwenden.add(i, Boolean.FALSE);
@@ -253,12 +245,10 @@ public class Planung {
 
 	public String getTextHochrechnen() {
 		if (!this.hochrechnen) {
-			return res.getString("extrapolation_used");
+			return RES.getString("extrapolation_used");
 		}
 		final int anzahlGesamttage = this.zeitraum.getAnzahlTage();
 		final AbstractZeitraum istZeitraum = new FreierZeitraum(this.zeitraum.getStartDatum(), new Datum());
-		return res.getString("extrapolation_unused") + " (" +
-				istZeitraum.getAnzahlTage() + " --> " +
-				anzahlGesamttage + ")";
+		return RES.getString("extrapolation_unused") + " (" + istZeitraum.getAnzahlTage() + " --> " + anzahlGesamttage + ")";
 	}
 }

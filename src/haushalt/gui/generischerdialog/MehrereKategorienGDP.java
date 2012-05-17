@@ -53,23 +53,23 @@ import javax.swing.ScrollPaneConstants;
 public class MehrereKategorienGDP extends AbstractGDPane {
 
 	private static final long serialVersionUID = 1L;
-	private static final TextResource res = TextResource.get();
+	private static final TextResource RES = TextResource.get();
 
 	private final JPanel negPane = new JPanel();
 	private final JPanel posPane = new JPanel();
 	private final JPanel buttonPane = new JPanel();
 	private final JPanel centralPane = new JPanel();
-	protected final JList negList;
-	protected DefaultListModel negListModel;
-	private final JLabel negLabel = new JLabel(res.getString("unused_categories"));
-	protected final JList posList;
-	protected DefaultListModel posListModel;
-	private final JLabel posLabel = new JLabel(res.getString("used_categories"));
-	private final JButton alle_hinzufuegen = new JButton(">>");
+	private final JList negList;
+	private DefaultListModel negListModel;
+	private final JLabel negLabel = new JLabel(RES.getString("unused_categories"));
+	private final JList posList;
+	private DefaultListModel posListModel;
+	private final JLabel posLabel = new JLabel(RES.getString("used_categories"));
+	private final JButton alleHinzufuegen = new JButton(">>");
 	private final JButton hinzufuegen = new JButton(">");
 	private final JButton entfernen = new JButton("<");
-	private final JButton alle_entfernen = new JButton("<<");
-	private final JCheckBox checkBox = new JCheckBox(res.getString("use_subcategories"), true);
+	private final JButton alleEntfernen = new JButton("<<");
+	private final JCheckBox checkBox = new JCheckBox(RES.getString("use_subcategories"), true);
 	private final Datenbasis db;
 
 	public MehrereKategorienGDP(final String text, final Datenbasis datenbasis) {
@@ -104,20 +104,19 @@ public class MehrereKategorienGDP extends AbstractGDPane {
 		this.posPane.add(this.posLabel);
 		this.posPane.add(posScrollPane);
 
-		this.alle_entfernen.addActionListener(new ActionListener() {
+		this.alleEntfernen.addActionListener(new ActionListener() {
 
 			public void actionPerformed(final ActionEvent e) {
 				MehrereKategorienGDP.this.posListModel.removeAllElements();
 				MehrereKategorienGDP.this.negListModel.removeAllElements();
-				final EinzelKategorie[] kategorien = MehrereKategorienGDP.this.db
-						.getKategorien(unterkategorienVerwenden());
+				final EinzelKategorie[] kategorien = MehrereKategorienGDP.this.db.getKategorien(unterkategorienVerwenden());
 				for (int i = 0; i < kategorien.length; i++) {
 					MehrereKategorienGDP.this.negListModel.addElement(kategorien[i]);
 				}
 			}
 		});
-		this.alle_entfernen.setAlignmentX(Component.CENTER_ALIGNMENT);
-		this.buttonPane.add(this.alle_entfernen);
+		this.alleEntfernen.setAlignmentX(Component.CENTER_ALIGNMENT);
+		this.buttonPane.add(this.alleEntfernen);
 		this.entfernen.addActionListener(new ActionListener() {
 
 			public void actionPerformed(final ActionEvent e) {
@@ -146,20 +145,19 @@ public class MehrereKategorienGDP extends AbstractGDPane {
 		});
 		this.hinzufuegen.setAlignmentX(Component.CENTER_ALIGNMENT);
 		this.buttonPane.add(this.hinzufuegen);
-		this.alle_hinzufuegen.addActionListener(new ActionListener() {
+		this.alleHinzufuegen.addActionListener(new ActionListener() {
 
 			public void actionPerformed(final ActionEvent e) {
 				MehrereKategorienGDP.this.posListModel.removeAllElements();
 				MehrereKategorienGDP.this.negListModel.removeAllElements();
-				final EinzelKategorie[] kategorien = MehrereKategorienGDP.this.db
-						.getKategorien(unterkategorienVerwenden());
+				final EinzelKategorie[] kategorien = MehrereKategorienGDP.this.db.getKategorien(unterkategorienVerwenden());
 				for (int i = 0; i < kategorien.length; i++) {
 					MehrereKategorienGDP.this.posListModel.addElement(kategorien[i]);
 				}
 			}
 		});
-		this.alle_hinzufuegen.setAlignmentX(Component.CENTER_ALIGNMENT);
-		this.buttonPane.add(this.alle_hinzufuegen);
+		this.alleHinzufuegen.setAlignmentX(Component.CENTER_ALIGNMENT);
+		this.buttonPane.add(this.alleHinzufuegen);
 		this.buttonPane.setLayout(new BoxLayout(this.buttonPane, BoxLayout.Y_AXIS));
 		this.centralPane.add(this.negPane);
 		this.centralPane.add(this.buttonPane);
@@ -187,7 +185,7 @@ public class MehrereKategorienGDP extends AbstractGDPane {
 	protected void refreshWert() {
 		final EinzelKategorie[] kategorien = new EinzelKategorie[this.posListModel.getSize()];
 		this.posListModel.copyInto(kategorien);
-		this.wert = kategorien;
+		setWert(kategorien);
 	}
 
 	@Override
@@ -208,8 +206,7 @@ public class MehrereKategorienGDP extends AbstractGDPane {
 			}
 			if (gefunden) {
 				this.posListModel.addElement(neueKategorien[i]);
-			}
-			else {
+			} else {
 				this.negListModel.addElement(neueKategorien[i]);
 			}
 		}
@@ -246,8 +243,7 @@ public class MehrereKategorienGDP extends AbstractGDPane {
 			}
 			if (gefunden) {
 				this.posListModel.addElement(kategorien[j]);
-			}
-			else {
+			} else {
 				this.negListModel.addElement(kategorien[j]);
 			}
 		}

@@ -50,15 +50,15 @@ import javax.swing.event.HyperlinkListener;
 public class DlgHilfe extends JDialog {
 
 	private static final long serialVersionUID = 1L;
-	private static final TextResource res = TextResource.get();
+	private static final TextResource RES = TextResource.get();
 
 	// GUI-Komponenten
 	private final JPanel buttonPane = new JPanel();
-	private final JButton buttonOK = new JButton(res.getString("button_ok"));
+	private final JButton buttonOK = new JButton(RES.getString("button_ok"));
 	private final JEditorPane editorPane = new JEditorPane();
 
 	public DlgHilfe(final JFrame frame) {
-		super(frame, res.getString("help"), false);
+		super(frame, RES.getString("help"), false);
 		this.editorPane.setPreferredSize(new Dimension(600, 400));
 		this.editorPane.setEditable(false);
 		this.editorPane.addHyperlinkListener(new HyperlinkListener() {
@@ -68,21 +68,19 @@ public class DlgHilfe extends JDialog {
 					final JEditorPane pane = (JEditorPane) e.getSource();
 					try {
 						pane.setPage(e.getURL());
-					}
-					catch (final IOException e1) {
-						pane.setText(res.getString("help_not_found") + e.getURL());
+					} catch (final IOException e1) {
+						pane.setText(RES.getString("help_not_found") + e.getURL());
 					}
 				}
 			}
 		});
-		final String code = res.getLocale().getLanguage();
+		final String code = RES.getLocale().getLanguage();
 		final URLClassLoader urlLoader = (URLClassLoader) getClass().getClassLoader();
-		final URL url = urlLoader.findResource("res/jhh-help_" + code + ".html");
+		final URL url = urlLoader.findResource("RES/jhh-help_" + code + ".html");
 		try {
 			this.editorPane.setPage(url);
-		}
-		catch (final IOException e1) {
-			this.editorPane.setText(res.getString("help_not_found") + " " + url + "\nCountry-Code: " + code);
+		} catch (final IOException e1) {
+			this.editorPane.setText(RES.getString("help_not_found") + " " + url + "\nCountry-Code: " + code);
 		}
 
 		final Container contentPane = getContentPane();

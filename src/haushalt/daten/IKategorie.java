@@ -24,8 +24,8 @@ package haushalt.daten;
  * 2006.02.10 Erste Version
  */
 
-public interface Kategorie extends Comparable<Kategorie> {
+public interface IKategorie extends Comparable<IKategorie> {
 
-	abstract public String toString();
+	String toString();
 
 }

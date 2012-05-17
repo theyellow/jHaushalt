@@ -45,75 +45,73 @@ import java.awt.Font;
 
 public class BAEinnahmenAusgaben extends AbstractBlockAuswertung {
 
-	private static final long serialVersionUID = 1L;
-	private static final TextResource res = TextResource.get();
+	public static final String UEBERSCHRIFT = TextResource.get().getString("table_income_expenditure");
 
-	public static final String ueberschrift = res.getString("table_income_expenditure");
+	private static final long serialVersionUID = 1L;
+	private static final TextResource RES = TextResource.get();
+
+	private final String[] kopf = {
+			RES.getString("period"), RES.getString("income"), RES.getString("expenditure"), RES.getString("difference")};
 
 	public BAEinnahmenAusgaben(final Haushalt haushalt, final Datenbasis db, final String name) {
 		super(haushalt, db, name);
 		final AbstractGDPane[] panes = new AbstractGDPane[3];
-		panes[0] = new ZeitraumGDP(res.getString("first_period") + ":", new Jahr(2007));
-		panes[1] = new ZahlGDP(res.getString("number_of_periods") + ":", new Integer(4));
-		panes[2] = new EinOderAlleRegisterGDP(res.getString("register") + ":", db, null);
-		erzeugeEigenschaften(haushalt.getFrame(), ueberschrift, panes);
+		panes[0] = new ZeitraumGDP(RES.getString("first_period") + ":", new Jahr(2007));
+		panes[1] = new ZahlGDP(RES.getString("number_of_periods") + ":", new Integer(4));
+		panes[2] = new EinOderAlleRegisterGDP(RES.getString("register") + ":", db, null);
+		erzeugeEigenschaften(haushalt.getFrame(), UEBERSCHRIFT, panes);
 	}
 
-	private final String[] kopf = {
-			res.getString("period"),
-			res.getString("income"),
-			res.getString("expenditure"),
-			res.getString("difference")
-	};
 
 	@Override
 	protected String berechneAuswertung(final Object[] werte) {
 		final AbstractZeitraum zeitraum = (AbstractZeitraum) werte[0];
 		final int anzahlZeitraeume = ((Integer) werte[1]).intValue();
 		final String register = (String) werte[2];
-		this.tabelle = new String[anzahlZeitraeume + 2][4];
+		setTabelle(new String[anzahlZeitraeume + 2][4]);
 		AbstractZeitraum tmpZeitraum = zeitraum;
 		final Euro summeEinnahmen = new Euro();
 		final Euro summeAusgaben = new Euro();
-		this.tabelle[0] = this.kopf;
+		setTabelleLine(0, this.kopf);
 		for (int i = 1; i <= anzahlZeitraeume; i++) {
-			final Euro einnahmen = this.db.getEinnahmen(tmpZeitraum, register);
-			final Euro ausgaben = this.db.getAusgaben(tmpZeitraum, register);
-			this.tabelle[i][0] = "" + tmpZeitraum;
-			this.tabelle[i][1] = "" + einnahmen;
-			this.tabelle[i][2] = "" + ausgaben;
-			this.tabelle[i][3] = "" + einnahmen.sub(ausgaben);
+			final Euro einnahmen = getDb().getEinnahmen(tmpZeitraum, register);
+			final Euro ausgaben = getDb().getAusgaben(tmpZeitraum, register);
+			setTabelleContent(i, 0, "" + tmpZeitraum);
+			setTabelleContent(i, 1, "" + einnahmen);
+			setTabelleContent(i, 2, "" + ausgaben);
+			setTabelleContent(i, 3, "" + einnahmen.sub(ausgaben));
 			summeEinnahmen.sum(einnahmen);
 			summeAusgaben.sum(ausgaben);
 			tmpZeitraum = tmpZeitraum.folgeZeitraum();
 		}
-		this.tabelle[anzahlZeitraeume + 1][0] = res.getString("average");
-		this.tabelle[anzahlZeitraeume + 1][1] = "" + summeEinnahmen.durch(anzahlZeitraeume);
-		this.tabelle[anzahlZeitraeume + 1][2] = "" + summeAusgaben.durch(anzahlZeitraeume);
-		this.tabelle[anzahlZeitraeume + 1][3] = "" + summeEinnahmen.sub(summeAusgaben).durch(anzahlZeitraeume);
+		setTabelleContent(anzahlZeitraeume + 1, 0, RES.getString("average"));
+		setTabelleContent(anzahlZeitraeume + 1, 1, "" + summeEinnahmen.durch(anzahlZeitraeume));
+		setTabelleContent(anzahlZeitraeume + 1, 2, "" + summeAusgaben.durch(anzahlZeitraeume));
+		setTabelleContent(anzahlZeitraeume + 1, 3, "" + summeEinnahmen.sub(summeAusgaben).durch(anzahlZeitraeume));
 
 		// Vorhandene Blöcke löschen und neu berechnete einfügen
-		String titel = res.getString("income_expenditure") + " (" + this.tabelle[1][0] + " " + res.getString("to")
-				+ " "
-				+ this.tabelle[anzahlZeitraeume][0];
+		String titel = RES.getString("income_expenditure")
+			+ " ("
+			+ getTabelle()[1][0]
+			+ " "
+			+ RES.getString("to")
+			+ " "
+			+ getTabelle()[anzahlZeitraeume][0];
 		if (register == null) {
 			titel += ")";
-		}
-		else {
+		} else {
 			titel += ", " + register + ")";
 		}
 		loescheBloecke();
 		final TextBlock block1 = new TextBlock(titel);
-		block1.setFont(new Font(this.haushalt.getFontname(), Font.BOLD, this.haushalt.getFontgroesse() + 6));
+		block1.setFont(new Font(this.getHaushalt().getFontname(), Font.BOLD, this.getHaushalt().getFontgroesse() + 6));
 		addDokumentenBlock(block1);
 		addDokumentenBlock(new LeererBlock(1));
-		final TabellenBlock block2 = new TabellenBlock(this.tabelle);
-		block2.setFont(new Font(this.haushalt.getFontname(), Font.PLAIN, this.haushalt.getFontgroesse()));
+		final TabellenBlock block2 = new TabellenBlock(getTabelle());
+		block2.setFont(new Font(this.getHaushalt().getFontname(), Font.PLAIN, this.getHaushalt().getFontgroesse()));
 		final TabellenBlock.Ausrichtung[] attribute = {
-				TabellenBlock.Ausrichtung.LINKS,
-				TabellenBlock.Ausrichtung.RECHTS,
-				TabellenBlock.Ausrichtung.RECHTS,
-				TabellenBlock.Ausrichtung.RECHTS };
+				TabellenBlock.Ausrichtung.LINKS, TabellenBlock.Ausrichtung.RECHTS, TabellenBlock.Ausrichtung.RECHTS,
+				TabellenBlock.Ausrichtung.RECHTS};
 		block2.setAusrichtung(attribute);
 		addDokumentenBlock(block2);
 		return titel;

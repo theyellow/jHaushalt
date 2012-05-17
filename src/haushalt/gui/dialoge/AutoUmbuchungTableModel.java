@@ -22,6 +22,8 @@ import haushalt.daten.Umbuchung;
 import haushalt.daten.UmbuchungKategorie;
 import haushalt.gui.TextResource;
 
+import java.util.logging.Logger;
+
 import javax.swing.table.AbstractTableModel;
 
 /**
@@ -42,16 +44,12 @@ public class AutoUmbuchungTableModel extends AbstractTableModel {
 
 	private static final boolean DEBUG = false;
 	private static final long serialVersionUID = 1L;
-	private static final TextResource res = TextResource.get();
+	private static final TextResource RES = TextResource.get();
+	private static final Logger LOGGER = Logger.getLogger(AutoUmbuchungTableModel.class.getName());
 
 	private final String[] spaltenNamen = {
-			res.getString("date"),
-			res.getString("posting_text"),
-			res.getString("amount"),
-			res.getString("source_register"),
-			res.getString("destination_register"),
-			res.getString("interval")
-	};
+			RES.getString("date"), RES.getString("posting_text"), RES.getString("amount"), RES.getString("source_register"),
+			RES.getString("destination_register"), RES.getString("interval")};
 
 	private final Datenbasis db;
 
@@ -80,46 +78,46 @@ public class AutoUmbuchungTableModel extends AbstractTableModel {
 	@Override
 	public Class<?> getColumnClass(final int columnIndex) {
 		switch (columnIndex) {
-		case 0:
-			return Datum.class;
-		case 2:
-			return Euro.class;
-		default:
-			return String.class;
+			case 0:
+				return Datum.class;
+			case 2:
+				return Euro.class;
+			default:
+				return String.class;
 		}
 	}
 
 	public Object getValueAt(final int row, final int col) {
 		if (DEBUG) {
-			System.out.println("AutoUmbuchungTableModel: getValue @ " + row + ", " + col);
+			LOGGER.info("AutoUmbuchungTableModel: getValue @ " + row + ", " + col);
 		}
 		if (row < this.db.getAnzahlAutoUmbuchungen()) {
 			final Umbuchung buchung = this.db.getAutoUmbuchung(row);
 			final UmbuchungKategorie registerPaar = this.db.getAutoUmbuchungRegister(row);
 			switch (col) {
-			case 0:
-				return buchung.getDatum();
-			case 1:
-				return buchung.getText();
-			case 2:
-				return buchung.getWert();
-			case 3:
-				return registerPaar.getQuelle();
-			case 4:
-				return registerPaar.getZiel();
-			default:
-				return res.getAutoBuchungIntervallName(this.db.getAutoUmbuchungIntervall(row));
+				case 0:
+					return buchung.getDatum();
+				case 1:
+					return buchung.getText();
+				case 2:
+					return buchung.getWert();
+				case 3:
+					return registerPaar.getQuelle();
+				case 4:
+					return registerPaar.getZiel();
+				default:
+					return RES.getAutoBuchungIntervallName(this.db.getAutoUmbuchungIntervall(row));
 			}
 		}
 
 		// Werte für die letzte Zeile gibt es noch nicht:
 		switch (col) {
-		case 0:
-			return new Datum();
-		case 2:
-			return new Euro();
-		default:
-			return "";
+			case 0:
+				return new Datum();
+			case 2:
+				return new Euro();
+			default:
+				return "";
 		}
 	}
 
@@ -131,7 +129,7 @@ public class AutoUmbuchungTableModel extends AbstractTableModel {
 	@Override
 	public void setValueAt(final Object value, final int row, final int col) {
 		if (DEBUG) {
-			System.out.println("AutoUmbuchungTableModel: setValue (" + value + ") @ " + row + ", " + col);
+			LOGGER.info("AutoUmbuchungTableModel: setValue (" + value + ") @ " + row + ", " + col);
 		}
 		if (row == this.db.getAnzahlAutoUmbuchungen()) {
 			// Wenn ein Wert in der letzten Zeile eingegeben wurde,
@@ -142,24 +140,24 @@ public class AutoUmbuchungTableModel extends AbstractTableModel {
 		final Umbuchung buchung = this.db.getAutoUmbuchung(row);
 		final UmbuchungKategorie registerPaar = this.db.getAutoUmbuchungRegister(row);
 		switch (col) {
-		case 0:
-			buchung.setDatum(new Datum("" + value));
-			break;
-		case 1:
-			buchung.setText("" + value);
-			break;
-		case 2:
-			buchung.setWert(new Euro("" + value));
-			break;
-		case 3:
-			registerPaar.setQuelle(this.db.findeOderErzeugeRegister("" + value));
-			break;
-		case 4:
-			registerPaar.setZiel(this.db.findeOderErzeugeRegister("" + value));
-			break;
-		default:
-			this.db.setAutoUmbuchungIntervall(row, res.getAutoBuchungIntervallIndex("" + value));
-			break;
+			case 0:
+				buchung.setDatum(new Datum("" + value));
+				break;
+			case 1:
+				buchung.setText("" + value);
+				break;
+			case 2:
+				buchung.setWert(new Euro("" + value));
+				break;
+			case 3:
+				registerPaar.setQuelle(this.db.findeOderErzeugeRegister("" + value));
+				break;
+			case 4:
+				registerPaar.setZiel(this.db.findeOderErzeugeRegister("" + value));
+				break;
+			default:
+				this.db.setAutoUmbuchungIntervall(row, RES.getAutoBuchungIntervallIndex("" + value));
+				break;
 		}
 		this.db.setGeaendert();
 		fireTableRowsUpdated(row, row);

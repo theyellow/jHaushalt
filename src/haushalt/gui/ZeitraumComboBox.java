@@ -48,23 +48,14 @@ import javax.swing.JComboBox;
 public class ZeitraumComboBox extends JComboBox {
 
 	private static final long serialVersionUID = 1L;
-	private static final TextResource res = TextResource.get();
+	private static final TextResource RES = TextResource.get();
 
-	private static final String[] items = {
-			res.getString("month"),
-			res.getString("quarter"),
-			res.getString("halfyear"),
-			res.getString("year"),
-			res.getString("full_year_to_date"),
-			res.getString("full_year_since_today"),
-			res.getString("beginning_of_the_year_to_date"),
-			res.getString("beginning_of_the_year_since_today"),
-			res.getString("free_period"),
-			res.getString("several_years"),
-			res.getString("current_month"),
-			res.getString("current_quarter"),
-			res.getString("current_year")
-	};
+	private static final String[] ITEMS = {
+			RES.getString("month"), RES.getString("quarter"), RES.getString("halfyear"), RES.getString("year"),
+			RES.getString("full_year_to_date"), RES.getString("full_year_since_today"),
+			RES.getString("beginning_of_the_year_to_date"), RES.getString("beginning_of_the_year_since_today"),
+			RES.getString("free_period"), RES.getString("several_years"), RES.getString("current_month"),
+			RES.getString("current_quarter"), RES.getString("current_year")};
 
 	/**
 	 * Es wird der Zeitraum passend zur Klasse des Parameters vorausgewählt.
@@ -75,51 +66,38 @@ public class ZeitraumComboBox extends JComboBox {
 	 *            Eintrags in der ComboBox
 	 */
 	public ZeitraumComboBox(final AbstractZeitraum zeitraum) {
-		super(items);
+		super(ITEMS);
 		waehleZeitraum(zeitraum);
 	}
 
 	public void waehleZeitraum(final AbstractZeitraum zeitraum) {
 		if (zeitraum == null) {
 			setSelectedIndex(0);
-		}
-		else if (zeitraum.getClass() == Quartal.class) {
+		} else if (zeitraum.getClass() == Quartal.class) {
 			setSelectedIndex(1);
-		}
-		else if (zeitraum.getClass() == Halbjahr.class) {
+		} else if (zeitraum.getClass() == Halbjahr.class) {
 			setSelectedIndex(2);
-		}
-		else if (zeitraum.getClass() == Jahr.class) {
+		} else if (zeitraum.getClass() == Jahr.class) {
 			setSelectedIndex(3);
-		}
-		else if (zeitraum.getClass() == VollesJahrBisDatum.class) {
+		} else if (zeitraum.getClass() == VollesJahrBisDatum.class) {
 			setSelectedIndex(4);
-		}
-		else if (zeitraum.getClass() == VollesJahrBisHeute.class) {
+		} else if (zeitraum.getClass() == VollesJahrBisHeute.class) {
 			setSelectedIndex(5);
-		}
-		else if (zeitraum.getClass() == JahresanfangBisDatum.class) {
+		} else if (zeitraum.getClass() == JahresanfangBisDatum.class) {
 			setSelectedIndex(6);
-		}
-		else if (zeitraum.getClass() == JahresanfangBisHeute.class) {
+		} else if (zeitraum.getClass() == JahresanfangBisHeute.class) {
 			setSelectedIndex(7);
-		}
-		else if (zeitraum.getClass() == FreierZeitraum.class) {
+		} else if (zeitraum.getClass() == FreierZeitraum.class) {
 			setSelectedIndex(8);
-		}
-		else if (zeitraum.getClass() == MehrereJahre.class) {
+		} else if (zeitraum.getClass() == MehrereJahre.class) {
 			setSelectedIndex(9);
-		}
-		else if (zeitraum.getClass() == AktuellerMonat.class) {
+		} else if (zeitraum.getClass() == AktuellerMonat.class) {
 			setSelectedIndex(10);
-		}
-		else if (zeitraum.getClass() == AktuellesQuartal.class) {
+		} else if (zeitraum.getClass() == AktuellesQuartal.class) {
 			setSelectedIndex(11);
-		}
-		else if (zeitraum.getClass() == AktuellesJahr.class) {
+		} else if (zeitraum.getClass() == AktuellesJahr.class) {
 			setSelectedIndex(12);
-		}
-		else {
+		} else {
 			setSelectedIndex(0);
 		}
 	}
@@ -134,32 +112,34 @@ public class ZeitraumComboBox extends JComboBox {
 	 */
 	public AbstractZeitraum getZeitraum(final String text) {
 		switch (getSelectedIndex()) {
-		case 0:
-			return new Monat(text);
-		case 1:
-			return new Quartal(text);
-		case 2:
-			return new Halbjahr(text);
-		case 3:
-			return new Jahr(text);
-		case 4:
-			return new VollesJahrBisDatum(text);
-		case 5:
-			return new VollesJahrBisHeute(text);
-		case 6:
-			return new JahresanfangBisDatum(text);
-		case 7:
-			return new JahresanfangBisHeute(text);
-		case 8:
-			return new FreierZeitraum(text);
-		case 9:
-			return new MehrereJahre(text);
-		case 10:
-			return new AktuellerMonat(text);
-		case 11:
-			return new AktuellesQuartal(text);
-		case 12:
-			return new AktuellesJahr(text);
+			case 0:
+				return new Monat(text);
+			case 1:
+				return new Quartal(text);
+			case 2:
+				return new Halbjahr(text);
+			case 3:
+				return new Jahr(text);
+			case 4:
+				return new VollesJahrBisDatum(text);
+			case 5:
+				return new VollesJahrBisHeute(text);
+			case 6:
+				return new JahresanfangBisDatum(text);
+			case 7:
+				return new JahresanfangBisHeute(text);
+			case 8:
+				return new FreierZeitraum(text);
+			case 9:
+				return new MehrereJahre(text);
+			case 10:
+				return new AktuellerMonat(text);
+			case 11:
+				return new AktuellesQuartal(text);
+			case 12:
+				return new AktuellesJahr(text);
+			default:
+				break;
 		}
 		return null;
 	}

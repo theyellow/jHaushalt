@@ -44,7 +44,7 @@ public class EuroGDP extends AbstractGDPane {
 	@Override
 	protected void refreshWert() {
 		final Euro euro = this.euroField.getValue();
-		this.wert = euro;
+		setWert(euro);
 		if (euro.equals(Euro.NULL_EURO)) {
 			this.euroField.setText("");
 		}
@@ -61,7 +61,7 @@ public class EuroGDP extends AbstractGDPane {
 
 	@Override
 	public void laden(final DataInputStream in) throws IOException {
-		final Euro euro = (Euro) getWert();
+		final Euro euro = (Euro) getRefreshedWert();
 		euro.laden(in);
 		if (euro.equals(Euro.NULL_EURO)) {
 			this.euroField.setText("");
@@ -74,7 +74,7 @@ public class EuroGDP extends AbstractGDPane {
 	@Override
 	public void speichern(final DataOutputStream out) throws IOException {
 		refreshWert();
-		final Euro euro = (Euro) getWert();
+		final Euro euro = (Euro) getRefreshedWert();
 		euro.speichern(out);
 	}
 

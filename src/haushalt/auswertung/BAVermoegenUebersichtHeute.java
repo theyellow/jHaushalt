@@ -38,43 +38,41 @@ import java.awt.Font;
  */
 public class BAVermoegenUebersichtHeute extends AbstractBlockAuswertung {
 
-	private static final long serialVersionUID = 1L;
-	private static final TextResource res = TextResource.get();
+	public static final String UEBERSCHRIFT = TextResource.get().getString("table_today_fortune_overview");
 
-	public static final String ueberschrift = res.getString("table_today_fortune_overview");
+	private static final long serialVersionUID = 1L;
+	private static final TextResource RES = TextResource.get();
 
 	public BAVermoegenUebersichtHeute(final Haushalt haushalt, final Datenbasis db, final String name) {
 		super(haushalt, db, name);
-		erzeugeEigenschaften(haushalt.getFrame(), ueberschrift, null);
+		erzeugeEigenschaften(haushalt.getFrame(), UEBERSCHRIFT, null);
 	}
 
 	@Override
 	protected String berechneAuswertung(final Object[] werte) {
 		final Datum datum = new Datum();
-		final String[] register = this.db.getRegisterNamen();
-		this.tabelle = new String[register.length + 1][2];
+		final String[] register = getDb().getRegisterNamen();
+		setTabelle(new String[register.length + 1][2]);
 		final Euro summe = new Euro();
 		for (int i = 0; i < register.length; i++) {
-			final Euro saldo = this.db.getRegisterSaldo(register[i], datum);
-			this.tabelle[i][0] = register[i];
-			this.tabelle[i][1] = "" + saldo;
+			final Euro saldo = getDb().getRegisterSaldo(register[i], datum);
+			setTabelleContent(i, 0, register[i]);
+			setTabelleContent(i, 1, "" + saldo);
 			summe.sum(saldo);
 		}
-		this.tabelle[register.length][0] = res.getString("total");
-		this.tabelle[register.length][1] = "" + summe;
+		setTabelleContent(register.length, 0, RES.getString("total"));
+		setTabelleContent(register.length, 1, "" + summe);
 
 		// Vorhandene Blöcke löschen und neu berechnete einfügen
-		final String titel = res.getString("fortune_overview") + " (" + datum + ")";
+		final String titel = RES.getString("fortune_overview") + " (" + datum + ")";
 		loescheBloecke();
 		final TextBlock block1 = new TextBlock(titel);
-		block1.setFont(new Font(this.haushalt.getFontname(), Font.BOLD, this.haushalt.getFontgroesse() + 6));
+		block1.setFont(new Font(this.getHaushalt().getFontname(), Font.BOLD, this.getHaushalt().getFontgroesse() + 6));
 		addDokumentenBlock(block1);
 		addDokumentenBlock(new LeererBlock(1));
-		final TabellenBlock block2 = new TabellenBlock(this.tabelle);
-		block2.setFont(new Font(this.haushalt.getFontname(), Font.PLAIN, this.haushalt.getFontgroesse()));
-		final TabellenBlock.Ausrichtung[] attribute = {
-				TabellenBlock.Ausrichtung.LINKS,
-				TabellenBlock.Ausrichtung.RECHTS };
+		final TabellenBlock block2 = new TabellenBlock(getTabelle());
+		block2.setFont(new Font(this.getHaushalt().getFontname(), Font.PLAIN, this.getHaushalt().getFontgroesse()));
+		final TabellenBlock.Ausrichtung[] attribute = {TabellenBlock.Ausrichtung.LINKS, TabellenBlock.Ausrichtung.RECHTS};
 		block2.setAusrichtung(attribute);
 		addDokumentenBlock(block2);
 		return titel;

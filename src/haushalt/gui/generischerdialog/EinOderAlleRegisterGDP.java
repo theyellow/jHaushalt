@@ -41,10 +41,10 @@ import javax.swing.JComponent;
 public class EinOderAlleRegisterGDP extends AbstractGDPane {
 
 	private static final long serialVersionUID = 1L;
-	private static final TextResource res = TextResource.get();
+	private static final TextResource RES = TextResource.get();
 
-	protected final JComboBox comboBox;
-	protected final JCheckBox checkBox;
+	private final JComboBox comboBox;
+	private final JCheckBox checkBox;
 	private final Datenbasis db;
 
 	public EinOderAlleRegisterGDP(final String textAufforderung, final Datenbasis datenbasis, final String auswahl) {
@@ -61,14 +61,13 @@ public class EinOderAlleRegisterGDP extends AbstractGDPane {
 			this.comboBox.setSelectedItem(auswahl);
 		}
 		this.comboBox.setEnabled(false);
-		this.checkBox = new JCheckBox(res.getString("all_registers"), true);
+		this.checkBox = new JCheckBox(RES.getString("all_registers"), true);
 		this.checkBox.addItemListener(new ItemListener() {
 
 			public void itemStateChanged(final ItemEvent e) {
 				if (EinOderAlleRegisterGDP.this.checkBox.isSelected()) {
 					EinOderAlleRegisterGDP.this.comboBox.setEnabled(false);
-				}
-				else {
+				} else {
 					EinOderAlleRegisterGDP.this.comboBox.setEnabled(true);
 				}
 				refreshWert();
@@ -82,10 +81,9 @@ public class EinOderAlleRegisterGDP extends AbstractGDPane {
 	@Override
 	protected void refreshWert() {
 		if (this.checkBox.isSelected()) {
-			this.wert = null;
-		}
-		else {
-			this.wert = this.comboBox.getSelectedItem();
+			setWert(null);
+		} else {
+			setWert(this.comboBox.getSelectedItem());
 		}
 	}
 

@@ -27,6 +27,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Locale;
 import java.util.Properties;
+import java.util.logging.Logger;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -58,18 +59,19 @@ import javax.swing.text.StyledDocument;
 public class DlgEinrichtung extends JDialog {
 
 	private static final long serialVersionUID = 1L;
-	private static final TextResource res = TextResource.get();
+	private static final TextResource RES = TextResource.get();
+	private static final Logger LOGGER = Logger.getLogger(DlgEinrichtung.class.getName());
 
-	private final Locale liste_locales[] = Locale.getAvailableLocales();
+	private final Locale[] listeLocales = Locale.getAvailableLocales();
 	private final JComboBox sprache;
 	private final DeleteableTextField waehrung = new DeleteableTextField();
 	private final JTextPane textPane = new JTextPane();
 	private final JPanel auswahlPane = new JPanel();
 	private final JPanel buttonPane = new JPanel();
-	private final JButton buttonOK = new JButton(res.getString("button_ok"));
+	private final JButton buttonOK = new JButton(RES.getString("button_ok"));
 
 	public DlgEinrichtung(final JFrame frame, final Properties properties) {
-		super(frame, res.getString("options"), true); // = modal
+		super(frame, RES.getString("options"), true); // = modal
 		setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
 		this.textPane.setEditable(false);
 		final StyledDocument doc = this.textPane.getStyledDocument();
@@ -82,41 +84,41 @@ public class DlgEinrichtung extends JDialog {
 		s = doc.addStyle("icon", regular);
 		StyleConstants.setAlignment(s, StyleConstants.ALIGN_CENTER);
 		final URLClassLoader urlLoader = (URLClassLoader) getClass().getClassLoader();
-		final URL imageURL = urlLoader.findResource("res/jhh-image.png");
+		final URL imageURL = urlLoader.findResource("RES/jhh-image.png");
 		final ImageIcon icon = new ImageIcon(imageURL);
 		if (icon != null) {
 			StyleConstants.setIcon(s, icon);
 		}
 		try {
 			doc.insertString(0, " \n", doc.getStyle("icon"));
-			doc.insertString(doc.getLength(), res.getString("message_installation1") + "\n", doc.getStyle("large"));
-			doc.insertString(doc.getLength(), res.getString("message_installation2"), doc.getStyle("regular"));
+			doc.insertString(doc.getLength(), RES.getString("message_installation1") + "\n", doc.getStyle("large"));
+			doc.insertString(doc.getLength(), RES.getString("message_installation2"), doc.getStyle("regular"));
+		} catch (final BadLocationException e1) {
+			LOGGER.warning(e1.getMessage());
 		}
-		catch (final BadLocationException e1) {
-			e1.printStackTrace();
-		}
-		final String[] sprachen = new String[this.liste_locales.length];
-		for (int i = 0; i < this.liste_locales.length; i++) {
-			sprachen[i] = this.liste_locales[i].getDisplayName();
+		final String[] sprachen = new String[this.listeLocales.length];
+		for (int i = 0; i < this.listeLocales.length; i++) {
+			sprachen[i] = this.listeLocales[i].getDisplayName();
 		}
 		this.sprache = new JComboBox(sprachen);
-		final String locale_name = res.getLocale().getDisplayName();
+		final String localeName = RES.getLocale().getDisplayName();
 		for (int i = 0; i < this.sprache.getItemCount(); i++) {
-			if (locale_name.equals(this.sprache.getItemAt(i))) {
+			if (localeName.equals(this.sprache.getItemAt(i))) {
 				this.sprache.setSelectedIndex(i);
 			}
 		}
 		this.auswahlPane.setLayout(new GridLayout(0, 2));
-		this.auswahlPane.add(new JLabel(res.getString("language") + ":"));
+		this.auswahlPane.add(new JLabel(RES.getString("language") + ":"));
 		this.auswahlPane.add(this.sprache);
 		this.waehrung.setText("€");
-		this.auswahlPane.add(new JLabel(res.getString("currency_symbol") + ":"));
+		this.auswahlPane.add(new JLabel(RES.getString("currency_symbol") + ":"));
 		this.auswahlPane.add(this.waehrung);
 		this.buttonOK.addActionListener(new ActionListener() {
 
 			public void actionPerformed(final ActionEvent e) {
-				properties.setProperty("jhh.opt.sprache", ""
-						+ DlgEinrichtung.this.liste_locales[DlgEinrichtung.this.sprache.getSelectedIndex()]);
+				properties.setProperty(
+						"jhh.opt.sprache",
+						"" + DlgEinrichtung.this.listeLocales[DlgEinrichtung.this.sprache.getSelectedIndex()]);
 				properties.setProperty("jhh.opt.waehrung", DlgEinrichtung.this.waehrung.getText());
 				setVisible(false);
 			}

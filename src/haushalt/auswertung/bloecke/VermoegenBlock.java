@@ -26,6 +26,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
+import java.util.logging.Logger;
 
 /**
  * @author Dr. Lars H. Hahn
@@ -42,6 +43,7 @@ import java.awt.geom.Rectangle2D;
 public class VermoegenBlock extends AbstractGraphikBlock {
 
 	private static final boolean DEBUG = false;
+	private static final Logger LOGGER = Logger.getLogger(VermoegenBlock.class.getName());
 
 	private final Datum[] zeitpunkte;
 	private final Euro[] salden;
@@ -65,7 +67,7 @@ public class VermoegenBlock extends AbstractGraphikBlock {
 			}
 		}
 		if (DEBUG) {
-			System.out.println("VermoegenBlock: MIN/MAX = " + this.klWert + "/" + this.grWert);
+			LOGGER.info("VermoegenBlock: MIN/MAX = " + this.klWert + "/" + this.grWert);
 		}
 	}
 
@@ -118,13 +120,15 @@ public class VermoegenBlock extends AbstractGraphikBlock {
 		g.setColor(Color.black);
 		final int x0 = xStart + rand + breiteYAchse;
 		g.drawLine(x0, (int) yOffset, xStart + rand + breiteYAchse + graphikBreite, (int) yOffset);
-		g.drawString("" + Euro.NULL_EURO, x0 - fontMetrics.stringWidth("" + Euro.NULL_EURO) - 5,
+		g.drawString(
+				"" + Euro.NULL_EURO,
+				x0 - fontMetrics.stringWidth("" + Euro.NULL_EURO) - 5,
 				(int) (yOffset + fontMetrics.getDescent()));
 
 		final GradientPaint verlaufPos = new GradientPaint(0, (int) yOffset, this.farbePos, 0, (int) (yOffset - yFaktor
-				* this.grWert.toDouble()), Color.lightGray);
+			* this.grWert.toDouble()), Color.lightGray);
 		final GradientPaint verlaufNeg = new GradientPaint(0, (int) yOffset, this.farbeNeg, 0, (int) (yOffset - yFaktor
-				* this.klWert.toDouble()), Color.lightGray);
+			* this.klWert.toDouble()), Color.lightGray);
 		int x = xStart + breiteYAchse + rand;
 		for (int i = 0; i < this.anzahl; i++) {
 			final double y = yOffset - yFaktor * this.salden[i].toDouble();
@@ -132,8 +136,7 @@ public class VermoegenBlock extends AbstractGraphikBlock {
 			if (this.salden[i].compareTo(Euro.NULL_EURO) >= 0) {
 				g2.setPaint(verlaufPos);
 				g2.fill(new Rectangle2D.Double(x + xBalken, y, balkenBreite, yOffset - y));
-			}
-			else {
+			} else {
 				g2.setPaint(verlaufNeg);
 				g2.fill(new Rectangle2D.Double(x + xBalken, yOffset, balkenBreite, y - yOffset));
 			}
@@ -150,23 +153,20 @@ public class VermoegenBlock extends AbstractGraphikBlock {
 					// Prima! Der Balken ist hoch genug für den Text
 					g2.rotate(Math.toRadians(90), x + xSaldoText, y + 5);
 					g2.drawString("" + this.salden[i], x + xSaldoText, (int) (y + 5));
-				}
-				else {
+				} else {
 					// Pech! Der Text ragt über den Balken hinaus, ist aber
 					// sichtbar
 					g2.rotate(Math.toRadians(90), x + xSaldoText, yOffset - textBreite - 5);
 					g2.drawString("" + this.salden[i], x + xSaldoText, (int) (yOffset - textBreite - 5));
 				}
-			}
-			else {
+			} else {
 				// -- Negativer Wert
 				// -----------------------------------------------------------------
 				if (textBreite + 10 <= yFaktor * -this.salden[i].toDouble()) {
 					// Prima! Der Balken ist hoch genug für den Text
 					g2.rotate(Math.toRadians(90), x + xSaldoText, y - textBreite - 5);
 					g2.drawString("" + this.salden[i], x + xSaldoText, (int) y - textBreite - 5);
-				}
-				else {
+				} else {
 					// Pech! Der Text ragt über den Balken hinaus, ist aber
 					// sichtbar
 					g2.rotate(Math.toRadians(90), x + xSaldoText, yOffset + 5);

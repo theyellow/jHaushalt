@@ -25,6 +25,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.StringTokenizer;
+import java.util.logging.Logger;
 
 /**
  * Die Datenbasis beinhaltet alle Buchungen und dient zum
@@ -62,11 +63,44 @@ import java.util.StringTokenizer;
 
 public class Datenbasis {
 
-	private static final boolean DEBUG = false;
-	private static final TextResource res = TextResource.get();
+	public static final String VERSION_DATENBASIS = "2.1.2";
 
-	public final static String VERSION_DATENBASIS = "2.1.2";
+	private static int cacheHit = 0;
+	private static int cacheMiss = 0;
+	private static final boolean DEBUG = false;
+	private static final TextResource RES = TextResource.get();
+	private static final Logger LOGGER = Logger.getLogger(Datenbasis.class.getName());
+	private static final String[] LEGACY_INTERVALL_NAMEN = {"Woche", "Monat", "Quartal", "Halbjahr", "Jahr"};
+
 	private boolean geaendert = false;
+
+	// -- Kategorien --------------------------------------------
+	private final ArrayList<EinzelKategorie> kategorieListe;
+
+	// -- Register ----------------------------------------------
+	private final ArrayList<Register> registerListe = new ArrayList<Register>();
+
+	// -- Suchen und Ersetzen -----------------------------------
+	private int registerSuchIdx = 0;
+	private int buchungSuchIdx = 0;
+
+	private AbstractZeitraum zeitraumImCache;
+	private String registerImCache;
+	private boolean cacheAktuell = false;
+	private boolean cacheMitUnterkategorien = true;
+
+	// -- gemerkte Buchungen ------------------------------------
+	private Datum startDatumGemerkteBuchungen = new Datum();
+	private final ArrayList<AbstractBuchung> gemerkteBuchungen = new ArrayList<AbstractBuchung>();
+	private final ArrayList<String> gemerkteBuchungenText = new ArrayList<String>();
+
+	// -- Auto-Buchung ------------------------------------------
+	private final ArrayList<StandardBuchung> autoStandardBuchungen = new ArrayList<StandardBuchung>();
+	private final ArrayList<Register> autoStandardBuchungRegister = new ArrayList<Register>();
+	private final ArrayList<Integer> autoStandardBuchungIntervalle = new ArrayList<Integer>();
+	private final ArrayList<Umbuchung> autoUmbuchungen = new ArrayList<Umbuchung>();
+	private final ArrayList<UmbuchungKategorie> autoUmbuchungRegister = new ArrayList<UmbuchungKategorie>();
+	private final ArrayList<Integer> autoUmbuchungIntervalle = new ArrayList<Integer>();
 
 	public Datenbasis() {
 		this.kategorieListe = new ArrayList<EinzelKategorie>();
@@ -89,19 +123,15 @@ public class Datenbasis {
 		this.geaendert = true;
 	}
 
-	// -- Kategorien --------------------------------------------
-
-	private final ArrayList<EinzelKategorie> kategorieListe;
-
 	/**
-	 * Liefert die Kategorie mit dem angegebene Namen zurück.
+	 * Liefert die IKategorie mit dem angegebene Namen zurück.
 	 * Wenn sie noch nicht existiert, wird sie erzeugt.
 	 * 
 	 * @param name
-	 *            Name der Kategorie
+	 *            Name der IKategorie
 	 * @param hauptkategorie
 	 *            Hauptkategorie
-	 * @return gesuchte Kategorie
+	 * @return gesuchte IKategorie
 	 */
 	public EinzelKategorie findeOderErzeugeKategorie(final String name, final EinzelKategorie hauptkategorie) {
 		final EinzelKategorie kategorie = new EinzelKategorie(name, hauptkategorie);
@@ -160,7 +190,7 @@ public class Datenbasis {
 	}
 
 	/**
-	 * Ersetzt in allen Registern die angegebne Kategorie durch eine neue.
+	 * Ersetzt in allen Registern die angegebne IKategorie durch eine neue.
 	 * 
 	 * @param alteKategorie
 	 * @param neueKategorie
@@ -178,10 +208,6 @@ public class Datenbasis {
 		this.cacheAktuell = false;
 		return zaehler;
 	}
-
-	// -- Register ----------------------------------------------
-
-	private final ArrayList<Register> registerListe = new ArrayList<Register>();
 
 	/**
 	 * Prüft, ob der Registername schon existiert und hängt ggf. Ziffern an.
@@ -204,8 +230,7 @@ public class Datenbasis {
 			if (nameVorhanden) {
 				generierterName = regname + " (" + ++count + ")";
 			}
-		}
-		while (nameVorhanden);
+		} while (nameVorhanden);
 		return generierterName;
 	}
 
@@ -224,7 +249,7 @@ public class Datenbasis {
 		final Register register = new Register(generierterName);
 		this.registerListe.add(register);
 		if (DEBUG) {
-			System.out.println("Register " + generierterName + " erzeugt.");
+			LOGGER.info("Register " + generierterName + " erzeugt.");
 		}
 		this.geaendert = true;
 		return generierterName;
@@ -290,7 +315,7 @@ public class Datenbasis {
 		this.registerListe.add(indexNeu, register);
 		if (DEBUG) {
 			for (int i = 0; i < this.registerListe.size(); i++) {
-				System.out.println("" + this.registerListe.get(i));
+				LOGGER.info("" + this.registerListe.get(i));
 			}
 		}
 	}
@@ -380,12 +405,13 @@ public class Datenbasis {
 	 * @param betrag
 	 *            Betrag
 	 */
-	public void addUmbuchung(final Datum datum, final String buchungstext, final String quelle, final String ziel,
-			final Euro betrag) {
-		final UmbuchungKategorie kategorie = new UmbuchungKategorie(
-				findeRegister(quelle),
-				findeRegister(ziel)
-				);
+	public void addUmbuchung(
+		final Datum datum,
+		final String buchungstext,
+		final String quelle,
+		final String ziel,
+		final Euro betrag) {
+		final UmbuchungKategorie kategorie = new UmbuchungKategorie(findeRegister(quelle), findeRegister(ziel));
 		new Umbuchung(datum, buchungstext, kategorie, betrag);
 		// beim Erzeugen der Umbuchung wird diese automatisch in die beiden
 		// Register
@@ -404,7 +430,7 @@ public class Datenbasis {
 		final Register register = findeRegister(regname);
 		if (register == null) {
 			if (DEBUG) {
-				System.out.println("Datenbasis.getAnzahlBuchungen: " + regname + " gibt es nicht.");
+				LOGGER.info("Datenbasis.getAnzahlBuchungen: " + regname + " gibt es nicht.");
 			}
 			return 0;
 		}
@@ -502,24 +528,19 @@ public class Datenbasis {
 				final Register register = this.registerListe.get(i);
 				register.removeBisBuchung(pos[i]);
 				new Umbuchung(
-						(Datum) datum.clone(),
-						res.getString("opening_balance"),
-						new UmbuchungKategorie(register, register),
-						salden[i]);
+					(Datum) datum.clone(),
+					RES.getString("opening_balance"),
+					new UmbuchungKategorie(register, register),
+					salden[i]);
 				// Umbuchung werden automatisch einsortiert
 				if (DEBUG) {
-					System.out.println("-I- Im Register " + register + " wurden " + pos[i] + " Buchungen gelöscht!");
+					LOGGER.info("-I- Im Register " + register + " wurden " + pos[i] + " Buchungen gelöscht!");
 				}
 			}
 		}
 		this.geaendert = true;
 		this.cacheAktuell = false;
 	}
-
-	// -- Suchen und Ersetzen -----------------------------------
-
-	private int registerSuchIdx = 0;
-	private int buchungSuchIdx = 0;
 
 	/**
 	 * Beginnt die Suche wieder in der ersten Buchung des ersten Registers.
@@ -576,26 +597,28 @@ public class Datenbasis {
 	// -- Auswertungen ------------------------------------------
 
 	/**
-	 * Liefert alle Buchungen einer Kategorie mit einem Buchungstext
+	 * Liefert alle Buchungen einer IKategorie mit einem Buchungstext
 	 * 
 	 * @param buchungstext
 	 *            Buchungstext
 	 * @param kategorie
-	 *            Kategorie
+	 *            IKategorie
 	 * @param unterkategorienVerwenden
 	 *            Die Unterkategorien sollen verwendet werden
 	 * @return Liste der Buchungen
 	 */
-	public ArrayList<Datensatz> getBuchungen(final String buchungstext, final EinzelKategorie kategorie,
-			final Boolean unterkategorienVerwenden) {
+	public ArrayList<Datensatz> getBuchungen(
+		final String buchungstext,
+		final EinzelKategorie kategorie,
+		final Boolean unterkategorienVerwenden) {
 		final ArrayList<Datensatz> liste = new ArrayList<Datensatz>();
 		for (int i = 0; i < this.registerListe.size(); i++) {
 			final Register register = this.registerListe.get(i);
 			for (int j = 0; j < register.getAnzahlBuchungen(); j++) {
 				final AbstractBuchung buchung = register.getBuchung(j);
-				if ((buchung.getText().contains(buchungstext)) &&
-						(buchung.getClass() != Umbuchung.class) &&
-						((kategorie == null) || buchung.istInKategorie(kategorie, unterkategorienVerwenden))) {
+				if ((buchung.getText().contains(buchungstext))
+					&& (buchung.getClass() != Umbuchung.class)
+					&& ((kategorie == null) || buchung.istInKategorie(kategorie, unterkategorienVerwenden))) {
 					liste.add(new Datensatz(register, buchung));
 				}
 			}
@@ -616,12 +639,8 @@ public class Datenbasis {
 			for (int j = 0; j < register.getAnzahlBuchungen(); j++) {
 				final AbstractBuchung buchung = register.getBuchung(j);
 				final String[] zeile = {
-						"" + buchung.getDatum(),
-						buchung.getText(),
-						"" + buchung.getKategorie(),
-						"" + buchung.getWert(),
-						"" + register
-				};
+						"" + buchung.getDatum(), buchung.getText(), "" + buchung.getKategorie(), "" + buchung.getWert(),
+						"" + register};
 				liste.add(zeile);
 			}
 		}
@@ -629,7 +648,7 @@ public class Datenbasis {
 	}
 
 	/**
-	 * Liefert alle Buchungen einer Kategorie in einem Zeitraum.
+	 * Liefert alle Buchungen einer IKategorie in einem Zeitraum.
 	 * 
 	 * @param zeitraum
 	 *            Zeitraum
@@ -640,24 +659,28 @@ public class Datenbasis {
 	 * @return Liste der Buchungen
 	 */
 
-	public ArrayList<String[]> getBuchungen(final AbstractZeitraum zeitraum, final String regname,
-			final EinzelKategorie[] kategorien,
-			final boolean unterkategorienVerwenden) {
+	public ArrayList<String[]> getBuchungen(
+		final AbstractZeitraum zeitraum,
+		final String regname,
+		final EinzelKategorie[] kategorien,
+		final boolean unterkategorienVerwenden) {
 		final ArrayList<String[]> liste = new ArrayList<String[]>();
 		if (regname == null) {
 			for (int i = 0; i < this.registerListe.size(); i++) {
 				getBuchungen(liste, zeitraum, this.registerListe.get(i), kategorien, unterkategorienVerwenden);
 			}
-		}
-		else {
+		} else {
 			getBuchungen(liste, zeitraum, findeRegister(regname), kategorien, unterkategorienVerwenden);
 		}
 		return liste;
 	}
 
-	private void getBuchungen(final ArrayList<String[]> liste, final AbstractZeitraum zeitraum,
-			final Register register,
-			final EinzelKategorie[] kategorien, final boolean unterkategorienVerwenden) {
+	private void getBuchungen(
+		final ArrayList<String[]> liste,
+		final AbstractZeitraum zeitraum,
+		final Register register,
+		final EinzelKategorie[] kategorien,
+		final boolean unterkategorienVerwenden) {
 		for (int i = 0; i < register.getAnzahlBuchungen(); i++) {
 			final AbstractBuchung buchung = register.getBuchung(i);
 			final Datum datum = buchung.getDatum();
@@ -672,16 +695,10 @@ public class Datenbasis {
 								pos = k;
 							}
 						}
-						final String[] zeile = {
-								"" + datum,
-								buchung.getText(),
-								"" + kategorien[j],
-								"" + wert
-						};
+						final String[] zeile = {"" + datum, buchung.getText(), "" + kategorien[j], "" + wert};
 						if (pos == anzahl - 1) {
 							liste.add(zeile);
-						}
-						else {
+						} else {
 							// neue Buchung einfuegen
 							liste.add(pos + 1, zeile);
 						}
@@ -779,23 +796,25 @@ public class Datenbasis {
 	}
 
 	/**
-	 * Ermittelt den Saldo über EINE Kategorie in einem bestimmten Register und
+	 * Ermittelt den Saldo über EINE IKategorie in einem bestimmten Register und
 	 * Zeitraum.
 	 * 
 	 * @param regname
 	 *            Name des Registers, <code>null</code> = alle Register
 	 * @param kategorie
-	 *            Name der Kategorie
+	 *            Name der IKategorie
 	 * @param zeitraum
 	 *            Zeitraum
 	 * @return gesuchter Saldo
 	 */
-	public Euro getKategorieSaldo(final EinzelKategorie kategorie, final AbstractZeitraum zeitraum,
-			final String regname,
-			final boolean unterkategorienVerwenden) {
+	public Euro getKategorieSaldo(
+		final EinzelKategorie kategorie,
+		final AbstractZeitraum zeitraum,
+		final String regname,
+		final boolean unterkategorienVerwenden) {
 		erneuereKategorieCache(zeitraum, regname, unterkategorienVerwenden);
 		if (DEBUG) {
-			System.out.println("" + kategorie + ": Saldo @ " + zeitraum + " = " + kategorie.getSumme());
+			LOGGER.info("" + kategorie + ": Saldo @ " + zeitraum + " = " + kategorie.getSumme());
 		}
 		return kategorie.getSumme();
 	}
@@ -834,9 +853,11 @@ public class Datenbasis {
 	 *            Name der Registers, <code>null</code> = alle Register
 	 * @return Salden der Kategorien
 	 */
-	public Euro[] getKategorieSalden(final EinzelKategorie[] kategorien, final AbstractZeitraum zeitraum,
-			final String regname,
-			final boolean unterkategorienVerwenden) {
+	public Euro[] getKategorieSalden(
+		final EinzelKategorie[] kategorien,
+		final AbstractZeitraum zeitraum,
+		final String regname,
+		final boolean unterkategorienVerwenden) {
 		erneuereKategorieCache(zeitraum, regname, unterkategorienVerwenden);
 		final Euro[] summen = new Euro[kategorien.length];
 		for (int i = 0; i < kategorien.length; i++) {
@@ -844,13 +865,6 @@ public class Datenbasis {
 		}
 		return summen;
 	}
-
-	private AbstractZeitraum zeitraumImCache;
-	private String registerImCache;
-	private boolean cacheAktuell = false;
-	private boolean cacheMitUnterkategorien = true;
-	public static int cacheHit = 0;
-	public static int cacheMiss = 0;
 
 	/**
 	 * Die Summen der Kategorien werden in einem Cache gehalten,
@@ -868,15 +882,18 @@ public class Datenbasis {
 	 *            Register der Abfrage
 	 * @param unterkategorienVerwenden
 	 */
-	private void erneuereKategorieCache(final AbstractZeitraum zeitraum, final String regname,
-			final boolean unterkategorienVerwenden) {
-		if (((zeitraum == this.zeitraumImCache) || ((zeitraum != null) && zeitraum.equals(this.zeitraumImCache))) &&
-				((regname == this.registerImCache) || ((regname != null) && regname.equals(this.registerImCache))) &&
-				(unterkategorienVerwenden == this.cacheMitUnterkategorien) && this.cacheAktuell) {
-			cacheHit++;
+	private void erneuereKategorieCache(
+		final AbstractZeitraum zeitraum,
+		final String regname,
+		final boolean unterkategorienVerwenden) {
+		if (((zeitraum == this.zeitraumImCache) || ((zeitraum != null) && zeitraum.equals(this.zeitraumImCache)))
+			&& ((regname == this.registerImCache) || ((regname != null) && regname.equals(this.registerImCache)))
+			&& (unterkategorienVerwenden == this.cacheMitUnterkategorien)
+			&& this.cacheAktuell) {
+			setCacheHit(getCacheHit() + 1);
 			return;
 		}
-		cacheMiss++;
+		setCacheMiss(getCacheMiss() + 1);
 		this.zeitraumImCache = zeitraum;
 		this.registerImCache = regname;
 		this.cacheMitUnterkategorien = unterkategorienVerwenden;
@@ -896,8 +913,7 @@ public class Datenbasis {
 					reg.getBuchung(j).bildeKategorieSumme(zeitraum, unterkategorienVerwenden);
 				}
 			}
-		}
-		else {
+		} else {
 			final Register register = findeRegister(regname);
 			final int anzahlBuchungen = register.getAnzahlBuchungen();
 			for (int j = 0; j < anzahlBuchungen; j++) {
@@ -905,12 +921,6 @@ public class Datenbasis {
 			}
 		}
 	}
-
-	// -- gemerkte Buchungen ------------------------------------
-
-	private Datum startDatumGemerkteBuchungen = new Datum();
-	private final ArrayList<AbstractBuchung> gemerkteBuchungen = new ArrayList<AbstractBuchung>();
-	private final ArrayList<String> gemerkteBuchungenText = new ArrayList<String>();
 
 	/**
 	 * Setzt das Start-Datum, ab dem Buchungen gemerkt werden.
@@ -921,7 +931,7 @@ public class Datenbasis {
 	public void setStartDatum(final Datum datum) {
 		this.startDatumGemerkteBuchungen = datum;
 		if (DEBUG) {
-			System.out.println("Neues Startdatum: " + datum);
+			LOGGER.info("Neues Startdatum: " + datum);
 		}
 	}
 
@@ -946,16 +956,15 @@ public class Datenbasis {
 		if (pos < 0) { // so eine Buchung gibt es noch nicht: Einfuegen
 			this.gemerkteBuchungen.add(-pos - 1, buchung);
 			this.gemerkteBuchungenText.add(-pos - 1, buchung.getText());
-		}
-		else { // Buchung gibt es schon: Ueberschreiben
+		} else { // Buchung gibt es schon: Ueberschreiben
 			this.gemerkteBuchungen.set(pos, buchung);
 			this.gemerkteBuchungenText.set(pos, buchung.getText());
 		}
 		if (DEBUG) {
-			System.out.println("-- Gemerkte Buchungen:");
+			LOGGER.info("-- Gemerkte Buchungen:");
 			for (int i = 0; i < this.gemerkteBuchungen.size(); i++) {
 				final AbstractBuchung dumpBuchung = this.gemerkteBuchungen.get(i);
-				System.out.println("" + dumpBuchung.getText() + " / " + dumpBuchung.getKategorie());
+				LOGGER.info("" + dumpBuchung.getText() + " / " + dumpBuchung.getKategorie());
 			}
 		}
 	}
@@ -976,25 +985,25 @@ public class Datenbasis {
 		return null;
 	}
 
-	// -- Auto-Buchung ------------------------------------------
+	public static int getCacheHit() {
+		return cacheHit;
+	}
 
-	static private final String[] legacyIntervallNamen = {
-			"Woche",
-			"Monat",
-			"Quartal",
-			"Halbjahr",
-			"Jahr"
-	};
-	private final ArrayList<StandardBuchung> autoStandardBuchungen = new ArrayList<StandardBuchung>();
-	private final ArrayList<Register> autoStandardBuchungRegister = new ArrayList<Register>();
-	private final ArrayList<Integer> autoStandardBuchungIntervalle = new ArrayList<Integer>();
-	private final ArrayList<Umbuchung> autoUmbuchungen = new ArrayList<Umbuchung>();
-	private final ArrayList<UmbuchungKategorie> autoUmbuchungRegister = new ArrayList<UmbuchungKategorie>();
-	private final ArrayList<Integer> autoUmbuchungIntervalle = new ArrayList<Integer>();
+	public static void setCacheHit(final int hit) {
+		cacheHit = hit;
+	}
+
+	public static int getCacheMiss() {
+		return cacheMiss;
+	}
+
+	public static void setCacheMiss(final int miss) {
+		cacheMiss = miss;
+	}
 
 	private Integer getLegacyIntervallIndex(final String name) {
-		for (int i = 0; i < legacyIntervallNamen.length; i++) {
-			if (name.equals(legacyIntervallNamen[i])) {
+		for (int i = 0; i < LEGACY_INTERVALL_NAMEN.length; i++) {
+			if (name.equals(LEGACY_INTERVALL_NAMEN[i])) {
 				return new Integer(i);
 			}
 		}
@@ -1215,7 +1224,7 @@ public class Datenbasis {
 			while (buchung.getDatum().compareTo(datum) <= 0) {
 				register.einsortierenBuchung((StandardBuchung) buchung.clone());
 				if (DEBUG) {
-					System.out.println("AutoBuchung ausgeführt: " + buchung.getText());
+					LOGGER.info("AutoBuchung ausgeführt: " + buchung.getText());
 				}
 				final Integer intervall = this.autoStandardBuchungIntervalle.get(i);
 				buchung.setDatum(getFolgeDatum(buchung.getDatum(), intervall));
@@ -1233,7 +1242,7 @@ public class Datenbasis {
 				neueUmbuchung.setKategorie((UmbuchungKategorie) umbuchungKategorie.clone());
 				// das Einsortieren ist damit automatisch erfolgt
 				if (DEBUG) {
-					System.out.println("AutoBuchung ausgeführt: " + buchung.getText());
+					LOGGER.info("AutoBuchung ausgeführt: " + buchung.getText());
 				}
 				final Integer intervall = this.autoUmbuchungIntervalle.get(i);
 				buchung.setDatum(getFolgeDatum(buchung.getDatum(), intervall));
@@ -1257,26 +1266,26 @@ public class Datenbasis {
 	 *            Index des Intervalls in den die Buchung ausgeführt wird
 	 * @return Neues Datum
 	 */
-	static private Datum getFolgeDatum(final Datum datum, final Integer intervall) {
+	private static Datum getFolgeDatum(final Datum datum, final Integer intervall) {
 		int tag = datum.getTag();
 		int monat = datum.getMonat();
 		int jahr = datum.getJahr();
 		switch (intervall) {
-		case 0:
-			tag += 7;
-			break; // Woche
-		case 1:
-			monat += 1;
-			break; // Monat
-		case 2:
-			monat += 3;
-			break; // Quartal
-		case 3:
-			monat += 6;
-			break; // Halbjahr
-		default:
-			jahr += 1;
-			break; // Jahr
+			case 0:
+				tag += 7;
+				break; // Woche
+			case 1:
+				monat += 1;
+				break; // Monat
+			case 2:
+				monat += 3;
+				break; // Quartal
+			case 3:
+				monat += 6;
+				break; // Halbjahr
+			default:
+				jahr += 1;
+				break; // Jahr
 		}
 
 		if (monat > 12) {
@@ -1330,7 +1339,7 @@ public class Datenbasis {
 		final Register register = findeRegister(regname);
 		final String typ = leseQIFZeile(in);
 		if (DEBUG) {
-			System.out.println("-I- QuickenImport: " + typ);
+			LOGGER.info("-I- QuickenImport: " + typ);
 		}
 		int c;
 		while ((c = in.read()) != -1) { // EOF erreicht
@@ -1382,13 +1391,12 @@ public class Datenbasis {
 				c = in.read();
 			}
 
-			// Kategorie einlesen
+			// IKategorie einlesen
 			String einzelKategorie;
 			if (c == 'L') {
 				einzelKategorie = leseQIFZeile(in);
 				c = in.read();
-			}
-			else {
+			} else {
 				einzelKategorie = "" + EinzelKategorie.SONSTIGES;
 			}
 
@@ -1407,33 +1415,22 @@ public class Datenbasis {
 					wert.umrechnenVonDM();
 				}
 				// Prüfen, ob Umbuchung:
-				if ((kategorie.length() > 2) &&
-						kategorie.startsWith("[") &&
-						kategorie.endsWith("]")) {
+				if ((kategorie.length() > 2) && kategorie.startsWith("[") && kategorie.endsWith("]")) {
 					if (wert.compareTo(Euro.NULL_EURO) > 0) {
-						new Umbuchung(
-								datum,
-								text,
-								new UmbuchungKategorie(
-										findeOderErzeugeRegister(kategorie),
-										register),
-								wert);
+						new Umbuchung(datum, text, new UmbuchungKategorie(findeOderErzeugeRegister(kategorie), register), wert);
 						// Nur positive Umbuchungen erzeugen; Umbuchungen werden
 						// automatisch eingefügt
 						if (DEBUG) {
-							System.out.println("Umbuchung " + text + " erzeugt.");
+							LOGGER.info("Umbuchung " + text + " erzeugt.");
 						}
 					}
-				}
-				else { // keine Umbuchung:
+				} else { // keine Umbuchung:
 					if (standardBuchung == null) {
 						standardBuchung = new StandardBuchung(datum, text, findeOderErzeugeKategorie(kategorie), wert);
-					}
-					else if (splitBuchung == null) {
+					} else if (splitBuchung == null) {
 						splitBuchung = new SplitBuchung(standardBuchung);
 						splitBuchung.add(findeOderErzeugeKategorie(kategorie), wert);
-					}
-					else {
+					} else {
 						splitBuchung.add(findeOderErzeugeKategorie(kategorie), wert);
 					}
 				}
@@ -1448,38 +1445,36 @@ public class Datenbasis {
 			if (splitBuchung != null) {
 				register.einsortierenBuchung(splitBuchung);
 				if (DEBUG) {
-					System.out.println("SplitBuchung erzeugt.");
+					LOGGER.info("SplitBuchung erzeugt.");
 				}
-			}
-			else if (standardBuchung != null) {
+			} else if (standardBuchung != null) {
 				register.einsortierenBuchung(standardBuchung);
 				if (DEBUG) {
-					System.out.println("StandardBuchung erzeugt.");
+					LOGGER.info("StandardBuchung erzeugt.");
 				}
-			}
-			else if ((einzelKategorie.length() > 2) && // Pruefen ob Umbuchung
-					einzelKategorie.startsWith("[") &&
-					einzelKategorie.endsWith("]")) {
+			} else if ((einzelKategorie.length() > 2) && // Pruefen ob Umbuchung
+				einzelKategorie.startsWith("[")
+				&& einzelKategorie.endsWith("]")) {
 				if (einzelWert.compareTo(Euro.NULL_EURO) > 0) {
 					new Umbuchung(
-							datum,
-							text,
-							new UmbuchungKategorie(
-									findeOderErzeugeRegister(einzelKategorie),
-									register),
-							einzelWert);
+						datum,
+						text,
+						new UmbuchungKategorie(findeOderErzeugeRegister(einzelKategorie), register),
+						einzelWert);
 					// Nur positive Umbuchungen erzeugen; Umbuchungen werden
 					// automatisch eingefügt
 					if (DEBUG) {
-						System.out.println("Umbuchung " + text + " erzeugt.");
+						LOGGER.info("Umbuchung " + text + " erzeugt.");
 					}
 				}
-			}
-			else {
-				register.einsortierenBuchung(new StandardBuchung(datum, text,
-						findeOderErzeugeKategorie(einzelKategorie), einzelWert));
+			} else {
+				register.einsortierenBuchung(new StandardBuchung(
+					datum,
+					text,
+					findeOderErzeugeKategorie(einzelKategorie),
+					einzelWert));
 				if (DEBUG) {
-					System.out.println("StandardBuchung " + text + " erzeugt.");
+					LOGGER.info("StandardBuchung " + text + " erzeugt.");
 				}
 			}
 		} /* Ende while Datei einlesen */
@@ -1488,8 +1483,7 @@ public class Datenbasis {
 		this.geaendert = true;
 	}
 
-	public static class QuickenImportException
-			extends Exception {
+	public static class QuickenImportException extends Exception {
 
 		private static final long serialVersionUID = 1L;
 
@@ -1507,11 +1501,10 @@ public class Datenbasis {
 	 * @throws IOException
 	 * @throws QuickenImportException
 	 */
-	private String leseQIFZeile(final InputStream in)
-			throws IOException, QuickenImportException {
+	private String leseQIFZeile(final InputStream in) throws IOException, QuickenImportException {
 		String zeile = "";
-		int c;
-		while ((c = in.read()) != 13) { // Bis zum Zeilenende (CR)
+		int c = in.read();
+		while (c != 13) { // Bis zum Zeilenende (CR)
 			if (c == -1) {
 				throw new QuickenImportException("-E- QuickenImport: Ups! Unerwartetes EOF.");
 			}
@@ -1519,7 +1512,8 @@ public class Datenbasis {
 				zeile = zeile + (char) c;
 			}
 		}
-		if ((c = in.read()) != 10) {
+		c = in.read();
+		if (c != 10) {
 			throw new QuickenImportException("-E- QuickenImport: Ups! Nach CR kam kein LF. " + (char) c);
 		}
 		return zeile;
@@ -1545,7 +1539,7 @@ public class Datenbasis {
 		}
 		this.cacheAktuell = false;
 		if (DEBUG) {
-			System.out.println("" + anzahl + " Register geladen.");
+			LOGGER.info("" + anzahl + " Register geladen.");
 		}
 
 		// automatische Buchungen laden und ausführen (in v1.0 noch unbekannt!)
@@ -1577,17 +1571,14 @@ public class Datenbasis {
 						this.autoUmbuchungen.add(buchung);
 						this.autoUmbuchungRegister.add(registerPaar);
 						this.autoUmbuchungIntervalle.add(zeitraum);
-					}
-					else { // neue Buchung einfuegen
+					} else { // neue Buchung einfuegen
 						this.autoUmbuchungen.add(pos + 1, buchung);
 						this.autoUmbuchungRegister.add(pos + 1, registerPaar);
 						this.autoUmbuchungIntervalle.add(pos + 1, zeitraum);
 					}
-				}
-				else if (!typ.equals("StandardBuchung") && !typ.equals("StandardBuchung2")) {
+				} else if (!typ.equals("StandardBuchung") && !typ.equals("StandardBuchung2")) {
 					throw new IOException("AutoBuchung: Falscher Buchungstyp: " + typ);
-				}
-				else {
+				} else {
 					StandardBuchung buchung;
 					if (typ.equals("StandardBuchung")) { // Laden des
 															// Legacy-Formats
@@ -1600,12 +1591,10 @@ public class Datenbasis {
 							final Euro betrag = new Euro();
 							betrag.laden(in);
 							buchung = new StandardBuchung(datum, text, kategorie, betrag);
-						}
-						else {
+						} else {
 							throw new IOException("AutoBuchung: Falscher Buchungstyp: SplitBuchung");
 						}
-					}
-					else { // Laden des aktuellen Formats für Standard-Buchungen
+					} else { // Laden des aktuellen Formats für Standard-Buchungen
 						buchung = new StandardBuchung();
 						(buchung).laden(in, this);
 					}
@@ -1627,8 +1616,7 @@ public class Datenbasis {
 						this.autoStandardBuchungen.add(buchung);
 						this.autoStandardBuchungRegister.add(register);
 						this.autoStandardBuchungIntervalle.add(zeitraum);
-					}
-					else { // neue Buchung einfuegen
+					} else { // neue Buchung einfuegen
 						this.autoStandardBuchungen.add(pos + 1, buchung);
 						this.autoStandardBuchungRegister.add(pos + 1, register);
 						this.autoStandardBuchungIntervalle.add(pos + 1, zeitraum);
@@ -1646,8 +1634,7 @@ public class Datenbasis {
 	 *            Ausgabe-Stream
 	 * @throws IOException
 	 */
-	public void speichern(final DataOutputStream out)
-			throws IOException {
+	public void speichern(final DataOutputStream out) throws IOException {
 		// 1. Versionsinfo:
 		out.writeUTF("jHaushalt" + VERSION_DATENBASIS);
 
@@ -1666,7 +1653,7 @@ public class Datenbasis {
 			final AbstractBuchung buchung = this.autoStandardBuchungen.get(i);
 			buchung.speichern(out);
 			out.writeUTF("" + this.autoStandardBuchungRegister.get(i));
-			out.writeUTF(legacyIntervallNamen[this.autoStandardBuchungIntervalle.get(i)]);
+			out.writeUTF(LEGACY_INTERVALL_NAMEN[this.autoStandardBuchungIntervalle.get(i)]);
 		}
 
 		// 3b. automatische Umbuchungen
@@ -1676,7 +1663,7 @@ public class Datenbasis {
 			final UmbuchungKategorie registerPaar = this.autoUmbuchungRegister.get(i);
 			out.writeUTF("" + registerPaar.getQuelle());
 			out.writeUTF("" + registerPaar.getZiel());
-			out.writeUTF(legacyIntervallNamen[this.autoUmbuchungIntervalle.get(i)]);
+			out.writeUTF(LEGACY_INTERVALL_NAMEN[this.autoUmbuchungIntervalle.get(i)]);
 		}
 
 		out.flush();

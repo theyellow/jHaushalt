@@ -33,6 +33,7 @@ import haushalt.gui.generischerdialog.ZeitraumGDP;
 
 import java.awt.Font;
 import java.util.ArrayList;
+import java.util.logging.Logger;
 
 /**
  * @author Dr. Lars H. Hahn
@@ -46,19 +47,20 @@ import java.util.ArrayList;
  */
 public class BAKategorieAusgabe extends AbstractBlockAuswertung {
 
-	private static final boolean DEBUG = false;
-	private static final long serialVersionUID = 1L;
-	private static final TextResource res = TextResource.get();
+	public static final String UEBERSCHRIFT = TextResource.get().getString("table_selected_bookings");
 
-	public static final String ueberschrift = res.getString("table_selected_bookings");
+	private static final boolean DEBUG = false;
+	private static final Logger LOGGER = Logger.getLogger(BAKategorieAusgabe.class.getName());
+	private static final long serialVersionUID = 1L;
+	private static final TextResource RES = TextResource.get();
 
 	public BAKategorieAusgabe(final Haushalt haushalt, final Datenbasis db, final String name) {
 		super(haushalt, db, name);
 		final AbstractGDPane[] panes = new AbstractGDPane[3];
-		panes[0] = new ZeitraumGDP(res.getString("period") + ":", new Jahr(2007));
-		panes[1] = new EinOderAlleRegisterGDP(res.getString("register") + ":", db, null);
-		panes[2] = new MehrereKategorienGDP(res.getString("categories") + ":", db);
-		erzeugeEigenschaften(haushalt.getFrame(), ueberschrift, panes);
+		panes[0] = new ZeitraumGDP(RES.getString("period") + ":", new Jahr(2007));
+		panes[1] = new EinOderAlleRegisterGDP(RES.getString("register") + ":", db, null);
+		panes[2] = new MehrereKategorienGDP(RES.getString("categories") + ":", db);
+		erzeugeEigenschaften(haushalt.getFrame(), UEBERSCHRIFT, panes);
 	}
 
 	@Override
@@ -67,54 +69,49 @@ public class BAKategorieAusgabe extends AbstractBlockAuswertung {
 		final String register = (String) werte[1];
 		final EinzelKategorie[] kategorien = (EinzelKategorie[]) werte[2];
 
-		final boolean unterkategorienVerwenden = ((MehrereKategorienGDP) this.panes[2]).getUnterkategorienVerwenden();
-		final ArrayList<String[]> buchungen = this.db.getBuchungen(zeitraum, register, kategorien,
-				unterkategorienVerwenden);
+		final boolean unterkategorienVerwenden = ((MehrereKategorienGDP) this.getPanes()[2]).getUnterkategorienVerwenden();
+		final ArrayList<String[]> buchungen = getDb().getBuchungen(zeitraum, register, kategorien, unterkategorienVerwenden);
 		final int anzahl = buchungen.size();
-		this.tabelle = new String[anzahl][4];
+		setTabelle(new String[anzahl][4]);
 		final Euro summe = new Euro();
 		for (int i = 0; i < anzahl; i++) {
 			summe.sum(new Euro(buchungen.get(i)[3]));
-			this.tabelle[i] = buchungen.get(i);
+			setTabelleLine(i, buchungen.get(i));
 		}
 		if (DEBUG) {
-			System.out.println("" + anzahl + " Buchungen im Zeitraum " + zeitraum);
+			LOGGER.info("" + anzahl + " Buchungen im Zeitraum " + zeitraum);
 		}
 
 		// Vorhandene Blöcke löschen und neu berechnete einfügen
-		String titel = res.getString("selected_bookings") + " (" + zeitraum;
+		String titel = RES.getString("selected_bookings") + " (" + zeitraum;
 		if (register == null) {
-			titel += " / " + res.getString("all_registers") + ")";
-		}
-		else {
+			titel += " / " + RES.getString("all_registers") + ")";
+		} else {
 			titel += " / " + register + ")";
 		}
 		loescheBloecke();
 		final AbstractBlock block1 = new TextBlock(titel);
-		block1.setFont(new Font(this.haushalt.getFontname(), Font.BOLD, this.haushalt.getFontgroesse() + 6));
+		block1.setFont(new Font(this.getHaushalt().getFontname(), Font.BOLD, this.getHaushalt().getFontgroesse() + 6));
 		addDokumentenBlock(block1);
 		addDokumentenBlock(new LeererBlock(1));
 		if (anzahl == 0) {
-			final String hinweis = res.getString("no_bookings_with_this_properties");
+			final String hinweis = RES.getString("no_bookings_with_this_properties");
 			final AbstractBlock block2 = new TextBlock(hinweis);
 			addDokumentenBlock(block2);
-		}
-		else {
-			final double[] relTabs = { 0.0, 12.0, 50.0, 80.0 };
+		} else {
+			final double[] relTabs = {0.0, 12.0, 50.0, 80.0};
 			final TabellenBlock.Ausrichtung[] attribute = {
-					TabellenBlock.Ausrichtung.LINKS,
-					TabellenBlock.Ausrichtung.LINKS,
-					TabellenBlock.Ausrichtung.LINKS,
-					TabellenBlock.Ausrichtung.RECHTS };
-			final TabellenBlock block2 = new TabellenBlock(this.tabelle);
-			block2.setFont(new Font(this.haushalt.getFontname(), Font.PLAIN, this.haushalt.getFontgroesse()));
+					TabellenBlock.Ausrichtung.LINKS, TabellenBlock.Ausrichtung.LINKS, TabellenBlock.Ausrichtung.LINKS,
+					TabellenBlock.Ausrichtung.RECHTS};
+			final TabellenBlock block2 = new TabellenBlock(getTabelle());
+			block2.setFont(new Font(this.getHaushalt().getFontname(), Font.PLAIN, this.getHaushalt().getFontgroesse()));
 			block2.setRelTabs(relTabs);
 			block2.setLinienFarbe("Weiß");
 			block2.setAusrichtung(attribute);
 			addDokumentenBlock(block2);
-			final String[][] text = { { "", res.getString("total") + ":", "", "" + summe } };
+			final String[][] text = {{"", RES.getString("total") + ":", "", "" + summe}};
 			final TabellenBlock block3 = new TabellenBlock(text);
-			block3.setFont(new Font(this.haushalt.getFontname(), Font.ITALIC, this.haushalt.getFontgroesse()));
+			block3.setFont(new Font(this.getHaushalt().getFontname(), Font.ITALIC, this.getHaushalt().getFontgroesse()));
 			block3.setRelTabs(relTabs);
 			block3.setHgFarbe("Grau");
 			block3.setLinienFarbe("Grau");

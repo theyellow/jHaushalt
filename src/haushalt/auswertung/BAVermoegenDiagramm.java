@@ -49,21 +49,21 @@ import java.awt.Font;
  */
 public class BAVermoegenDiagramm extends AbstractBlockAuswertung {
 
-	private static final long serialVersionUID = 1L;
-	private static final TextResource res = TextResource.get();
+	public static final String UEBERSCHRIFT = TextResource.get().getString("bar_chart_fortune");
 
-	public static final String ueberschrift = res.getString("bar_chart_fortune");
+	private static final long serialVersionUID = 1L;
+	private static final TextResource RES = TextResource.get();
 
 	public BAVermoegenDiagramm(final Haushalt haushalt, final Datenbasis db, final String name) {
 		super(haushalt, db, name);
 		final AbstractGDPane[] panes = new AbstractGDPane[5];
-		panes[0] = new ZeitraumGDP(res.getString("first_period") + ":", new Jahr(2007));
-		panes[1] = new ZahlGDP(res.getString("number_of_periods") + ":", new Integer(4));
-		panes[2] = new EinOderAlleRegisterGDP(res.getString("register") + ":", db, null);
-		panes[3] = new FarbwahlGDP(res.getString("color_income"), haushalt.getFrame(), Color.BLUE);
-		panes[4] = new FarbwahlGDP(res.getString("color_expenditure"), haushalt.getFrame(), Color.RED);
+		panes[0] = new ZeitraumGDP(RES.getString("first_period") + ":", new Jahr(2007));
+		panes[1] = new ZahlGDP(RES.getString("number_of_periods") + ":", new Integer(4));
+		panes[2] = new EinOderAlleRegisterGDP(RES.getString("register") + ":", db, null);
+		panes[3] = new FarbwahlGDP(RES.getString("color_income"), haushalt.getFrame(), Color.BLUE);
+		panes[4] = new FarbwahlGDP(RES.getString("color_expenditure"), haushalt.getFrame(), Color.RED);
 
-		erzeugeEigenschaften(haushalt.getFrame(), ueberschrift, panes);
+		erzeugeEigenschaften(haushalt.getFrame(), UEBERSCHRIFT, panes);
 	}
 
 	@Override
@@ -78,32 +78,33 @@ public class BAVermoegenDiagramm extends AbstractBlockAuswertung {
 			final Datum datum = tmpZeitraum.getStartDatum();
 			zeitpunkte[i] = datum;
 			if (register == null) {
-				salden[i] = this.db.getSaldo(datum);
-			}
-			else {
-				salden[i] = this.db.getRegisterSaldo(register, datum);
+				salden[i] = getDb().getSaldo(datum);
+			} else {
+				salden[i] = getDb().getRegisterSaldo(register, datum);
 			}
 			tmpZeitraum = tmpZeitraum.folgeZeitraum();
 		}
 
 		// Vorhandene Blöcke löschen und neu berechnete einfügen
-		String titel = res.getString("fortune_development") + " (" +
-				zeitpunkte[0] + " " +
-				res.getString("to") + " " +
-				zeitpunkte[anzahlZeitraeume - 1];
+		String titel = RES.getString("fortune_development")
+			+ " ("
+			+ zeitpunkte[0]
+			+ " "
+			+ RES.getString("to")
+			+ " "
+			+ zeitpunkte[anzahlZeitraeume - 1];
 		if (register == null) {
 			titel += ")";
-		}
-		else {
+		} else {
 			titel += ", " + register + ")";
 		}
 		loescheBloecke();
 		final AbstractBlock block1 = new TextBlock(titel);
-		block1.setFont(new Font(this.haushalt.getFontname(), Font.BOLD, this.haushalt.getFontgroesse() + 6));
+		block1.setFont(new Font(this.getHaushalt().getFontname(), Font.BOLD, this.getHaushalt().getFontgroesse() + 6));
 		addDokumentenBlock(block1);
 		addDokumentenBlock(new LeererBlock(1));
 		final VermoegenBlock block2 = new VermoegenBlock(zeitpunkte, salden);
-		block2.setFont(new Font(this.haushalt.getFontname(), Font.PLAIN, this.haushalt.getFontgroesse()));
+		block2.setFont(new Font(this.getHaushalt().getFontname(), Font.PLAIN, this.getHaushalt().getFontgroesse()));
 		block2.setFarbePos((Color) werte[3]);
 		block2.setFarbeNeg((Color) werte[4]);
 		addDokumentenBlock(block2);

@@ -50,21 +50,21 @@ import javax.swing.WindowConstants;
 public class DlgSuchenErsetzen extends JDialog {
 
 	private static final long serialVersionUID = 1L;
-	private static final TextResource res = TextResource.get();
+	private static final TextResource RES = TextResource.get();
 
 	// GUI-Komponenten
-	private final JButton beenden = new JButton(res.getString("button_close"));
-	private final JButton suchen = new JButton(res.getString("button_search"));
-	protected final JButton ersetzen = new JButton(res.getString("button_replace"));
-	private final JButton alle = new JButton(res.getString("button_replace_all"));
-	protected final DeleteableTextField suchenText = new DeleteableTextField(20);
-	protected final DeleteableTextField ersetzenText = new DeleteableTextField(20);
-	private final JCheckBox grossUndKlein = new JCheckBox(res.getString("case_sensitivity"));
+	private final JButton beenden = new JButton(RES.getString("button_close"));
+	private final JButton suchen = new JButton(RES.getString("button_search"));
+	private final JButton ersetzen = new JButton(RES.getString("button_replace"));
+	private final JButton alle = new JButton(RES.getString("button_replace_all"));
+	private final DeleteableTextField suchenText = new DeleteableTextField(20);
+	private final DeleteableTextField ersetzenText = new DeleteableTextField(20);
+	private final JCheckBox grossUndKlein = new JCheckBox(RES.getString("case_sensitivity"));
 
 	// Daten
 	private final Haushalt haushalt;
-	protected Datenbasis db;
-	protected AbstractBuchung buchung;
+	private Datenbasis db;
+	private AbstractBuchung buchung;
 
 	/**
 	 * Einziger Konstruktor.
@@ -73,7 +73,7 @@ public class DlgSuchenErsetzen extends JDialog {
 	 *            Haupt-Klasse
 	 */
 	public DlgSuchenErsetzen(final Haushalt haushalt) {
-		super(haushalt.getFrame(), res.getString("find"));
+		super(haushalt.getFrame(), RES.getString("find"));
 		this.haushalt = haushalt;
 		this.suchenText.addInputMethodListener(new InputMethodListener() {
 
@@ -98,10 +98,9 @@ public class DlgSuchenErsetzen extends JDialog {
 				if (!DlgSuchenErsetzen.this.suchenText.getText().equals("")) {
 					if (suchen()) {
 						DlgSuchenErsetzen.this.ersetzen.setEnabled(true);
-					}
-					else {
+					} else {
 						DlgSuchenErsetzen.this.ersetzen.setEnabled(false);
-						JOptionPane.showMessageDialog(haushalt.getFrame(), res.getString("search_completed"));
+						JOptionPane.showMessageDialog(haushalt.getFrame(), RES.getString("search_completed"));
 					}
 				}
 			}
@@ -109,12 +108,12 @@ public class DlgSuchenErsetzen extends JDialog {
 		this.ersetzen.addActionListener(new ActionListener() {
 
 			public void actionPerformed(final ActionEvent e) {
-				if (DlgSuchenErsetzen.this.buchung.ersetzeText(DlgSuchenErsetzen.this.suchenText.getText(),
+				if (DlgSuchenErsetzen.this.buchung.ersetzeText(
+						DlgSuchenErsetzen.this.suchenText.getText(),
 						DlgSuchenErsetzen.this.ersetzenText.getText())) {
 					DlgSuchenErsetzen.this.ersetzen.setEnabled(false);
-				}
-				else {
-					JOptionPane.showMessageDialog(haushalt.getFrame(), res.getString("replace_not_successful"));
+				} else {
+					JOptionPane.showMessageDialog(haushalt.getFrame(), RES.getString("replace_not_successful"));
 				}
 			}
 		});
@@ -126,27 +125,29 @@ public class DlgSuchenErsetzen extends JDialog {
 					DlgSuchenErsetzen.this.db.resetSuchIdx();
 					int z = 0;
 					while (suchen()) {
-						if (DlgSuchenErsetzen.this.buchung.ersetzeText(DlgSuchenErsetzen.this.suchenText.getText(),
+						if (DlgSuchenErsetzen.this.buchung.ersetzeText(
+								DlgSuchenErsetzen.this.suchenText.getText(),
 								DlgSuchenErsetzen.this.ersetzenText.getText())) {
 							z++;
 						}
 					}
 					DlgSuchenErsetzen.this.ersetzen.setEnabled(false);
-					JOptionPane.showMessageDialog(haushalt.getFrame(),
-							res.getString("replace_count1") + " " + z + " " + res.getString("replace_count2"));
+					JOptionPane.showMessageDialog(
+							haushalt.getFrame(),
+							RES.getString("replace_count1") + " " + z + " " + RES.getString("replace_count2"));
 				}
 			}
 		});
 
 		final Container contentPane = getContentPane();
 		contentPane.setLayout(new GridLayout(0, 2));
-		contentPane.add(new JLabel(res.getString("search_text")));
+		contentPane.add(new JLabel(RES.getString("search_text")));
 		contentPane.add(Box.createGlue());
 		contentPane.add(this.suchenText);
 		contentPane.add(this.suchen);
 		contentPane.add(this.grossUndKlein);
 		contentPane.add(Box.createGlue());
-		contentPane.add(new JLabel(res.getString("replace_by")));
+		contentPane.add(new JLabel(RES.getString("replace_by")));
 		contentPane.add(Box.createGlue());
 		contentPane.add(this.ersetzenText);
 		contentPane.add(this.ersetzen);

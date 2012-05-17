@@ -55,12 +55,12 @@ import javax.swing.table.DefaultTableCellRenderer;
 public class PlanungGDP extends AbstractGDPane {
 
 	private static final long serialVersionUID = 1L;
-	private static final TextResource res = TextResource.get();
+	private static final TextResource RES = TextResource.get();
 
-	final JTable table;
-	final Planung planung;
-	final JCheckBox unterkategorien = new JCheckBox(res.getString("use_subcategories"));
-	final JCheckBox hochrechnen = new JCheckBox(res.getString("extrapolation_actual_values"));
+	private final JTable table;
+	private final Planung planung;
+	private final JCheckBox unterkategorien = new JCheckBox(RES.getString("use_subcategories"));
+	private final JCheckBox hochrechnen = new JCheckBox(RES.getString("extrapolation_actual_values"));
 
 	public PlanungGDP(final String text, final Planung planung) {
 		super(text);
@@ -72,8 +72,8 @@ public class PlanungGDP extends AbstractGDPane {
 		final PlanungTableModel tableModel = new PlanungTableModel(planung);
 		this.table = new JTable(tableModel);
 		final JPanel paneButton = new JPanel();
-		final JButton buttonAlle = new JButton(res.getString("all_categories"));
-		final JButton buttonKeine = new JButton(res.getString("no_categories"));
+		final JButton buttonAlle = new JButton(RES.getString("all_categories"));
+		final JButton buttonKeine = new JButton(RES.getString("no_categories"));
 
 		this.unterkategorien.addItemListener(new ItemListener() {
 
@@ -129,7 +129,7 @@ public class PlanungGDP extends AbstractGDPane {
 	@Override
 	protected void refreshWert() {
 		this.planung.kategorienAbgleichen();
-		this.wert = this.planung;
+		setWert(this.planung);
 	}
 
 	@Override

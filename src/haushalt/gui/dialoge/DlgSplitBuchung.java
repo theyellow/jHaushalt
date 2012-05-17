@@ -28,7 +28,6 @@ import haushalt.gui.TextResource;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
-import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -61,18 +60,17 @@ import javax.swing.table.TableCellEditor;
 public class DlgSplitBuchung extends JDialog {
 
 	private static final long serialVersionUID = 1L;
-	private static final TextResource res = TextResource.get();
+	private static final TextResource RES = TextResource.get();
 
 	// GUI-Komponenten
 	private final JPanel buttonPane = new JPanel();
-	private final JButton buttonOK = new JButton(res.getString("button_ok"));
+	private final JButton buttonOK = new JButton(RES.getString("button_ok"));
 	private final JButton buttonDelete;
-	protected final SplitBetragTableModel tableModel;
-	protected final JTable table;
+	private final SplitBetragTableModel tableModel;
+	private final JTable table;
 
-	public DlgSplitBuchung(final Haushalt haushalt, final Datenbasis db, final SplitBuchung buchung)
-			throws HeadlessException {
-		super(haushalt.getFrame(), res.getString("split_editor"), true);
+	public DlgSplitBuchung(final Haushalt haushalt, final Datenbasis db, final SplitBuchung buchung) {
+		super(haushalt.getFrame(), RES.getString("split_editor"), true);
 		this.tableModel = new SplitBetragTableModel(buchung);
 		this.table = new JTable(this.tableModel);
 		this.table.setSurrendersFocusOnKeystroke(true);
@@ -82,43 +80,39 @@ public class DlgSplitBuchung extends JDialog {
 		this.table.setPreferredScrollableViewportSize(new Dimension(500, 200));
 
 		// Action erzeugen
-		final Action action = new AbstractAction(res.getString("button_delete"), haushalt.bildLaden("Delete16.png")) {
+		final Action action = new AbstractAction(RES.getString("button_delete"), haushalt.bildLaden("Delete16.png")) {
 
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(final ActionEvent e) {
-				if (e.getActionCommand().equals(res.getString("button_delete"))) {
+				if (e.getActionCommand().equals(RES.getString("button_delete"))) {
 					final TableCellEditor cellEditor = DlgSplitBuchung.this.table.getCellEditor();
 					if (cellEditor != null) {
 						cellEditor.cancelCellEditing();
 					}
 					final int row = DlgSplitBuchung.this.table.getSelectedRow();
 					if (row == -1) {
-						JOptionPane.showMessageDialog(haushalt.getFrame(),
-								res.getString("no_row_selected"),
+						JOptionPane.showMessageDialog(
+								haushalt.getFrame(),
+								RES.getString("no_row_selected"),
 								"Alt-D: Split-Buchung",
 								JOptionPane.WARNING_MESSAGE);
-					}
-					else if (row == DlgSplitBuchung.this.tableModel.getRowCount() - 1) {
-						JOptionPane.showMessageDialog(haushalt.getFrame(),
-								res.getString("can_not_delete_input_row"),
-								"Alt-D: " + res.getString("split_editor"),
-								JOptionPane.WARNING_MESSAGE);
-					}
-					else {
+					} else if (row == DlgSplitBuchung.this.tableModel.getRowCount() - 1) {
+						JOptionPane.showMessageDialog(haushalt.getFrame(), RES.getString("can_not_delete_input_row"), "Alt-D: "
+							+ RES.getString("split_editor"), JOptionPane.WARNING_MESSAGE);
+					} else {
 						DlgSplitBuchung.this.tableModel.entferneZeile(row);
 					}
 				}
 			}
 		};
-		action.putValue(Action.SHORT_DESCRIPTION, res.getString("delete_split_booking"));
+		action.putValue(Action.SHORT_DESCRIPTION, RES.getString("delete_split_booking"));
 		final KeyStroke key = KeyStroke.getKeyStroke(KeyEvent.VK_D, ActionEvent.CTRL_MASK);
 		action.putValue(Action.ACCELERATOR_KEY, key);
 		action.putValue(Action.MNEMONIC_KEY, new Integer(KeyEvent.VK_D));
 
 		// Cell-Editoren erzeugen
-		this.table
-				.setDefaultEditor(EinzelKategorie.class, new DefaultCellEditor(new JComboBox(db.getKategorien(true))));
+		this.table.setDefaultEditor(EinzelKategorie.class, new DefaultCellEditor(new JComboBox(db.getKategorien(true))));
 		this.table.setDefaultEditor(Euro.class, new DefaultCellEditor(new EuroField()));
 
 		// Cell-Renderer erzeugen

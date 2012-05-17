@@ -46,7 +46,7 @@ public class BooleanGDP extends AbstractGDPane {
 
 	@Override
 	protected void refreshWert() {
-		this.wert = Boolean.valueOf(this.checkBox.isSelected());
+		setWert(Boolean.valueOf(this.checkBox.isSelected()));
 	}
 
 	@Override

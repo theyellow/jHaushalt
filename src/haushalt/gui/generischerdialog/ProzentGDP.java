@@ -48,10 +48,9 @@ public class ProzentGDP extends AbstractGDPane {
 	@Override
 	protected void refreshWert() {
 		final Integer prozent = this.prozentField.getValue();
-		this.wert = prozent;
-		this.prozentField.setText("" + prozent); // neusetzen, da ggf. Fehler
-													// beim
-		// Parsen
+		setWert(prozent);
+		// neusetzen, da ggf. Fehler beim Parsen:
+		this.prozentField.setText("" + prozent);
 	}
 
 	@Override

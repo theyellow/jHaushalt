@@ -24,7 +24,7 @@ import java.util.logging.Logger;
 
 /**
  * Die StandardBuchung ist die "normale" Buchung. Sie besteht aus Datum, Name,
- * Kategorie und Betrag.
+ * IKategorie und Betrag.
  * 
  * @author Dr. Lars H. Hahn
  * @version 2.6/2010.02.03
@@ -55,16 +55,16 @@ public class StandardBuchung extends AbstractBuchung {
 		this.betrag = betrag;
 	}
 
-	// -- Kategorie
+	// -- IKategorie
 	// --------------------------------------------------------------
 
 	@Override
-	public Kategorie getKategorie() {
+	public IKategorie getKategorie() {
 		return this.kategorie;
 	}
 
 	@Override
-	public void setKategorie(final Kategorie neueKategorie) {
+	public void setKategorie(final IKategorie neueKategorie) {
 		this.kategorie = (EinzelKategorie) neueKategorie;
 	}
 

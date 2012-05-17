@@ -25,8 +25,8 @@ import java.util.logging.Logger;
 /**
  * Eine Umbuchung verschiebt Geld von einem Register in ein anderes. Es
  * entstehen
- * keine Einnahmen oder Ausgaben. Umbuchungen sind deshalb keiner Kategorie
- * zugeordnet. Statt der Kategorie besitzen Umbuchungen ein Register-Paar
+ * keine Einnahmen oder Ausgaben. Umbuchungen sind deshalb keiner IKategorie
+ * zugeordnet. Statt der IKategorie besitzen Umbuchungen ein Register-Paar
  * (Quell- und Zielregister). Umbuchungen werden (bei Änderungen) automatisch in
  * das Quell- und das Zielregister einsortiert.
  * 
@@ -36,9 +36,9 @@ import java.util.logging.Logger;
 
 /*
  * 2010.02.03 Funktion clone() korrigiert: new String() verwendet
- * 2006.06.19 Speichern von Umbuchungen ohne Kategorie (für auto. Umbuchungen)
+ * 2006.06.19 Speichern von Umbuchungen ohne IKategorie (für auto. Umbuchungen)
  * 2006.02.13 Überarbeitung: Umstellung auf Klasse 'UmbuchungKategorie' als
- * Kategorie für eine Umbuchung
+ * IKategorie für eine Umbuchung
  * 2006.02.10 Ergänzung der Methode isInKategorie
  * 2004.08.22 Erste Version
  */
@@ -62,16 +62,16 @@ public class Umbuchung extends AbstractBuchung {
 		setKategorie(kategorie);
 	}
 
-	// -- Kategorie
+	// -- IKategorie
 	// --------------------------------------------------------------
 
 	@Override
-	public Kategorie getKategorie() {
+	public IKategorie getKategorie() {
 		return this.kategorie;
 	}
 
 	@Override
-	public void setKategorie(final Kategorie neueKategorie) {
+	public void setKategorie(final IKategorie neueKategorie) {
 		// Wenn sich das Partner-Register ändert, muss die Buchung entfernt und
 		// wieder eingefügt werden. Vorsicht bei Selbstbuchungen!
 		if (DEBUG) {
@@ -101,13 +101,13 @@ public class Umbuchung extends AbstractBuchung {
 
 	@Override
 	public int ersetzeKategorie(final EinzelKategorie alteKategorie, final EinzelKategorie neueKategorie) {
-		// Umbuchungen haben keine Kategorie!
+		// Umbuchungen haben keine IKategorie!
 		return 0;
 	}
 
 	@Override
 	public boolean istInKategorie(final EinzelKategorie kategorie, final boolean unterkategorienVerwenden) {
-		// Umbuchungen haben keine Kategorie!
+		// Umbuchungen haben keine IKategorie!
 		return false;
 	}
 
@@ -129,12 +129,12 @@ public class Umbuchung extends AbstractBuchung {
 
 	@Override
 	public void bildeKategorieSumme(final AbstractZeitraum zeitraum, final boolean unterkat) {
-		// Umbuchungen haben keine Kategorie!
+		// Umbuchungen haben keine IKategorie!
 	}
 
 	@Override
 	public Euro getKategorieWert(final EinzelKategorie namekat, final boolean unterkat) {
-		// Umbuchungen haben keine Kategorie!
+		// Umbuchungen haben keine IKategorie!
 		return Euro.NULL_EURO;
 	}
 

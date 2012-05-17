@@ -18,6 +18,7 @@ package haushalt.gui;
 import haushalt.daten.Datum;
 
 import java.awt.event.KeyEvent;
+import java.util.logging.Logger;
 
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
@@ -48,6 +49,7 @@ public class DatumField extends DeleteableTextField {
 
 	private static final boolean DEBUG = false;
 	private static final long serialVersionUID = 1L;
+	private static final Logger LOGGER = Logger.getLogger(DatumField.class.getName());
 
 	public DatumField() {
 		this(new Datum());
@@ -70,14 +72,12 @@ public class DatumField extends DeleteableTextField {
 			final Datum datum = new Datum(getText());
 			datum.addiereTage(1);
 			setText("" + datum);
-		}
-		else if ((keycode == KeyEvent.VK_MINUS) || (keycode == KeyEvent.VK_SUBTRACT)) {
+		} else if ((keycode == KeyEvent.VK_MINUS) || (keycode == KeyEvent.VK_SUBTRACT)) {
 			final Datum datum = new Datum(getText());
 			datum.addiereTage(-1);
 			setText("" + datum);
-		}
-		else if (DEBUG) {
-			System.out.println("DatumField: KeyCode = " + keycode);
+		} else if (DEBUG) {
+			LOGGER.info("DatumField: KeyCode = " + keycode);
 		}
 	}
 
@@ -86,8 +86,7 @@ public class DatumField extends DeleteableTextField {
 		private static final long serialVersionUID = 1L;
 
 		@Override
-		public void insertString(final int offs, final String str, final AttributeSet a)
-				throws BadLocationException {
+		public void insertString(final int offs, final String str, final AttributeSet a) throws BadLocationException {
 			final char[] source = str.toCharArray();
 			final char[] result = new char[11]; // max. 11 Zeichen (Ungarisch):
 			// yyyy.mm.tt.
@@ -96,11 +95,9 @@ public class DatumField extends DeleteableTextField {
 				final int anzChar = (source.length < 8) ? source.length : 8;
 
 				for (int i = 0; i < anzChar; i++) {
-					if (((source[i] == '.') || (source[i] == ',') || (source[i] == '-'))
-							&& ((offs + i == 2) || (offs + i == 5))) {
+					if (((source[i] == '.') || (source[i] == ',') || (source[i] == '-')) && ((offs + i == 2) || (offs + i == 5))) {
 						result[j++] = '.';
-					}
-					else {
+					} else {
 						if (Character.isDigit(source[i])) {
 							if ((offs + i == 2) || (offs + i == 5)) {
 								result[j++] = '.';
@@ -112,8 +109,7 @@ public class DatumField extends DeleteableTextField {
 				if (j + getLength() > 8) {
 					j = 8 - getLength();
 				}
-			}
-			else { /* anderes Land = anderes Datumsformat */
+			} else { /* anderes Land = anderes Datumsformat */
 				final int anzChar = source.length;
 				for (int i = 0; i < anzChar; i++) {
 					if (Character.isDigit(source[i]) || (source[i] == '.') || (source[i] == '/') || (source[i] == '-')) {

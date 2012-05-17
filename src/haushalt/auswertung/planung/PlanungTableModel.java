@@ -34,13 +34,11 @@ import javax.swing.table.AbstractTableModel;
 public class PlanungTableModel extends AbstractTableModel {
 
 	private static final long serialVersionUID = 1L;
-	private static final TextResource res = TextResource.get();
+	private static final TextResource RES = TextResource.get();
 
-	private static final String[] spaltenNamen = {
-			res.getString("category"),
-			res.getString("amount"),
-			res.getString("use_category")
-	};
+	private static final String[] SPALTEN_NAMEN = {
+			RES.getString("category"), RES.getString("amount"), RES.getString("use_category")};
+
 	private final Planung planung;
 
 	public PlanungTableModel(final Planung planung) {
@@ -57,28 +55,28 @@ public class PlanungTableModel extends AbstractTableModel {
 
 	@Override
 	public String getColumnName(final int col) {
-		return spaltenNamen[col];
+		return SPALTEN_NAMEN[col];
 	}
 
 	@Override
 	public Class<?> getColumnClass(final int col) {
 		switch (col) {
-		case 0:
-			return String.class;
-		case 1:
-			return Euro.class;
-		case 2:
-			return Boolean.class;
-		default:
-			return null;
+			case 0:
+				return String.class;
+			case 1:
+				return Euro.class;
+			case 2:
+				return Boolean.class;
+			default:
+				return null;
 		}
 	}
 
 	@Override
 	public boolean isCellEditable(final int row, final int col) {
-		if ((col == 0) ||
-				((col == 1) && !this.planung.kategorieVerwenden(row).booleanValue()) ||
-				(row == this.planung.getAnzahlKategorien())) {
+		if ((col == 0)
+			|| ((col == 1) && !this.planung.kategorieVerwenden(row).booleanValue())
+			|| (row == this.planung.getAnzahlKategorien())) {
 			return false;
 		}
 		return true;
@@ -87,27 +85,29 @@ public class PlanungTableModel extends AbstractTableModel {
 	public Object getValueAt(final int row, final int col) {
 		if (row == this.planung.getAnzahlKategorien()) {
 			switch (col) {
-			case 0:
-				return res.getString("total");
-			case 1:
-				return this.planung.getSumme();
-			case 2:
-				return Boolean.FALSE;
+				case 0:
+					return RES.getString("total");
+				case 1:
+					return this.planung.getSumme();
+				case 2:
+					return Boolean.FALSE;
+				default:
+					break;
 			}
-		}
-		else {
+		} else {
 			switch (col) {
-			case 0:
-				return this.planung.getKategorie(row);
-			case 1:
-				if (this.planung.kategorieVerwenden(row)) {
-					return this.planung.getBetrag(row);
-				}
-				else {
-					return new Euro();
-				}
-			case 2:
-				return this.planung.kategorieVerwenden(row);
+				case 0:
+					return this.planung.getKategorie(row);
+				case 1:
+					if (this.planung.kategorieVerwenden(row)) {
+						return this.planung.getBetrag(row);
+					} else {
+						return new Euro();
+					}
+				case 2:
+					return this.planung.kategorieVerwenden(row);
+				default:
+					break;
 			}
 		}
 		return null;
@@ -116,12 +116,14 @@ public class PlanungTableModel extends AbstractTableModel {
 	@Override
 	public void setValueAt(final Object value, final int row, final int col) {
 		switch (col) {
-		case 1:
-			this.planung.setBetrag(row, new Euro("" + value));
-			break;
-		case 2:
-			this.planung.setVerwenden(row, (Boolean) value);
-			break;
+			case 1:
+				this.planung.setBetrag(row, new Euro("" + value));
+				break;
+			case 2:
+				this.planung.setVerwenden(row, (Boolean) value);
+				break;
+			default:
+				break;
 		}
 		fireTableCellUpdated(this.planung.getAnzahlKategorien(), 1);
 	}

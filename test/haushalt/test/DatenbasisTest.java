@@ -127,7 +127,7 @@ public class DatenbasisTest {
 		final EinzelKategorie kat1 = db.findeOderErzeugeKategorie("MeineKategorie1");
 		final int anz = db.ersetzeKategorie(kat1, EinzelKategorie.SONSTIGES); // alteKategorie,
 		// neueKategorie)
-		assertTrue("Es sollte eine Kategorie ersetzt worden sein.",
+		assertTrue("Es sollte eine IKategorie ersetzt worden sein.",
 				anz == 1);
 	}
 

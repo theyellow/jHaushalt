@@ -37,14 +37,15 @@ import com.apple.eawt.PreferencesHandler;
  * @author Benjamin Marstaller
  * 
  */
-public class MacAdapter {
+public final class MacAdapter {
+
+	private MacAdapter() {}
 
 	public static void macStyle(final Haushalt haushalt) {
 
 		final Application application = Application.getApplication();
 
-		final URLClassLoader urlLoader = (URLClassLoader) MacAdapter.class
-				.getClassLoader();
+		final URLClassLoader urlLoader = (URLClassLoader) MacAdapter.class.getClassLoader();
 
 		// Apple dock
 		final URL iconLoc = urlLoader.findResource("res/jhh-icon.gif");

@@ -20,6 +20,7 @@ import haushalt.auswertung.FarbPaletten;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.util.Arrays;
+import java.util.logging.Logger;
 
 /**
  * @author Dr. Lars H. Hahn
@@ -33,6 +34,7 @@ import java.util.Arrays;
 public class DoppelteTabelleBlock extends AbstractTabelleBlock {
 
 	private static final boolean DEBUG = false;
+	private static final Logger LOGGER = Logger.getLogger(DoppelteTabelleBlock.class.getName());
 
 	private final String[][] tabelleLinks;
 	private final String[][] tabelleRechts;
@@ -88,8 +90,11 @@ public class DoppelteTabelleBlock extends AbstractTabelleBlock {
 		// Berechnung der absoluten Abstände (=Tabs) der rechten Spalte
 		final int[] absTabsRechts = new int[this.spaltenRechts + 1];
 		for (int i = 0; i < this.spaltenRechts; i++) {
-			absTabsRechts[i] = (int) (tabellenBreiteRechts * this.relTabsRechts[i] / 100.0D + tabellenBreiteAbstand
-					+ tabellenBreiteLinks + getAbsRand(breite));
+			absTabsRechts[i] = (int) (tabellenBreiteRechts
+				* this.relTabsRechts[i]
+				/ 100.0D
+				+ tabellenBreiteAbstand
+				+ tabellenBreiteLinks + getAbsRand(breite));
 		}
 		absTabsRechts[this.spaltenRechts] = breite - getAbsRand(breite);
 
@@ -99,9 +104,9 @@ public class DoppelteTabelleBlock extends AbstractTabelleBlock {
 		if ((zeile < this.tabelleLinks.length) && (this.tabelleLinks[zeile][0] != null)) {
 			for (int x = 0; x < this.spaltenLinks; x++) {
 				int zellenBreite = absTabsLinks[x + 1] - absTabsLinks[x];
-				g.setColor(FarbPaletten.getFarbe(zeile, this.hgFarbe));
+				g.setColor(FarbPaletten.getFarbe(zeile, this.getHgFarbe()));
 				g.fillRect(xStart + absTabsLinks[x], yStart, zellenBreite, textHoehe);
-				g.setColor(FarbPaletten.getFarbe(zeile, this.linienFarbe));
+				g.setColor(FarbPaletten.getFarbe(zeile, this.getLinienFarbe()));
 				g.drawRect(xStart + absTabsLinks[x], yStart, zellenBreite, textHoehe);
 
 				zellenBreite -= 4;
@@ -111,22 +116,23 @@ public class DoppelteTabelleBlock extends AbstractTabelleBlock {
 				}
 				int delta = 0;
 				switch (this.ausrichtungLinks[x]) {
-				case LINKS:
-					delta = 2;
-					break;
-				case CENTER:
-					delta = (zellenBreite - g.getFontMetrics().stringWidth(wort)) / 2 + 2;
-					break;
-				case RECHTS:
-					delta = zellenBreite - g.getFontMetrics().stringWidth(wort) + 2;
-					break;
+					case LINKS:
+						delta = 2;
+						break;
+					case CENTER:
+						delta = (zellenBreite - g.getFontMetrics().stringWidth(wort)) / 2 + 2;
+						break;
+					case RECHTS:
+						delta = zellenBreite - g.getFontMetrics().stringWidth(wort) + 2;
+						break;
+					default:
+						break;
 				}
 				g.setColor(Color.black);
-				g.drawString(wort, xStart + absTabsLinks[x] + delta, yStart + textHoehe
-						- g.getFontMetrics().getDescent());
+				g.drawString(wort, xStart + absTabsLinks[x] + delta, yStart + textHoehe - g.getFontMetrics().getDescent());
 			}
 			if (DEBUG) {
-				System.out.println("Z" + zeile + ": " + this.tabelleLinks[zeile][0]);
+				LOGGER.info("Z" + zeile + ": " + this.tabelleLinks[zeile][0]);
 			}
 		}
 
@@ -134,9 +140,9 @@ public class DoppelteTabelleBlock extends AbstractTabelleBlock {
 		if ((zeile < this.tabelleRechts.length) && (this.tabelleRechts[zeile][0] != null)) {
 			for (int x = 0; x < this.spaltenRechts; x++) {
 				int zellenBreite = absTabsRechts[x + 1] - absTabsRechts[x];
-				g.setColor(FarbPaletten.getFarbe(zeile, this.hgFarbe));
+				g.setColor(FarbPaletten.getFarbe(zeile, this.getHgFarbe()));
 				g.fillRect(xStart + absTabsRechts[x], yStart, zellenBreite, textHoehe);
-				g.setColor(FarbPaletten.getFarbe(zeile, this.linienFarbe));
+				g.setColor(FarbPaletten.getFarbe(zeile, this.getLinienFarbe()));
 				g.drawRect(xStart + absTabsRechts[x], yStart, zellenBreite, textHoehe);
 
 				zellenBreite -= 4;
@@ -146,22 +152,23 @@ public class DoppelteTabelleBlock extends AbstractTabelleBlock {
 				}
 				int delta = 0;
 				switch (this.ausrichtungRechts[x]) {
-				case LINKS:
-					delta = 2;
-					break;
-				case CENTER:
-					delta = (zellenBreite - g.getFontMetrics().stringWidth(wort)) / 2 + 2;
-					break;
-				case RECHTS:
-					delta = zellenBreite - g.getFontMetrics().stringWidth(wort) + 2;
-					break;
+					case LINKS:
+						delta = 2;
+						break;
+					case CENTER:
+						delta = (zellenBreite - g.getFontMetrics().stringWidth(wort)) / 2 + 2;
+						break;
+					case RECHTS:
+						delta = zellenBreite - g.getFontMetrics().stringWidth(wort) + 2;
+						break;
+					default:
+						break;
 				}
 				g.setColor(Color.black);
-				g.drawString(wort, xStart + absTabsRechts[x] + delta, yStart + textHoehe
-						- g.getFontMetrics().getDescent());
+				g.drawString(wort, xStart + absTabsRechts[x] + delta, yStart + textHoehe - g.getFontMetrics().getDescent());
 			}
 			if (DEBUG) {
-				System.out.println("Z" + zeile + ": " + this.tabelleRechts[zeile][0]);
+				LOGGER.info("Z" + zeile + ": " + this.tabelleRechts[zeile][0]);
 			}
 		}
 	}
@@ -170,17 +177,14 @@ public class DoppelteTabelleBlock extends AbstractTabelleBlock {
 		if (linkeTabelle) {
 			if (relTabs.length == this.spaltenLinks) {
 				this.relTabsLinks = relTabs;
+			} else if (DEBUG) {
+				LOGGER.info("DoppelteTabelleBlock: Falsche Anzahl Tabulatoren.");
 			}
-			else if (DEBUG) {
-				System.out.println("DoppelteTabelleBlock: Falsche Anzahl Tabulatoren.");
-			}
-		}
-		else {
+		} else {
 			if (relTabs.length == this.spaltenRechts) {
 				this.relTabsRechts = relTabs;
-			}
-			else if (DEBUG) {
-				System.out.println("DoppelteTabelleBlock: Falsche Anzahl Tabulatoren.");
+			} else if (DEBUG) {
+				LOGGER.info("DoppelteTabelleBlock: Falsche Anzahl Tabulatoren.");
 			}
 		}
 	}
@@ -189,17 +193,14 @@ public class DoppelteTabelleBlock extends AbstractTabelleBlock {
 		if (linkeTabelle) {
 			if (ausrichtung.length == this.spaltenLinks) {
 				this.ausrichtungLinks = ausrichtung;
+			} else if (DEBUG) {
+				LOGGER.info("DoppelteTabelleBlock: Ausrichtung - Falsche Anzahl.");
 			}
-			else if (DEBUG) {
-				System.out.println("DoppelteTabelleBlock: Ausrichtung - Falsche Anzahl.");
-			}
-		}
-		else {
+		} else {
 			if (ausrichtung.length == this.spaltenRechts) {
 				this.ausrichtungRechts = ausrichtung;
-			}
-			else if (DEBUG) {
-				System.out.println("DoppelteTabelleBlock: Ausrichtung - Falsche Anzahl.");
+			} else if (DEBUG) {
+				LOGGER.info("DoppelteTabelleBlock: Ausrichtung - Falsche Anzahl.");
 			}
 		}
 	}

@@ -35,6 +35,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.logging.Logger;
 
 import javax.print.attribute.HashPrintRequestAttributeSet;
 import javax.print.attribute.ResolutionSyntax;
@@ -78,11 +79,12 @@ import javax.swing.event.ListSelectionListener;
 
 public class DlgContainerAuswertung extends JDialog implements ListSelectionListener {
 
+	public static final String VERSION_AUSWERTUNG = "2.6";
+
 	private static final long serialVersionUID = 1L;
 	private static final boolean DEBUG = false;
-	private static final TextResource res = TextResource.get();
-
-	public final static String VERSION_AUSWERTUNG = "2.6";
+	private static final Logger LOGGER = Logger.getLogger(DlgContainerAuswertung.class.getName());
+	private static final TextResource RES = TextResource.get();
 
 	private boolean geaendert = false;
 	private final Haushalt haushalt;
@@ -95,8 +97,7 @@ public class DlgContainerAuswertung extends JDialog implements ListSelectionList
 	private final JList list = new JList(this.listModel);
 	private final JScrollPane listScrollPane = new JScrollPane(this.list);
 	private final JScrollPane graphikScrollPane = new JScrollPane();
-	private final JSplitPane split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, this.listScrollPane,
-			this.graphikScrollPane);
+	private final JSplitPane split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, this.listScrollPane, this.graphikScrollPane);
 	private final Dimension minimumSize = new Dimension(100, 50);
 
 	// ButtonPane und Buttons:
@@ -114,19 +115,19 @@ public class DlgContainerAuswertung extends JDialog implements ListSelectionList
 	private final DlgAuswertungAuswaehlen dlg;
 
 	public DlgContainerAuswertung(final Haushalt haushalt, final Datenbasis db) {
-		super(haushalt.getFrame(), res.getString("reports"), true);
+		super(haushalt.getFrame(), RES.getString("reports"), true);
 		this.haushalt = haushalt;
 		this.db = db;
 
 		this.buttonHoch = new JButton(haushalt.bildLaden("Up16.png"));
 		this.buttonRunter = new JButton(haushalt.bildLaden("Down16.png"));
-		this.buttonHinzu = new JButton(res.getString("button_add"), haushalt.bildLaden("Add16.png"));
-		this.buttonEntf = new JButton(res.getString("button_delete"), haushalt.bildLaden("Delete16.png"));
-		this.buttonEigensch = new JButton(res.getString("button_properties"), haushalt.bildLaden("Properties16.png"));
-		this.buttonExport = new JButton(res.getString("button_csv_export"), haushalt.bildLaden("Export16.png"));
-		this.buttonEinstDr = new JButton(res.getString("button_page_setup"), haushalt.bildLaden("PageSetup16.png"));
-		this.buttonDrucken = new JButton(res.getString("button_print"), haushalt.bildLaden("Print16.png"));
-		this.buttonAbbruch = new JButton(res.getString("button_close"));
+		this.buttonHinzu = new JButton(RES.getString("button_add"), haushalt.bildLaden("Add16.png"));
+		this.buttonEntf = new JButton(RES.getString("button_delete"), haushalt.bildLaden("Delete16.png"));
+		this.buttonEigensch = new JButton(RES.getString("button_properties"), haushalt.bildLaden("Properties16.png"));
+		this.buttonExport = new JButton(RES.getString("button_csv_export"), haushalt.bildLaden("Export16.png"));
+		this.buttonEinstDr = new JButton(RES.getString("button_page_setup"), haushalt.bildLaden("PageSetup16.png"));
+		this.buttonDrucken = new JButton(RES.getString("button_print"), haushalt.bildLaden("Print16.png"));
+		this.buttonAbbruch = new JButton(RES.getString("button_close"));
 
 		// Liste zur Auswahl der Auswertung
 		this.list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -247,18 +248,17 @@ public class DlgContainerAuswertung extends JDialog implements ListSelectionList
 		final int idx = this.list.getSelectedIndex();
 		final int anzahl = this.auswertungen.size();
 		if ((idx == -1) || (idx >= anzahl)) {
-			JOptionPane.showMessageDialog(null,
-					res.getString("no_report_selected"),
-					res.getString("reports"),
+			JOptionPane.showMessageDialog(
+					null,
+					RES.getString("no_report_selected"),
+					RES.getString("reports"),
 					JOptionPane.WARNING_MESSAGE);
-		}
-		else {
+		} else {
 			if ((idx < anzahl - 1) && (raufRunter == false)) { // RUNTER
 				this.listModel.insertElementAt(this.listModel.remove(idx), idx + 1);
 				this.auswertungen.add(idx + 1, this.auswertungen.remove(idx));
 				this.list.setSelectedIndex(idx + 1);
-			}
-			else if ((idx > 0) && (raufRunter == true)) { // RAUF
+			} else if ((idx > 0) && (raufRunter == true)) { // RAUF
 				this.listModel.insertElementAt(this.listModel.remove(idx), idx - 1);
 				this.auswertungen.add(idx - 1, this.auswertungen.remove(idx));
 				this.list.setSelectedIndex(idx - 1);
@@ -282,18 +282,17 @@ public class DlgContainerAuswertung extends JDialog implements ListSelectionList
 		final int nr = this.list.getSelectedIndex();
 		final int anzahl = this.auswertungen.size();
 		if ((nr == -1) || (nr >= anzahl)) {
-			JOptionPane.showMessageDialog(null,
-					res.getString("no_report_selected"),
-					res.getString("reports"),
+			JOptionPane.showMessageDialog(
+					null,
+					RES.getString("no_report_selected"),
+					RES.getString("reports"),
 					JOptionPane.WARNING_MESSAGE);
-		}
-		else {
+		} else {
 			this.auswertungen.remove(nr);
 			this.listModel.remove(nr);
 			if (anzahl > 1) {
 				this.list.setSelectedIndex(0);
-			}
-			else {
+			} else {
 				this.graphikScrollPane.getViewport().removeAll();
 				this.graphikScrollPane.getViewport().repaint();
 			}
@@ -304,12 +303,12 @@ public class DlgContainerAuswertung extends JDialog implements ListSelectionList
 	private void eigenschaften() {
 		final int nr = this.list.getSelectedIndex();
 		if ((nr == -1) || (nr >= this.auswertungen.size())) {
-			JOptionPane.showMessageDialog(null,
-					res.getString("no_report_selected"),
-					res.getString("reports"),
+			JOptionPane.showMessageDialog(
+					null,
+					RES.getString("no_report_selected"),
+					RES.getString("reports"),
 					JOptionPane.WARNING_MESSAGE);
-		}
-		else {
+		} else {
 			final AbstractAuswertung auswertung = this.auswertungen.get(nr);
 			if (auswertung.zeigeEigenschaften()) {
 				this.geaendert = true;
@@ -322,12 +321,12 @@ public class DlgContainerAuswertung extends JDialog implements ListSelectionList
 	protected void export() {
 		final int nr = this.list.getSelectedIndex();
 		if ((nr == -1) || (nr >= this.auswertungen.size())) {
-			JOptionPane.showMessageDialog(null,
-					res.getString("no_report_selected"),
-					res.getString("reports"),
+			JOptionPane.showMessageDialog(
+					null,
+					RES.getString("no_report_selected"),
+					RES.getString("reports"),
 					JOptionPane.WARNING_MESSAGE);
-		}
-		else {
+		} else {
 			final AbstractAuswertung auswertung = this.auswertungen.get(nr);
 			final String[][] tabelle = auswertung.getTabelle();
 			final CsvHandler handler = new CsvHandler(tabelle);
@@ -342,12 +341,12 @@ public class DlgContainerAuswertung extends JDialog implements ListSelectionList
 	private void drucken() {
 		final int nr = this.list.getSelectedIndex();
 		if ((nr == -1) || (nr >= this.auswertungen.size())) {
-			JOptionPane.showMessageDialog(null,
-					res.getString("no_report_selected"),
-					res.getString("reports"),
+			JOptionPane.showMessageDialog(
+					null,
+					RES.getString("no_report_selected"),
+					RES.getString("reports"),
 					JOptionPane.WARNING_MESSAGE);
-		}
-		else {
+		} else {
 			final AbstractAuswertung auswertung = this.auswertungen.get(nr);
 			final PrinterJob job = PrinterJob.getPrinterJob();
 			job.setJobName("jHaushalt - Report");
@@ -357,16 +356,16 @@ public class DlgContainerAuswertung extends JDialog implements ListSelectionList
 			set.add(pr);
 			if (job.printDialog(set)) {
 				if (DEBUG) {
-					System.out.println("Auswertung drucken: Format " +
-							this.seitenFormat.getImageableWidth() + " x " +
-							this.seitenFormat.getImageableHeight());
+					System.out.println("Auswertung drucken: Format "
+						+ this.seitenFormat.getImageableWidth()
+						+ " x "
+						+ this.seitenFormat.getImageableHeight());
 				}
 			}
 			try {
 				job.print();
-			}
-			catch (final PrinterException e) {
-				e.printStackTrace();
+			} catch (final PrinterException e) {
+				LOGGER.warning(e.getMessage());
 			}
 		}
 	}
@@ -380,8 +379,7 @@ public class DlgContainerAuswertung extends JDialog implements ListSelectionList
 				this.buttonEigensch.setEnabled(false);
 				this.buttonExport.setEnabled(false);
 				this.buttonDrucken.setEnabled(false);
-			}
-			else {
+			} else {
 				this.buttonEntf.setEnabled(true);
 				this.buttonEigensch.setEnabled(true);
 				this.buttonDrucken.setEnabled(true);
@@ -407,23 +405,33 @@ public class DlgContainerAuswertung extends JDialog implements ListSelectionList
 				final String version = in.readUTF();
 				if (version.equals(VERSION_AUSWERTUNG) || version.equals("2.5")) {
 					size = in.readInt();
-				}
-				else {
-					JOptionPane.showMessageDialog(null,
-							res.getString("message_reports1") + "\n" +
-									res.getString("message_reports2") + " " + VERSION_AUSWERTUNG + " " +
-									res.getString("message_reports3") + "\n" +
-									res.getString("message_reports4") + "\n" +
-									res.getString("message_reports5") + "\n" +
-									res.getString("message_reports6"),
-							res.getString("hint"),
+				} else {
+					JOptionPane.showMessageDialog(
+							null,
+							RES.getString("message_reports1")
+								+ "\n"
+								+ RES.getString("message_reports2")
+								+ " "
+								+ VERSION_AUSWERTUNG
+								+ " "
+								+ RES.getString("message_reports3")
+								+ "\n"
+								+ RES.getString("message_reports4")
+								+ "\n"
+								+ RES.getString("message_reports5")
+								+ "\n"
+								+ RES.getString("message_reports6"),
+							RES.getString("hint"),
 							JOptionPane.INFORMATION_MESSAGE);
 				}
 				for (int i = 0; i < size; i++) {
 					final String name = in.readUTF();
 					final String klasse = in.readUTF();
-					final AbstractAuswertung auswertung = AbstractAuswertung.erzeugeAuswertung(klasse, this.haushalt,
-							this.db, name);
+					final AbstractAuswertung auswertung = AbstractAuswertung.erzeugeAuswertung(
+							klasse,
+							this.haushalt,
+							this.db,
+							name);
 					if (auswertung != null) {
 						auswertung.laden(in);
 						this.auswertungen.add(auswertung);
@@ -432,11 +440,10 @@ public class DlgContainerAuswertung extends JDialog implements ListSelectionList
 				}
 				fis.close();
 				if (DEBUG) {
-					System.out.println("" + size + " " + res.getString("reports_loaded"));
+					LOGGER.info("" + size + " " + RES.getString("reports_loaded"));
 				}
-			}
-			catch (final IOException e) {
-				e.printStackTrace();
+			} catch (final IOException e) {
+				LOGGER.warning(e.getMessage());
 			}
 		}
 		this.geaendert = false;
@@ -458,11 +465,10 @@ public class DlgContainerAuswertung extends JDialog implements ListSelectionList
 			out.flush();
 			fos.close();
 			if (DEBUG) {
-				System.out.println("" + this.auswertungen.size() + " " + res.getString("reports_stored"));
+				LOGGER.info("" + this.auswertungen.size() + " " + RES.getString("reports_stored"));
 			}
-		}
-		catch (final IOException e) {
-			e.printStackTrace();
+		} catch (final IOException e) {
+			LOGGER.warning(e.getMessage());
 		}
 		this.geaendert = false;
 	}

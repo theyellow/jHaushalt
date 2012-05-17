@@ -22,13 +22,14 @@ import haushalt.daten.MehrfachKategorie;
 import haushalt.daten.UmbuchungKategorie;
 
 import java.awt.Component;
+import java.util.logging.Logger;
 
 import javax.swing.DefaultCellEditor;
 import javax.swing.JComboBox;
 import javax.swing.JTable;
 
 /**
- * Cell-Editor für die Kategorie.
+ * Cell-Editor für die IKategorie.
  * 
  * @author Dr. Lars H. Hahn
  * @version 2.1.1/2006.04.21
@@ -38,7 +39,7 @@ import javax.swing.JTable;
  * 2006.04.21 BugFix: Bei der Änderung eine Umbuchung wurden
  * Ziel- und Quellregister vertauscht
  * 2006.02.13 Anpassung an die neue abstrakte Klasse
- * 'Kategorie'
+ * 'IKategorie'
  * 2004.08.22 Erste Version
  */
 
@@ -46,6 +47,7 @@ public class KategorieCellEditor extends DefaultCellEditor {
 
 	private static final boolean DEBUG = false;
 	private static final long serialVersionUID = 1L;
+	private static final Logger LOGGER = Logger.getLogger(KategorieCellEditor.class.getName());
 
 	private final Haushalt haushalt;
 	private final Datenbasis db;
@@ -65,31 +67,32 @@ public class KategorieCellEditor extends DefaultCellEditor {
 	public Object getCellEditorValue() {
 		final Object kategorie = this.comboBox.getSelectedItem();
 		if (DEBUG) {
-			System.out.println("KategorieCellEditor: getCellEditorValue = " + kategorie);
+			LOGGER.info("KategorieCellEditor: getCellEditorValue = " + kategorie);
 		}
 		if (kategorie.getClass() == EinzelKategorie.class) {
 			return kategorie;
-		}
-		else if (kategorie.getClass() == String.class) {
+		} else if (kategorie.getClass() == String.class) {
 			final Object neuesRegister = this.db.findeOderErzeugeRegister("" + kategorie);
 			if (this.quellregister) {
 				this.umbuchungKategorie.setZiel(neuesRegister);
-			}
-			else {
+			} else {
 				this.umbuchungKategorie.setQuelle(neuesRegister);
 			}
 			this.haushalt.alleRegisterVeraendert();
 			return this.umbuchungKategorie;
-		}
-		else if (DEBUG) {
-			System.out.println("-E- KategorieCellEditor: Unerwartete Klasse: " + kategorie.getClass());
+		} else if (DEBUG) {
+			LOGGER.info("-E- KategorieCellEditor: Unerwartete Klasse: " + kategorie.getClass());
 		}
 		return null;
 	}
 
 	@Override
-	public Component getTableCellEditorComponent(final JTable table, Object value, final boolean isSelected,
-			final int row, final int col) {
+	public Component getTableCellEditorComponent(
+		final JTable table,
+		Object value,
+		final boolean isSelected,
+		final int row,
+		final int col) {
 		this.comboBox = (JComboBox) super.getTableCellEditorComponent(table, value, isSelected, row, col);
 		if (value == null) {
 			value = EinzelKategorie.SONSTIGES;
@@ -97,14 +100,12 @@ public class KategorieCellEditor extends DefaultCellEditor {
 		if (value.getClass() == EinzelKategorie.class) {
 			this.comboBox = new JComboBox(this.db.getKategorien(true));
 			this.comboBox.setSelectedItem(value);
-		}
-		else if (value.getClass() == MehrfachKategorie.class) {
+		} else if (value.getClass() == MehrfachKategorie.class) {
 			this.haushalt.selektiereBuchung("" + table.getModel(), row);
 			this.haushalt.splitten();
 			this.comboBox = null;
 			cancelCellEditing();
-		}
-		else if (value.getClass() == UmbuchungKategorie.class) {
+		} else if (value.getClass() == UmbuchungKategorie.class) {
 			this.umbuchungKategorie = (UmbuchungKategorie) ((UmbuchungKategorie) value).clone();
 			final String regname = "" + table.getModel();
 			this.comboBox = new JComboBox(this.db.getRegisterNamen());
@@ -114,9 +115,8 @@ public class KategorieCellEditor extends DefaultCellEditor {
 			// befindet.
 			this.quellregister = (this.db.findeOderErzeugeRegister(regname) == this.umbuchungKategorie.getQuelle());
 			this.comboBox.setSelectedItem("" + this.umbuchungKategorie.getPartnerRegister(regname));
-		}
-		else if (DEBUG) {
-			System.out.println("-E- KategorieCellEditor: Unerwartete Klasse: " + value.getClass());
+		} else if (DEBUG) {
+			LOGGER.info("-E- KategorieCellEditor: Unerwartete Klasse: " + value.getClass());
 		}
 		return this.comboBox;
 	}

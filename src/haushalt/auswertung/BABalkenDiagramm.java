@@ -47,21 +47,21 @@ import java.awt.Font;
  */
 public class BABalkenDiagramm extends AbstractBlockAuswertung {
 
-	private static final long serialVersionUID = 1L;
-	private static final TextResource res = TextResource.get();
+	public static final String UEBERSCHRIFT = TextResource.get().getString("headline_bar_chart");
 
-	public static final String ueberschrift = res.getString("headline_bar_chart");
+	private static final long serialVersionUID = 1L;
+	private static final TextResource RES = TextResource.get();
 
 	public BABalkenDiagramm(final Haushalt haushalt, final Datenbasis db, final String name) {
 		super(haushalt, db, name);
 		final AbstractGDPane[] panes = new AbstractGDPane[6];
-		panes[0] = new ZeitraumGDP(res.getString("first_period") + ":", new Jahr(2007));
-		panes[1] = new ZahlGDP(res.getString("number_of_periods") + ":", new Integer(4));
-		panes[2] = new EinOderAlleRegisterGDP(res.getString("register") + ":", db, null);
-		panes[3] = new BooleanGDP(res.getString("average"), Boolean.TRUE, res.getString("display"));
-		panes[4] = new FarbwahlGDP(res.getString("color_income"), haushalt.getFrame(), Color.BLUE);
-		panes[5] = new FarbwahlGDP(res.getString("color_expenditure"), haushalt.getFrame(), Color.RED);
-		erzeugeEigenschaften(haushalt.getFrame(), ueberschrift, panes);
+		panes[0] = new ZeitraumGDP(RES.getString("first_period") + ":", new Jahr(2007));
+		panes[1] = new ZahlGDP(RES.getString("number_of_periods") + ":", new Integer(4));
+		panes[2] = new EinOderAlleRegisterGDP(RES.getString("register") + ":", db, null);
+		panes[3] = new BooleanGDP(RES.getString("average"), Boolean.TRUE, RES.getString("display"));
+		panes[4] = new FarbwahlGDP(RES.getString("color_income"), haushalt.getFrame(), Color.BLUE);
+		panes[5] = new FarbwahlGDP(RES.getString("color_expenditure"), haushalt.getFrame(), Color.RED);
+		erzeugeEigenschaften(haushalt.getFrame(), UEBERSCHRIFT, panes);
 	}
 
 	@Override
@@ -77,27 +77,31 @@ public class BABalkenDiagramm extends AbstractBlockAuswertung {
 		final Euro[] ausgaben = new Euro[anzahlZeitraeume];
 		for (int i = 0; i < anzahlZeitraeume; i++) {
 			zeitraumNamen[i] = "" + tmpZeitraum;
-			einnahmen[i] = this.db.getEinnahmen(tmpZeitraum, register);
-			ausgaben[i] = this.db.getAusgaben(tmpZeitraum, register);
+			einnahmen[i] = getDb().getEinnahmen(tmpZeitraum, register);
+			ausgaben[i] = getDb().getAusgaben(tmpZeitraum, register);
 			tmpZeitraum = tmpZeitraum.folgeZeitraum();
 		}
 
 		// Vorhandene Blöcke löschen und neu berechnete einfügen
-		String titel = res.getString("income_expenditure") + " (" + zeitraumNamen[0] + " " + res.getString("to") + " "
-				+ zeitraumNamen[anzahlZeitraeume - 1];
+		String titel = RES.getString("income_expenditure")
+			+ " ("
+			+ zeitraumNamen[0]
+			+ " "
+			+ RES.getString("to")
+			+ " "
+			+ zeitraumNamen[anzahlZeitraeume - 1];
 		if (register == null) {
 			titel += ")";
-		}
-		else {
+		} else {
 			titel += ", " + register + ")";
 		}
 		loescheBloecke();
 		final AbstractBlock block1 = new TextBlock(titel);
-		block1.setFont(new Font(this.haushalt.getFontname(), Font.BOLD, this.haushalt.getFontgroesse() + 6));
+		block1.setFont(new Font(this.getHaushalt().getFontname(), Font.BOLD, this.getHaushalt().getFontgroesse() + 6));
 		addDokumentenBlock(block1);
 		addDokumentenBlock(new LeererBlock(1));
 		final BalkenBlock block2 = new BalkenBlock(zeitraumNamen, einnahmen, ausgaben, durchschnitt.booleanValue());
-		block2.setFont(new Font(this.haushalt.getFontname(), Font.PLAIN, this.haushalt.getFontgroesse()));
+		block2.setFont(new Font(this.getHaushalt().getFontname(), Font.PLAIN, this.getHaushalt().getFontgroesse()));
 		block2.setFarbeEinnahmen((Color) werte[4]);
 		block2.setFarbeAusgaben((Color) werte[5]);
 		addDokumentenBlock(block2);

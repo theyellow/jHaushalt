@@ -28,14 +28,16 @@ import java.awt.Graphics2D;
  * 2010.11.23 Graphics2D in der Methode 'print' verwendet
  * 2008.04.15 Erste Version (2.5.4)
  */
-abstract public class AbstractTabelleBlock extends AbstractBlock {
+public abstract class AbstractTabelleBlock extends AbstractBlock {
 
 	public enum Ausrichtung {
-		LINKS, CENTER, RECHTS
+		LINKS,
+		CENTER,
+		RECHTS
 	};
 
-	protected String hgFarbe = "Weiß";
-	protected String linienFarbe = "Schwarz";
+	private String hgFarbe = "Weiß";
+	private String linienFarbe = "Schwarz";
 	private final int zeilen;
 
 	public AbstractTabelleBlock(final int zeilen) {
@@ -60,8 +62,7 @@ abstract public class AbstractTabelleBlock extends AbstractBlock {
 	 *         weiteren Zeilen
 	 */
 	@Override
-	public int print(final Graphics2D g2d, final int zeile, final int xStart, final int yStart, final int hoehe,
-			final int breite) {
+	public int print(final Graphics2D g2d, final int zeile, final int xStart, final int yStart, final int hoehe, final int breite) {
 		g2d.setFont(getFont());
 		if (g2d.getFontMetrics().getHeight() > hoehe) {
 			return 0;
@@ -73,7 +74,7 @@ abstract public class AbstractTabelleBlock extends AbstractBlock {
 		return g2d.getFontMetrics().getHeight();
 	}
 
-	abstract protected void zeichneZeile(int zeile, Graphics g, int xStart, int yStart, int breite);
+	protected abstract void zeichneZeile(int zeile, Graphics g, int xStart, int yStart, int breite);
 
 	public void setHgFarbe(final String hgFarbe) {
 		this.hgFarbe = hgFarbe;
@@ -81,6 +82,14 @@ abstract public class AbstractTabelleBlock extends AbstractBlock {
 
 	public void setLinienFarbe(final String linienFarbe) {
 		this.linienFarbe = linienFarbe;
+	}
+
+	public String getHgFarbe() {
+		return hgFarbe;
+	}
+
+	public String getLinienFarbe() {
+		return linienFarbe;
 	}
 
 }

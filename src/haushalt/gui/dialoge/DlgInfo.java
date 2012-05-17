@@ -57,48 +57,50 @@ import javax.swing.JTextArea;
 public class DlgInfo extends JDialog {
 
 	private static final long serialVersionUID = 1L;
-	private static final TextResource res = TextResource.get();
+	private static final TextResource RES = TextResource.get();
 
 	private final JPanel southPane = new JPanel();
-	protected final JTextArea textArea = new JTextArea(10, 30);
-	private final JButton buttonGC = new JButton(res.getString("button_start_gc"));
-	private final JButton buttonAbbruch = new JButton(res.getString("button_close"));
+	private final JTextArea textArea = new JTextArea(10, 30);
+	private final JButton buttonGC = new JButton(RES.getString("button_start_gc"));
+	private final JButton buttonAbbruch = new JButton(RES.getString("button_close"));
 
 	public DlgInfo(final JFrame frame) {
-		super(frame, res.getString("program_info"), true);
+		super(frame, RES.getString("program_info"), true);
 		this.textArea.setEditable(true);
 		this.textArea.selectAll();
 		this.textArea.cut();
 		this.textArea.setEditable(false);
 		this.textArea.append(Haushalt.COPYRIGHT + "\n\n");
-		this.textArea.append(res.getString("info_gpl_text1") + "\n");
-		this.textArea.append(res.getString("info_gpl_text2") + "\n");
-		this.textArea.append(res.getString("info_gpl_text3") + "\n\n");
-		this.textArea.append(res.getString("info_icons") + "\n\n");
+		this.textArea.append(RES.getString("info_gpl_text1") + "\n");
+		this.textArea.append(RES.getString("info_gpl_text2") + "\n");
+		this.textArea.append(RES.getString("info_gpl_text3") + "\n\n");
+		this.textArea.append(RES.getString("info_icons") + "\n\n");
 
-		this.textArea.append(res.getString("info_version_text1") + " " + Haushalt.VERSION + "\n");
-		this.textArea.append(res.getString("info_version_text2") + " " + Datenbasis.VERSION_DATENBASIS + "\n");
-		this.textArea.append(res.getString("info_version_text3") + " " + DlgContainerAuswertung.VERSION_AUSWERTUNG
-				+ "\n");
+		this.textArea.append(RES.getString("info_version_text1") + " " + Haushalt.VERSION + "\n");
+		this.textArea.append(RES.getString("info_version_text2") + " " + Datenbasis.VERSION_DATENBASIS + "\n");
+		this.textArea.append(RES.getString("info_version_text3") + " " + DlgContainerAuswertung.VERSION_AUSWERTUNG + "\n");
 
-		this.textArea.append(res.getString("info_internals1") + " " +
-				Datenbasis.cacheHit + "/" + Datenbasis.cacheMiss + " = " +
-				String.format("%1$.1f%%", 100.0D * Datenbasis.cacheHit / (Datenbasis.cacheHit + Datenbasis.cacheMiss))
-				+ "\n");
+		this.textArea.append(RES.getString("info_internals1")
+			+ " "
+			+ Datenbasis.getCacheHit()
+			+ "/"
+			+ Datenbasis.getCacheMiss()
+			+ " = "
+			+ String.format("%1$.1f%%", 100.0D * Datenbasis.getCacheHit() / (Datenbasis.getCacheHit() + Datenbasis.getCacheMiss()))
+			+ "\n");
 		final Properties prop = System.getProperties();
-		this.textArea.append(res.getString("info_internals2") + " " + prop.getProperty("os.name") + "\n");
-		this.textArea.append(res.getString("info_internals3") + " " + prop.getProperty("os.arch") + "\n");
-		this.textArea.append(res.getString("info_internals4") + " " + prop.getProperty("java.vm.version") + "\n");
-		this.textArea.append(res.getString("info_internals5") + " " + Runtime.getRuntime().freeMemory() + "\n");
-		this.textArea.append(res.getString("info_internals6") + " " + Runtime.getRuntime().totalMemory());
+		this.textArea.append(RES.getString("info_internals2") + " " + prop.getProperty("os.name") + "\n");
+		this.textArea.append(RES.getString("info_internals3") + " " + prop.getProperty("os.arch") + "\n");
+		this.textArea.append(RES.getString("info_internals4") + " " + prop.getProperty("java.vm.version") + "\n");
+		this.textArea.append(RES.getString("info_internals5") + " " + Runtime.getRuntime().freeMemory() + "\n");
+		this.textArea.append(RES.getString("info_internals6") + " " + Runtime.getRuntime().totalMemory());
 		this.textArea.setAlignmentX(LEFT_ALIGNMENT);
 
 		this.buttonGC.addActionListener(new ActionListener() {
 
 			public void actionPerformed(final ActionEvent e) {
 				System.gc();
-				DlgInfo.this.textArea.append("\n" + res.getString("info_internals5") + "  "
-						+ Runtime.getRuntime().freeMemory());
+				DlgInfo.this.textArea.append("\n" + RES.getString("info_internals5") + "  " + Runtime.getRuntime().freeMemory());
 			}
 		});
 		this.buttonAbbruch.addActionListener(new ActionListener() {
@@ -110,7 +112,7 @@ public class DlgInfo extends JDialog {
 		getRootPane().setDefaultButton(this.buttonAbbruch);
 
 		final URLClassLoader urlLoader = (URLClassLoader) getClass().getClassLoader();
-		final URL fileLoc = urlLoader.findResource("res/jhh-image.png");
+		final URL fileLoc = urlLoader.findResource("RES/jhh-image.png");
 		final Image image = Toolkit.getDefaultToolkit().createImage(fileLoc);
 		final Container contentPane = getContentPane();
 		contentPane.add(new JLabel(new ImageIcon(image)), BorderLayout.NORTH);
