@@ -15,24 +15,18 @@
 
 package haushalt.gui;
 
-import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.net.URL;
-import java.net.URLClassLoader;
+import haushalt.gui.action.StandardAction;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.ImageIcon;
+import java.awt.event.KeyEvent;
+import java.util.LinkedList;
+import java.util.List;
+
 import javax.swing.JButton;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JToolBar;
-import javax.swing.KeyStroke;
 
 /**
  * @author Dr. Lars H. Hahn
@@ -46,231 +40,347 @@ import javax.swing.KeyStroke;
 
 public class ActionHandler {
 
-	private static final boolean DEBUG = false;
 	private static final TextResource res = TextResource.get();
 
-	final private String[] hauptmenu = {
-			res.getString("file"),
-			res.getString("edit"),
-			res.getString("output"),
-			res.getString("extras"),
-			res.getString("help")
-	};
-	final private Object[] alleActions;
-	// 0:
-	final private Object[][] menuDateiText = {
-			{ "neu", res.getString("new"), "New", res.getString("new_legend"), new Integer(KeyEvent.VK_N) },
-			{ "laden", res.getString("open") + "...", "Open", res.getString("open_legend"), new Integer(KeyEvent.VK_L) },
-			{ "speichern", res.getString("save"), "Save", res.getString("save_legend"), new Integer(KeyEvent.VK_S) },
-			{ "speichernUnter", res.getString("save_as") + "...", "SaveAs", res.getString("save_as_legend"), null },
-			{ "beenden", res.getString("exit"), null, res.getString("exit_legend"), new Integer(KeyEvent.VK_X) }
-	};
-	// 1:
-	final private Object[][] menuBearbeitenText = {
-
-			{ "neueBuchungErstellen", res.getString("new_booking") + "...", "AddBuchung",
-					res.getString("new_booking_legend"), new Integer(KeyEvent.VK_C) },
-			{ "loeschen", res.getString("delete"), "Delete", res.getString("delete_legend"), new Integer(KeyEvent.VK_D) },
-			{ "umbuchen", res.getString("rebook") + "...", "Umbuchung", res.getString("rebook_legend"),
-					new Integer(KeyEvent.VK_U) },
-			{ "splitten", res.getString("split") + "...", "Splitten", res.getString("split_legend"),
-					new Integer(KeyEvent.VK_P) },
-			{ "umwandeln", res.getString("convert") + "...", "Umwandeln", res.getString("convert_legend"),
-					new Integer(KeyEvent.VK_W) },
-			{ "registerBearbeiten", res.getString("edit_registers") + "...", "Register",
-					res.getString("edit_registers_legend"), new Integer(KeyEvent.VK_R) },
-			{ "kategorienBearbeiten", res.getString("edit_category") + "...", "Auto",
-					res.getString("edit_category_legend"), new Integer(KeyEvent.VK_K) },
-			{ "suchen", res.getString("find") + "...", "Find", res.getString("find_legend"), null },
-			{ "alteBuchungenLoeschen", res.getString("delete_old_bookings") + "...", null,
-					res.getString("delete_old_bookings_legend"), new Integer(KeyEvent.VK_E) },
-			{ "kategorieErsetzen", res.getString("replace_category") + "...", null,
-					res.getString("replace_category_legend"), null },
-			{ "kategorienBereinigen", res.getString("clean_categories") + "...", null,
-					res.getString("clean_categories_legend"), new Integer(KeyEvent.VK_B) },
-			{ "registerVereinigen", res.getString("join_register") + "...", null,
-					res.getString("join_register_legend"), new Integer(KeyEvent.VK_V) }
-
-	};
-	// 2:
-	final private Object[][] menuAusgabeText = {
-			{ "zeigeAuswertung", res.getString("show_report") + "...", "Auswertung",
-					res.getString("show_report_legend"), new Integer(KeyEvent.VK_A) },
-			{ "exportCSV", res.getString("export_csv") + "...", "Export", res.getString("export_csv_legend"), null },
-			{ "drucken", res.getString("print") + "...", "Print", res.getString("print_legend"),
-					new Integer(KeyEvent.VK_P) }
-	};
-
-	// 3: Extras
-	final private Object[] preferences = { "optionen",
-			res.getString("preferences") + "...", "Preferences",
-			res.getString("preferences_legend"), new Integer(KeyEvent.VK_O) };
-	final private Object[] autoBuchungen = { "autoBuchung",
-			res.getString("automatic_booking") + "...", "Robot",
-			res.getString("automatic_booking_legend"), null };
-	final private Object[] importCSV = { "importCSV",
-			res.getString("import_csv") + "...", "Import",
-			res.getString("import_csv_legend"), new Integer(KeyEvent.VK_I) };
-	final private Object[] importQuicken = { "importQuicken",
-			res.getString("import_quicken") + "...", null,
-			res.getString("import_quicken_legend"), new Integer(KeyEvent.VK_Q) };
-	final private Object[][] menuExtrasText;
-
-	// 4: Hilfe
-	final private Object[] hilfe = { "hilfeInhalt",
-			res.getString("help_content") + "...", "Help",
-			res.getString("help_content_legend"), new Integer(KeyEvent.VK_F1) };
-	final private Object[] programmInfo = { "programmInfo",
-			res.getString("program_info") + "...", "Information",
-			res.getString("program_info_legend"), null };
-	final private Object[][] menuHilfeText;
-
-	protected final Haushalt haushalt;
+	private final Haushalt haushalt;
 	private final JPopupMenu popupMenu = new JPopupMenu();
+	private final List<StandardAction> menuDatei;
+	private final List<StandardAction> menuBearbeiten;
+	private final List<StandardAction> menuAusgabe;
+	private final List<StandardAction> menuExtras;
+	private final List<StandardAction> menuHilfe;
+
+	// Sonderfall: Für MacOS X muss diese Action von Hand zur Toolbar hinzugefuegt werden
+	private StandardAction preferences;
 
 	public ActionHandler(final Haushalt haushalt) {
 		super();
 		this.haushalt = haushalt;
-		if (!Haushalt.isMacOSX()) {
-			this.menuHilfeText = new Object[][] { this.hilfe, this.programmInfo };
-			this.menuExtrasText = new Object[][] { this.preferences, this.autoBuchungen,
-					this.importCSV, this.importQuicken };
-		}
-		else {
-			this.menuHilfeText = new Object[][] { this.hilfe };
-			this.menuExtrasText = new Object[][] { this.autoBuchungen, this.importCSV,
-					this.importQuicken };
-		}
-		this.alleActions = new Object[this.hauptmenu.length];
-		this.alleActions[0] = erzeugeAction(this.menuDateiText);
-		this.alleActions[1] = erzeugeAction(this.menuBearbeitenText);
-		this.alleActions[2] = erzeugeAction(this.menuAusgabeText);
-		this.alleActions[3] = erzeugeAction(this.menuExtrasText);
-		this.alleActions[4] = erzeugeAction(this.menuHilfeText);
+
+		menuDatei = erzeugeMenuDatei();
+		menuBearbeiten = erzeugeMenuBearbeiten();
+		menuAusgabe = erzeugeMenuAusgabe();
+		menuExtras = erzeugeMenuExtras();
+		menuHilfe = erzeugeMenuHilfe();
 
 		// Das PopupMenü wird mit Bearbeiten-Menü belegt.
-		final HaushaltAction[] action = (HaushaltAction[]) this.alleActions[1];
-		for (int i = 0; i < action.length; i++) {
-			this.popupMenu.add(new JMenuItem(action[i]));
+		for (StandardAction action : menuBearbeiten) {
+			this.popupMenu.add(new JMenuItem(action));
 		}
 	}
 
-	private HaushaltAction[] erzeugeAction(final Object[][] text) {
-		final int anzahl = text.length;
-		final HaushaltAction[] action = new HaushaltAction[anzahl];
-		for (int i = 0; i < anzahl; i++) {
-			action[i] = new HaushaltAction(text[i]);
+	// 0:
+	private List<StandardAction> erzeugeMenuDatei() {
+		List<StandardAction> standardActions = new LinkedList<StandardAction>();
+
+		standardActions.add(new StandardAction(
+			haushalt,
+			"neu",
+			res.getString("new"),
+			"New",
+			res.getString("new_legend"),
+			new Integer(KeyEvent.VK_N)));
+		standardActions.add(new StandardAction(
+			haushalt,
+			"laden",
+			res.getString("open") + "...",
+			"Open",
+			res.getString("open_legend"),
+			new Integer(KeyEvent.VK_L)));
+		standardActions.add(new StandardAction(
+			haushalt,
+			"speichern",
+			res.getString("save"),
+			"Save",
+			res.getString("save_legend"),
+			new Integer(KeyEvent.VK_S)));
+		standardActions.add(new StandardAction(
+			haushalt,
+			"speichernUnter",
+			res.getString("save_as") + "...",
+			"SaveAs",
+			res.getString("save_as_legend"),
+			null));
+		standardActions.add(new StandardAction(
+			haushalt,
+			"beenden",
+			res.getString("exit"),
+			null,
+			res.getString("exit_legend"),
+			new Integer(KeyEvent.VK_X)));
+
+		return standardActions;
+	}
+
+	// 1:
+	private List<StandardAction> erzeugeMenuBearbeiten() {
+		List<StandardAction> standardActions = new LinkedList<StandardAction>();
+
+		standardActions.add(new StandardAction(
+			haushalt,
+			"neueBuchungErstellen",
+			res.getString("new_booking") + "...",
+			"AddBuchung",
+			res.getString("new_booking_legend"),
+			new Integer(KeyEvent.VK_C)));
+		standardActions.add(new StandardAction(
+			haushalt,
+			"loeschen",
+			res.getString("delete"),
+			"Delete",
+			res.getString("delete_legend"),
+			new Integer(KeyEvent.VK_D)));
+		standardActions.add(new StandardAction(
+			haushalt,
+			"umbuchen",
+			res.getString("rebook") + "...",
+			"Umbuchung",
+			res.getString("rebook_legend"),
+			new Integer(KeyEvent.VK_U)));
+		standardActions.add(new StandardAction(
+			haushalt,
+			"splitten",
+			res.getString("split") + "...",
+			"Splitten",
+			res.getString("split_legend"),
+			new Integer(KeyEvent.VK_P)));
+		standardActions.add(new StandardAction(
+			haushalt,
+			"umwandeln",
+			res.getString("convert") + "...",
+			"Umwandeln",
+			res.getString("convert_legend"),
+			new Integer(KeyEvent.VK_W)));
+		standardActions.add(new StandardAction(
+			haushalt,
+			"registerBearbeiten",
+			res.getString("edit_registers") + "...",
+			"Register",
+			res.getString("edit_registers_legend"),
+			new Integer(KeyEvent.VK_R)));
+		standardActions.add(new StandardAction(
+			haushalt,
+			"kategorienBearbeiten",
+			res.getString("edit_category") + "...",
+			"Auto",
+			res.getString("edit_category_legend"),
+			new Integer(KeyEvent.VK_K)));
+		standardActions.add(new StandardAction(
+			haushalt,
+			"suchen",
+			res.getString("find") + "...",
+			"Find",
+			res.getString("find_legend"),
+			null));
+		standardActions.add(new StandardAction(
+			haushalt,
+			"alteBuchungenLoeschen",
+			res.getString("delete_old_bookings") + "...",
+			null,
+			res.getString("delete_old_bookings_legend"),
+			new Integer(KeyEvent.VK_E)));
+		standardActions.add(new StandardAction(
+			haushalt,
+			"kategorieErsetzen",
+			res.getString("replace_category") + "...",
+			null,
+			res.getString("replace_category_legend"),
+			null));
+		standardActions.add(new StandardAction(
+			haushalt,
+			"kategorienBereinigen",
+			res.getString("clean_categories") + "...",
+			null,
+			res.getString("clean_categories_legend"),
+			new Integer(KeyEvent.VK_B)));
+		standardActions.add(new StandardAction(
+			haushalt,
+			"registerVereinigen",
+			res.getString("join_register") + "...",
+			null,
+			res.getString("join_register_legend"),
+			new Integer(KeyEvent.VK_V)));
+
+		return standardActions;
+	}
+
+	// 2:
+	private List<StandardAction> erzeugeMenuAusgabe() {
+		List<StandardAction> standardActions = new LinkedList<StandardAction>();
+
+		standardActions.add(new StandardAction(
+			haushalt,
+			"zeigeAuswertung",
+			res.getString("show_report") + "...",
+			"Auswertung",
+			res.getString("show_report_legend"),
+			new Integer(KeyEvent.VK_A)));
+		standardActions.add(new StandardAction(
+			haushalt,
+			"exportCSV",
+			res.getString("export_csv") + "...",
+			"Export",
+			res.getString("export_csv_legend"),
+			null));
+		standardActions.add(new StandardAction(
+			haushalt,
+			"drucken",
+			res.getString("print") + "...",
+			"Print",
+			res.getString("print_legend"),
+			new Integer(KeyEvent.VK_P)));
+
+		return standardActions;
+	}
+
+	// 3: Extras
+	private List<StandardAction> erzeugeMenuExtras() {
+		List<StandardAction> standardActions = new LinkedList<StandardAction>();
+
+		// Sonderfall: Für MacOS X muss diese Action von Hand zur Toolbar hinzugefuegt werden
+		preferences = new StandardAction(
+			haushalt,
+			"optionen",
+			res.getString("preferences") + "...",
+			"Preferences",
+			res.getString("preferences_legend"),
+			new Integer(KeyEvent.VK_O));
+		final StandardAction autoBuchungen = new StandardAction(haushalt, "autoBuchung", res.getString("automatic_booking")
+			+ "...", "Robot", res.getString("automatic_booking_legend"), null);
+		final StandardAction importCSV = new StandardAction(
+			haushalt,
+			"importCSV",
+			res.getString("import_csv") + "...",
+			"Import",
+			res.getString("import_csv_legend"),
+			new Integer(KeyEvent.VK_I));
+		final StandardAction importQuicken = new StandardAction(haushalt, "importQuicken", res.getString("import_quicken")
+			+ "...", null, res.getString("import_quicken_legend"), new Integer(KeyEvent.VK_Q));
+
+		if (!Haushalt.isMacOSX()) {
+			standardActions.add(preferences);
 		}
-		if (DEBUG) {
-			System.out.println("ActionHandler: Action-Liste erzeugt.");
+
+		standardActions.add(autoBuchungen);
+		standardActions.add(importCSV);
+		standardActions.add(importQuicken);
+
+		return standardActions;
+	}
+
+	// 4: Hilfe
+	private List<StandardAction> erzeugeMenuHilfe() {
+		List<StandardAction> standardActions = new LinkedList<StandardAction>();
+		final StandardAction hilfe = new StandardAction(
+			haushalt,
+			"hilfeInhalt",
+			res.getString("help_content") + "...",
+			"Help",
+			res.getString("help_content_legend"),
+			new Integer(KeyEvent.VK_F1));
+		final StandardAction programmInfo = new StandardAction(
+			haushalt,
+			"programmInfo",
+			res.getString("program_info") + "...",
+			"Information",
+			res.getString("program_info_legend"),
+			null);
+
+		standardActions.add(hilfe);
+
+		if (!Haushalt.isMacOSX()) {
+			standardActions.add(programmInfo);
 		}
-		return action;
+
+		return standardActions;
 	}
 
 	public JMenuBar erzeugeMenuBar() {
 		final JMenuBar menuBar = new JMenuBar();
-		for (int i = 0; i < this.hauptmenu.length; i++) {
-			final JMenu menu = new JMenu(this.hauptmenu[i]);
-			final Action[] action = (Action[]) this.alleActions[i];
-			for (int j = 0; j < action.length; j++) {
-				final JMenuItem menuItem = new JMenuItem(action[j]);
-				menu.add(menuItem);
-			}
-			menuBar.add(menu);
-		}
+
+		String title = "";
+		JMenu menu = null;
+
+		// Datei:
+		title = res.getString("file");
+		menu = createMenu(title, menuDatei);
+		menuBar.add(menu);
+
+		// Bearbeiten:
+		title = res.getString("edit");
+		menu = createMenu(title, menuBearbeiten);
+		menuBar.add(menu);
+
+		// Ausgabe:
+		title = res.getString("output");
+		menu = createMenu(title, menuAusgabe);
+		menuBar.add(menu);
+
+		// Extras:
+		title = res.getString("extras");
+		menu = createMenu(title, menuExtras);
+		menuBar.add(menu);
+
+		// Hilfe:
+		title = res.getString("help");
+		menu = createMenu(title, menuHilfe);
+		menuBar.add(menu);
+
 		return menuBar;
+	}
+
+	private JMenu createMenu(String title, List<StandardAction> actions) {
+		JMenu menu = new JMenu(title);
+		for (StandardAction action : actions) {
+			final JMenuItem menuItem = new JMenuItem(action);
+			menu.add(menuItem);
+		}
+		return menu;
 	}
 
 	public JToolBar erzeugeToolBar() {
 		final JToolBar toolBar = new JToolBar();
-		for (int i = 0; i < this.hauptmenu.length; i++) {
-			final HaushaltAction[] action = (HaushaltAction[]) this.alleActions[i];
-			for (int j = 0; j < action.length; j++) {
-				final ImageIcon bigIcon = action[j].getBigIcon();
-				if (bigIcon != null) {
-					final JButton button = new JButton(action[j]);
-					button.setText("");
-					button.setIcon(bigIcon);
-					toolBar.add(button);
-				}
+
+		addActions(toolBar, menuDatei);
+		toolBar.addSeparator();
+		addActions(toolBar, menuBearbeiten);
+		toolBar.addSeparator();
+		addActions(toolBar, menuAusgabe);
+		toolBar.addSeparator();
+		addActions(toolBar, menuExtras);
+
+		if (Haushalt.isMacOSX()) {
+			// Sonderfall: Für MacOS X muss die Preferences-Action von Hand zur Toolbar hinzugefuegt werden
+			List<StandardAction> preferenceList = new LinkedList<StandardAction>();
+			preferenceList.add(preferences);
+			addActions(toolBar, preferenceList);
+		}
+
+		toolBar.addSeparator();
+		addActions(toolBar, menuHilfe);
+
+		return toolBar;
+	}
+
+	private void addActions(final JToolBar toolBar, final List<StandardAction> actions) {
+		JButton button;
+		for (StandardAction action : actions) {
+			if (action.getBigIcon() != null) {
+				button = createButton(action);
+				toolBar.add(button);
 			}
 		}
-		return toolBar;
+	}
+
+	private JButton createButton(StandardAction action) {
+		final JButton button = new JButton(action);
+		button.setText("");
+		button.setIcon(action.getBigIcon());
+		return button;
 	}
 
 	public JPopupMenu getPopupMenu() {
 		return this.popupMenu;
-	}
-
-	protected ImageIcon createBigIcon(final Object iconname) {
-		if (iconname == null) {
-			return null;
-		}
-		final URLClassLoader urlLoader = (URLClassLoader) getClass().getClassLoader();
-		final URL imageURL = urlLoader.findResource("res/" + iconname + "24.png");
-		if (DEBUG) {
-			System.out.println("ActionHandler: Erzeuge Image " + iconname + "@" + imageURL);
-		}
-		return new ImageIcon(imageURL);
-	}
-
-	protected ImageIcon createSmallIcon(Object iconname) {
-		if (iconname == null) {
-			iconname = "Leer";
-		}
-		final URLClassLoader urlLoader = (URLClassLoader) getClass().getClassLoader();
-		final URL imageURL = urlLoader.findResource("res/" + iconname + "16.png");
-		if (DEBUG) {
-			System.out.println("ActionHandler: Erzeuge Image " + iconname + "@" + imageURL);
-		}
-		return new ImageIcon(imageURL);
-	}
-
-	private class HaushaltAction extends AbstractAction {
-
-		private static final long serialVersionUID = 1L;
-		private final String name;
-		private final ImageIcon bigIcon;
-
-		HaushaltAction(final Object[] text) {
-			super((String) text[1], createSmallIcon(text[2]));
-			this.name = (String) text[0];
-			this.bigIcon = createBigIcon(text[2]);
-			putValue(SHORT_DESCRIPTION, text[3]);
-			if (text[4] != null) {
-				putValue(MNEMONIC_KEY, text[4]);
-				final int code = ((Integer) text[4]).intValue();
-				putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(code, Toolkit
-						.getDefaultToolkit().getMenuShortcutKeyMask()));
-			}
-		}
-
-		public ImageIcon getBigIcon() {
-			return this.bigIcon;
-		}
-
-		public void actionPerformed(final ActionEvent e) {
-			Method call;
-			try {
-				call = Haushalt.class.getMethod(this.name, (Class[]) null);
-				call.invoke(ActionHandler.this.haushalt, (Object[]) null);
-			}
-			catch (final SecurityException e1) {
-				e1.printStackTrace();
-			}
-			catch (final NoSuchMethodException e1) {
-				e1.printStackTrace();
-			}
-			catch (final IllegalArgumentException e1) {
-				e1.printStackTrace();
-			}
-			catch (final IllegalAccessException e1) {
-				e1.printStackTrace();
-			}
-			catch (final InvocationTargetException e1) {
-				e1.printStackTrace();
-			}
-		}
 	}
 
 }
