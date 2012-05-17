@@ -20,6 +20,7 @@ import haushalt.daten.zeitraum.AbstractZeitraum;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.logging.Logger;
 
 /**
  * Die StandardBuchung ist die "normale" Buchung. Sie besteht aus Datum, Name,
@@ -36,6 +37,8 @@ import java.io.IOException;
  */
 
 public class StandardBuchung extends AbstractBuchung {
+
+	private static final Logger LOGGER = Logger.getLogger(StandardBuchung.class.getName());
 
 	private EinzelKategorie kategorie = null;
 	private Euro betrag;
@@ -141,9 +144,23 @@ public class StandardBuchung extends AbstractBuchung {
 	// --------------------------------------
 
 	@Override
-	final public Object clone() {
-		return new StandardBuchung((Datum) getDatum().clone(), new String(getText()), this.kategorie,
-				(Euro) this.betrag.clone());
+	public final Object clone() {
+		final Datum clonedDatum = (Datum) getDatum().clone();
+		final String text = new String(getText());
+		final Euro clonedBetrag = (Euro) this.betrag.clone();
+		StandardBuchung standardBuchung = new StandardBuchung();
+
+		try {
+			standardBuchung = (StandardBuchung) super.clone();
+		} catch (final CloneNotSupportedException e) {
+			LOGGER.warning("Cloning error. This should never happen.");
+		}
+
+		setDatum(clonedDatum);
+		setText(text);
+		setKategorie(this.kategorie);
+		standardBuchung.betrag = clonedBetrag;
+		return standardBuchung;
 	}
 
 }

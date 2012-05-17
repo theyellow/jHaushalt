@@ -25,6 +25,7 @@ import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Locale;
+import java.util.logging.Logger;
 
 /**
  * Repräsentiert ein Buchungsdatum.
@@ -49,7 +50,9 @@ import java.util.Locale;
 public class Datum implements Comparable<Datum>, Cloneable {
 
 	private static final boolean DEBUG = false;
-	private static final TextResource res = TextResource.get();
+	private static final TextResource RES = TextResource.get();
+
+	private final Logger logger = Logger.getLogger(Datum.class.getName());
 
 	private GregorianCalendar wert;
 
@@ -63,10 +66,10 @@ public class Datum implements Comparable<Datum>, Cloneable {
 
 	public Datum(String datumString) {
 		this.wert = new GregorianCalendar();
-		final Locale locale = res.getLocale();
+		final Locale locale = RES.getLocale();
 		final DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT, locale);
 		final String heute = df.format(this.wert.getTime());
-		if (res.getLocale().getLanguage().equals("de") && (datumString.length() < heute.length())) {
+		if (RES.getLocale().getLanguage().equals("de") && (datumString.length() < heute.length())) {
 			datumString = datumString + heute.substring(datumString.length());
 		}
 		try {
@@ -77,7 +80,7 @@ public class Datum implements Comparable<Datum>, Cloneable {
 
 	@Override
 	public String toString() {
-		final Locale locale = res.getLocale();
+		final Locale locale = RES.getLocale();
 		final DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT, locale);
 		return df.format(this.wert.getTime());
 	}
@@ -90,7 +93,7 @@ public class Datum implements Comparable<Datum>, Cloneable {
 	public void addiereTage(final int tage) {
 		this.wert.add(Calendar.DAY_OF_MONTH, tage);
 		if (DEBUG) {
-			System.out.println("Tage plus: " + tage + " / Tage alt: " + this.wert.getTimeInMillis() + "=" + toString());
+			logger.info("Tage plus: " + tage + " / Tage alt: " + this.wert.getTimeInMillis() + "=" + toString());
 		}
 	}
 
@@ -132,8 +135,13 @@ public class Datum implements Comparable<Datum>, Cloneable {
 	// -- Methoden fuer Interface: Cloneable --------------------
 
 	@Override
-	final public Object clone() {
-		final Datum datum = new Datum();
+	public final Object clone() {
+		Datum datum = new Datum();
+		try {
+			datum = (Datum) super.clone();
+		} catch (final CloneNotSupportedException e) {
+			logger.warning("Clone not works. This should never happen!");
+		}
 		datum.wert = (GregorianCalendar) this.wert.clone();
 		return datum;
 	}

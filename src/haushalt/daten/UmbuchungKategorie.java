@@ -15,6 +15,8 @@
  */
 package haushalt.daten;
 
+import java.util.logging.Logger;
+
 /**
  * @author Dr. Lars H. Hahn
  * @version 2.1/2006.02.10
@@ -27,6 +29,7 @@ package haushalt.daten;
 
 public class UmbuchungKategorie implements Kategorie, Cloneable {
 
+	private static final Logger LOGGER = Logger.getLogger(UmbuchungKategorie.class.getName());
 	private static final long serialVersionUID = 1L;
 
 	private Register quelle;
@@ -67,8 +70,16 @@ public class UmbuchungKategorie implements Kategorie, Cloneable {
 	}
 
 	@Override
-	final public Object clone() {
-		return new UmbuchungKategorie(this.quelle, this.ziel);
+	public final Object clone() {
+		UmbuchungKategorie umbuchungKategorie = new UmbuchungKategorie(this.quelle, this.ziel);
+		try {
+			umbuchungKategorie = (UmbuchungKategorie) super.clone();
+		} catch (final CloneNotSupportedException e) {
+			LOGGER.warning("Cloning error. This should never happen.");
+		}
+		umbuchungKategorie.setQuelle(quelle);
+		umbuchungKategorie.setZiel(ziel);
+		return umbuchungKategorie;
 	}
 
 	public void setQuelle(final Object neuesRegister) {

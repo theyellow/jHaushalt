@@ -36,7 +36,7 @@ public class GemerkteBuchungenGlassPane extends JComponent {
 
 	@Override
 	public void paint(final Graphics g) {
-		if (this.text != "") {
+		if (!"".equals(this.text)) {
 			final FontMetrics fontMetrics = g.getFontMetrics();
 			final int dx = fontMetrics.stringWidth(this.text) + 1;
 			final int dy = fontMetrics.getAscent() + fontMetrics.getDescent();

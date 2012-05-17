@@ -47,11 +47,12 @@ import java.util.logging.Logger;
 
 public class Euro implements Cloneable, Comparable<Euro> {
 
+	public static final Euro NULL_EURO = new Euro();
+
 	private static final Logger LOGGER = Logger.getLogger(Euro.class.getName());
 
-	private static final TextResource res = TextResource.get();
+	private static final TextResource RES = TextResource.get();
 
-	public static final Euro NULL_EURO = new Euro();
 	private static String symbol = "€";
 	private long wert = 0L;
 
@@ -62,11 +63,11 @@ public class Euro implements Cloneable, Comparable<Euro> {
 	}
 
 	public Euro(String wert) {
-		final Locale locale = res.getLocale();
+		final Locale locale = RES.getLocale();
 		final NumberFormat nf = NumberFormat.getInstance(locale);
 		nf.setMinimumFractionDigits(2);
 		nf.setMaximumFractionDigits(2);
-		if (wert != "") {
+		if (!"".equals(wert)) {
 			try {
 				if (wert.trim().startsWith("+")) {
 					wert = wert.trim().substring(1).trim();
@@ -84,7 +85,7 @@ public class Euro implements Cloneable, Comparable<Euro> {
 
 	@Override
 	public String toString() {
-		final Locale locale = res.getLocale();
+		final Locale locale = RES.getLocale();
 		final NumberFormat nf = NumberFormat.getInstance(locale);
 		nf.setMinimumFractionDigits(2);
 		nf.setMaximumFractionDigits(2);
@@ -188,8 +189,13 @@ public class Euro implements Cloneable, Comparable<Euro> {
 	// -- Methoden fuer Interface: Cloneable --------------------
 
 	@Override
-	final public Object clone() {
-		final Euro kopie = new Euro();
+	public final Object clone() {
+		Euro kopie = new Euro();
+		try {
+			kopie = (Euro) super.clone();
+		} catch (final CloneNotSupportedException e) {
+			LOGGER.warning("Cloning error. This should never happen.");
+		}
 		kopie.wert = this.wert;
 		return kopie;
 	}
@@ -207,12 +213,12 @@ public class Euro implements Cloneable, Comparable<Euro> {
 	}
 
 	public static void main(final String[] args) {
-		final Locale list[] = Locale.getAvailableLocales();
+		final Locale[] list = Locale.getAvailableLocales();
 		for (int i = 0; i < list.length; i++) {
 			final NumberFormat nf = NumberFormat.getInstance(list[i]);
-			System.out.print(list[i].getDisplayName() + " " + nf.format(1234.56D));
+			LOGGER.info(list[i].getDisplayName() + " " + nf.format(1234.56D));
 			final DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT, list[i]);
-			System.out.println(" " + df.format(new Date()));
+			LOGGER.info(" " + df.format(new Date()));
 		}
 
 	}

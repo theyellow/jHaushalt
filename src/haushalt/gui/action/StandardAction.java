@@ -31,18 +31,21 @@ import javax.swing.KeyStroke;
 public class StandardAction extends AbstractAction {
 
 	private static final long serialVersionUID = -7046231489315578362L;
-
-	Logger logger = Logger.getLogger(StandardAction.class.getName());
-
 	private static final boolean DEBUG = false;
+
+	private final Logger logger = Logger.getLogger(StandardAction.class.getName());
 
 	private final String name;
 	private final ImageIcon bigIcon;
 	private final Haushalt haushalt;
 
-	public StandardAction(final Haushalt haushalt, final String name, String localizedName, final String bigIcon,
-			final String shortDescription,
-			Integer mnemonicKey) {
+	public StandardAction(
+		final Haushalt haushalt,
+		final String name,
+		String localizedName,
+		final String bigIcon,
+		final String shortDescription,
+		final Integer mnemonicKey) {
 		this.name = name;
 		localizedName = localizedName == null || "".equals(localizedName.trim()) ? name : localizedName;
 		putValue(NAME, localizedName);
@@ -54,8 +57,7 @@ public class StandardAction extends AbstractAction {
 		if (mnemonicKey != null) {
 			putValue(MNEMONIC_KEY, mnemonicKey);
 			final int code = mnemonicKey.intValue();
-			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(code, Toolkit
-					.getDefaultToolkit().getMenuShortcutKeyMask()));
+			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(code, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 		}
 
 	}
@@ -67,7 +69,7 @@ public class StandardAction extends AbstractAction {
 		final URLClassLoader urlLoader = (URLClassLoader) getClass().getClassLoader();
 		final URL imageURL = urlLoader.findResource("res/" + iconname + "16.png");
 		if (DEBUG) {
-			System.out.println("ActionHandler: Erzeuge Image " + iconname + "@" + imageURL);
+			logger.info("ActionHandler: Erzeuge Image " + iconname + "@" + imageURL);
 		}
 		return new ImageIcon(imageURL);
 	}
@@ -79,7 +81,7 @@ public class StandardAction extends AbstractAction {
 		final URLClassLoader urlLoader = (URLClassLoader) getClass().getClassLoader();
 		final URL imageURL = urlLoader.findResource("res/" + iconname + "24.png");
 		if (DEBUG) {
-			System.out.println("ActionHandler: Erzeuge Image " + iconname + "@" + imageURL);
+			logger.info("ActionHandler: Erzeuge Image " + iconname + "@" + imageURL);
 		}
 		return new ImageIcon(imageURL);
 	}
@@ -89,37 +91,28 @@ public class StandardAction extends AbstractAction {
 	}
 
 	@Override
-	public void actionPerformed(ActionEvent arg0) {
+	public void actionPerformed(final ActionEvent arg0) {
 		Method call;
 
 		try {
 			logger.warning("Doing a reflection call on method " + name + " of 'Haushalt'");
 			call = Haushalt.class.getMethod(name, (Class[]) null);
 			call.invoke(haushalt, (Object[]) null);
-		}
-		catch (SecurityException e) {
+		} catch (final SecurityException e) {
 			logger.warning("SecurityException wenn calling actionPerformed of " + name);
-			e.printStackTrace();
-		}
-		catch (NoSuchMethodException e) {
+			logger.warning(e.getMessage());
+		} catch (final NoSuchMethodException e) {
 			logger.warning("NoSuchMethodException wenn calling actionPerformed of " + name);
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		catch (IllegalArgumentException e) {
+			logger.warning(e.getMessage());
+		} catch (final IllegalArgumentException e) {
 			logger.warning("IllegalArgumentException wenn calling actionPerformed of " + name);
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		catch (IllegalAccessException e) {
+			logger.warning(e.getMessage());
+		} catch (final IllegalAccessException e) {
 			logger.warning("IllegalAccessException wenn calling actionPerformed of " + name);
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		catch (InvocationTargetException e) {
+			logger.warning(e.getMessage());
+		} catch (final InvocationTargetException e) {
 			logger.warning("InvocationTargetException wenn calling actionPerformed of " + name);
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.warning(e.getMessage());
 		}
 
 	}

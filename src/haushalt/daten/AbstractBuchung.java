@@ -20,6 +20,7 @@ import haushalt.daten.zeitraum.AbstractZeitraum;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.logging.Logger;
 
 /**
  * Basisklasse für die Buchungsarten Umbuchung, SplitBuchung und
@@ -35,6 +36,8 @@ import java.io.IOException;
  */
 
 abstract public class AbstractBuchung implements Cloneable, Comparable<Object> {
+
+	private static final Logger LOGGER = Logger.getLogger(AbstractBuchung.class.getName());
 
 	// -- Buchungsdatum
 	// ----------------------------------------------------------
@@ -251,6 +254,8 @@ abstract public class AbstractBuchung implements Cloneable, Comparable<Object> {
 	// --------------------------------------
 
 	@Override
-	abstract public Object clone();
+	public Object clone() throws CloneNotSupportedException {
+		return super.clone();
+	};
 
 }

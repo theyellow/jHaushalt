@@ -20,6 +20,7 @@ import haushalt.daten.zeitraum.AbstractZeitraum;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.logging.Logger;
 
 /**
  * Eine Umbuchung verschiebt Geld von einem Register in ein anderes. Es
@@ -44,6 +45,7 @@ import java.io.IOException;
 
 public class Umbuchung extends AbstractBuchung {
 
+	private static final Logger LOGGER = Logger.getLogger(Umbuchung.class.getName());
 	private static final boolean DEBUG = false;
 
 	private Euro wert = new Euro();
@@ -73,7 +75,7 @@ public class Umbuchung extends AbstractBuchung {
 		// Wenn sich das Partner-Register ändert, muss die Buchung entfernt und
 		// wieder eingefügt werden. Vorsicht bei Selbstbuchungen!
 		if (DEBUG) {
-			System.out.println("Umbuchung.setKategorie: NEU " + neueKategorie + "; ALT " + this.kategorie);
+			LOGGER.info("Umbuchung.setKategorie: NEU " + neueKategorie + "; ALT " + this.kategorie);
 		}
 
 		// Schritt 1: Alte Umbuchung entfernen
@@ -150,7 +152,7 @@ public class Umbuchung extends AbstractBuchung {
 		}
 		this.wert.laden(in);
 		if (DEBUG) {
-			System.out.println("Umbuchung: " + getText() + " / " + this.kategorie.getQuelle() + " geladen.");
+			LOGGER.info("Umbuchung: " + getText() + " / " + this.kategorie.getQuelle() + " geladen.");
 		}
 	}
 
@@ -162,7 +164,7 @@ public class Umbuchung extends AbstractBuchung {
 		out.writeUTF("" + this.kategorie.getQuelle());
 		this.wert.speichern(out);
 		if (DEBUG) {
-			System.out.println("Umbuchung: " + getText() + " / " + this.kategorie.getQuelle() + " gespeichert.");
+			LOGGER.info("Umbuchung: " + getText() + " / " + this.kategorie.getQuelle() + " gespeichert.");
 		}
 	}
 
@@ -170,12 +172,23 @@ public class Umbuchung extends AbstractBuchung {
 	// --------------------------------------
 
 	@Override
-	final public Object clone() {
-		final Umbuchung neueUmbuchung = new Umbuchung();
-		neueUmbuchung.setDatum((Datum) getDatum().clone());
-		neueUmbuchung.setText(new String(getText()));
-		neueUmbuchung.kategorie = (UmbuchungKategorie) this.kategorie.clone();
-		neueUmbuchung.setWert((Euro) getWert().clone());
+	public final Object clone() {
+		final Datum clonedDatum = (Datum) getDatum().clone();
+		final String text = new String(getText());
+		final UmbuchungKategorie clonedKategorie = (UmbuchungKategorie) this.kategorie.clone();
+		final Euro clonedWert = (Euro) getWert().clone();
+		Umbuchung neueUmbuchung = new Umbuchung();
+
+		try {
+			neueUmbuchung = (Umbuchung) super.clone();
+		} catch (final CloneNotSupportedException e) {
+			LOGGER.warning("Cloning error. This should never happen.");
+		}
+
+		neueUmbuchung.setDatum(clonedDatum);
+		neueUmbuchung.setText(text);
+		neueUmbuchung.kategorie = clonedKategorie;
+		neueUmbuchung.setWert(clonedWert);
 		return neueUmbuchung;
 	}
 

@@ -144,19 +144,21 @@ import javax.swing.table.TableColumnModel;
  */
 public class Haushalt implements KeyListener, ListSelectionListener {
 
+
+	public static final String COPYRIGHT = "jHaushalt v2.6 * (C)opyright 2002-2011 Lars H. Hahn";
+	public static final String VERSION = "2.6";
+	public static final String PROPERTIES_FILENAME = ".jhh";
+
+
 	private static final boolean DEBUG = false;
-	private static final TextResource res = TextResource.get();
+	private static final TextResource RES = TextResource.get();
 
-	public final static String COPYRIGHT = "jHaushalt v2.6 * (C)opyright 2002-2011 Lars H. Hahn";
-	public final static String VERSION = "2.6";
-	public final static String PROPERTIES_FILENAME = ".jhh";
-
+	private final JTextField status = new JTextField(COPYRIGHT);
 	private final Properties properties;
 	private final JFrame frame = new JFrame();
 	private final JTabbedPane tabbedPane;
 	private TableColumnModel columnModel = null;
 	private final Image icon;
-	protected final JTextField status = new JTextField(COPYRIGHT);
 	private final GemerkteBuchungenGlassPane glassPane = new GemerkteBuchungenGlassPane();
 	private final DlgOptionen dlgOptionen;
 	private final DlgSuchenErsetzen dlgSuchenErsetzen;
@@ -200,9 +202,9 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 
 		// Das Neusetzen der Locale geht leider nicht an einer zentralen Stelle
 		// ...
-		res.setLocale(this.properties.getProperty("jhh.opt.sprache", "" + Locale.getDefault()));
-		Locale.setDefault(res.getLocale());
-		this.frame.setLocale(res.getLocale());
+		RES.setLocale(this.properties.getProperty("jhh.opt.sprache", "" + Locale.getDefault()));
+		Locale.setDefault(RES.getLocale());
+		this.frame.setLocale(RES.getLocale());
 
 		// Look-and-Feel:
 		final String systemClassName = UIManager.getSystemLookAndFeelClassName();
@@ -626,9 +628,11 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 		}
 		else
 			status.setText(
-					"-E- " + res.getString("status_register_not_found1") +
+"-E- "
+				+ RES.getString("status_register_not_found1")
+				+
 							" " + regname + " " +
-							res.getString("status_register_not_found2")
+ RES.getString("status_register_not_found2")
 					);
 	}
 
@@ -679,8 +683,8 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 	private boolean keinRegisterVorhanden() {
 		if (tabbedPane.getTabCount() == 0) {
 			int n = JOptionPane.showConfirmDialog(frame,
-					res.getString("message_no_register"),
-					res.getString("warning"),
+					RES.getString("message_no_register"),
+					RES.getString("warning"),
 					JOptionPane.YES_NO_OPTION);
 			if (n == JOptionPane.OK_OPTION)
 				registerBearbeiten();
@@ -702,7 +706,7 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 	private boolean abfrageGeaendert() {
 		if ((db != null) && (db.isGeaendert() || containerAuswertung.isGeaendert())) {
 			int n = JOptionPane.showConfirmDialog(frame,
-					res.getString("message_data_changed")
+ RES.getString("message_data_changed")
 					);
 			switch (n) {
 			case JOptionPane.CANCEL_OPTION:
@@ -732,9 +736,9 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 			int auswertungHoehe = new Integer(properties.getProperty("jhh.auswertung.hoehe", "400")).intValue();
 			containerAuswertung.setPreferredSize(new Dimension(auswertungBreite, auswertungHoehe));
 			status.setText(COPYRIGHT);
-			String name = db.erzeugeRegister(res.getString("default_register_name"));
+			String name = db.erzeugeRegister(RES.getString("default_register_name"));
 			zeigeRegisterTab(name);
-			db.addUmbuchung(new Datum(), res.getString("opening_balance"), name, name, Euro.NULL_EURO);
+			db.addUmbuchung(new Datum(), RES.getString("opening_balance"), name, name, Euro.NULL_EURO);
 		}
 	}
 
@@ -751,7 +755,7 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 
 		@Override
 		public String getDescription() {
-			return res.getString("jhaushalt_files");
+			return RES.getString("jhaushalt_files");
 		}
 	};
 
@@ -772,40 +776,46 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 		try {
 			FileInputStream fis = new FileInputStream(datei);
 			ProgressMonitorInputStream pmis = new ProgressMonitorInputStream(
-					frame, res.getString("reading") + " " + datei + " ...", fis);
+frame, RES.getString("reading")
+				+ " "
+				+ datei
+				+ " ...", fis);
 			DataInputStream in = new DataInputStream(pmis);
 			String versionInfo = in.readUTF();
 			if ((!versionInfo.equals("jHaushalt" + Datenbasis.VERSION_DATENBASIS)) &&
 					(JOptionPane.showConfirmDialog(null,
-							res.getString("message_old_version1") +
+						RES.getString("message_old_version1")
+							+
 									" " + versionInfo + " " +
-									res.getString("message_old_version2") +
+ RES.getString("message_old_version2")
+							+
 									Datenbasis.VERSION_DATENBASIS +
-									res.getString("message_old_version3"),
-							res.getString("warning"),
+ RES.getString("message_old_version3"),
+						RES.getString("warning"),
 							JOptionPane.YES_NO_OPTION) == JOptionPane.NO_OPTION))
 				fis.close();
 			else {
 				db.laden(in, versionInfo);
 				fis.close();
 				properties.setProperty("jhh.dateiname", datei.getPath());
-				status.setText(datei.getPath() + " " + res.getString("status_loaded") + ".");
+				status.setText(datei.getPath() + " " + RES.getString("status_loaded") + ".");
 			}
 		}
 		catch (FileNotFoundException e) {
-			status.setText("-E- " + datei.getPath() + " " + res.getString("status_not_found"));
+			status.setText("-E- " + datei.getPath() + " " + RES.getString("status_not_found"));
 			properties.remove("jhh.dateiname");
 		}
 		catch (IOException e) {
-			status.setText("-E- " + res.getString("status_load_error") + ": " + datei.getPath());
+			status.setText("-E- " + RES.getString("status_load_error") + ": " + datei.getPath());
 			properties.remove("jhh.dateiname");
 		}
 		int anzahl = db.ausfuehrenAutoBuchungen(new Datum());
 		if (anzahl > 0)
 			status.setText(
-					res.getString("executed_automatic_bookings1") +
+RES.getString("executed_automatic_bookings1")
+				+
 							" " + anzahl + " " +
-							res.getString("executed_automatic_bookings2")
+ RES.getString("executed_automatic_bookings2")
 					);
 		zeigeAlleRegisterTabs();
 
@@ -843,13 +853,13 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 			out.flush();
 			fos.close();
 			properties.setProperty("jhh.dateiname", datei.getPath());
-			status.setText(datei.getPath() + " " + res.getString("status_saved") + ".");
+			status.setText(datei.getPath() + " " + RES.getString("status_saved") + ".");
 		}
 		catch (FileNotFoundException e1) {
-			status.setText("-E- " + datei.getPath() + " " + res.getString("status_not_found"));
+			status.setText("-E- " + datei.getPath() + " " + RES.getString("status_not_found"));
 		}
 		catch (IOException e2) {
-			status.setText("-E- " + res.getString("status_write_error") + ": " + datei.getPath());
+			status.setText("-E- " + RES.getString("status_write_error") + ": " + datei.getPath());
 		}
 
 		// Speichern der Auswertungen
@@ -928,16 +938,16 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 			return;
 		int registerIndex = tabbedPane.getSelectedIndex();
 		String regname = tabbedPane.getTitleAt(registerIndex);
-		GenerischerDialog dlg = new GenerischerDialog(res.getString("create_rebooking"), frame);
-		DatumGDP pane1 = new DatumGDP(res.getString("insert_date") + ":", new Datum());
+		GenerischerDialog dlg = new GenerischerDialog(RES.getString("create_rebooking"), frame);
+		DatumGDP pane1 = new DatumGDP(RES.getString("insert_date") + ":", new Datum());
 		dlg.addPane(pane1);
-		TextGDP pane2 = new TextGDP(res.getString("insert_posting_text") + ":", res.getString("default_posting_text"));
+		TextGDP pane2 = new TextGDP(RES.getString("insert_posting_text") + ":", RES.getString("default_posting_text"));
 		dlg.addPane(pane2);
-		RegisterGDP pane3 = new RegisterGDP(res.getString("select_source_register") + ":", db, regname);
+		RegisterGDP pane3 = new RegisterGDP(RES.getString("select_source_register") + ":", db, regname);
 		dlg.addPane(pane3);
-		RegisterGDP pane4 = new RegisterGDP(res.getString("select_destination_register") + ":", db, regname);
+		RegisterGDP pane4 = new RegisterGDP(RES.getString("select_destination_register") + ":", db, regname);
 		dlg.addPane(pane4);
-		EuroGDP pane5 = new EuroGDP(res.getString("insert_amount") + ":", new Euro());
+		EuroGDP pane5 = new EuroGDP(RES.getString("insert_amount") + ":", new Euro());
 		dlg.addPane(pane5);
 		if (dlg.showDialog()) {
 			Datum datum = (Datum) pane1.getWert();
@@ -961,12 +971,12 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 		int buchungIndex = table.getSelectedRow();
 		if (buchungIndex == -1) {
 			JOptionPane.showMessageDialog(frame,
-					res.getString("message_no_row_selected"));
+ RES.getString("message_no_row_selected"));
 			return;
 		}
 		if (buchungIndex == db.getAnzahlBuchungen(regname)) {
 			JOptionPane.showMessageDialog(frame,
-					res.getString("message_row_can_not_be_deleted"));
+ RES.getString("message_row_can_not_be_deleted"));
 			return;
 		}
 		db.entferneBuchung(regname, buchungIndex);
@@ -977,11 +987,13 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 		table.requestFocus();
 		table.setRowSelectionInterval(buchungIndex, buchungIndex);
 		status.setText(
-				res.getString("status_posting_deleted1") +
+RES.getString("status_posting_deleted1")
+			+
 						" " + (buchungIndex + 1) + " " +
-						res.getString("status_posting_deleted2") +
+ RES.getString("status_posting_deleted2")
+			+
 						" " + regname + " " +
-						res.getString("status_posting_deleted3")
+ RES.getString("status_posting_deleted3")
 				);
 	}
 
@@ -995,13 +1007,13 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 		int buchungIndex = table.getSelectedRow();
 		if (buchungIndex == -1) {
 			JOptionPane.showMessageDialog(frame,
-					res.getString("message_no_row_selected"));
+ RES.getString("message_no_row_selected"));
 			return;
 		}
 		AbstractBuchung buchung = db.getBuchung(regname, buchungIndex);
 		if (buchung.getClass() == Umbuchung.class) {
 			JOptionPane.showMessageDialog(frame,
-					res.getString("message_rebookings_can_not_be_split"));
+ RES.getString("message_rebookings_can_not_be_split"));
 		}
 		else {
 			SplitBuchung splitBuchung;
@@ -1034,22 +1046,22 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 		int buchungIndex = table.getSelectedRow();
 		if (buchungIndex == -1) {
 			JOptionPane.showMessageDialog(frame,
-					res.getString("message_no_row_selected"));
+ RES.getString("message_no_row_selected"));
 			return;
 		}
 		if (buchungIndex == db.getAnzahlBuchungen(regname)) {
 			JOptionPane.showMessageDialog(frame,
-					res.getString("message_row_can_not_be_deleted"));
+ RES.getString("message_row_can_not_be_deleted"));
 			return;
 		}
 		AbstractBuchung buchung = db.getBuchung(regname, buchungIndex);
 		if (buchung.getClass() == Umbuchung.class) {
 			JOptionPane.showMessageDialog(frame,
-					res.getString("message_posting_is_already_a_reposting"));
+ RES.getString("message_posting_is_already_a_reposting"));
 			return;
 		}
-		GenerischerDialog dlg = new GenerischerDialog(res.getString("convert"), frame);
-		RegisterGDP pane = new RegisterGDP(res.getString("select_destination_register") + ":", db, regname);
+		GenerischerDialog dlg = new GenerischerDialog(RES.getString("convert"), frame);
+		RegisterGDP pane = new RegisterGDP(RES.getString("select_destination_register") + ":", db, regname);
 		dlg.addPane(pane);
 		if (dlg.showDialog()) {
 			Datum datum = buchung.getDatum();
@@ -1076,8 +1088,8 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 	}
 
 	public void alteBuchungenLoeschen() {
-		GenerischerDialog dlg = new GenerischerDialog(res.getString("delete_old_bookings"), frame);
-		DatumGDP pane = new DatumGDP(res.getString("cutoff_date") + ":", new Datum());
+		GenerischerDialog dlg = new GenerischerDialog(RES.getString("delete_old_bookings"), frame);
+		DatumGDP pane = new DatumGDP(RES.getString("cutoff_date") + ":", new Datum());
 		pane.setPreferredSize(new Dimension(320, 60));
 		dlg.addPane(pane);
 
@@ -1086,25 +1098,26 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 			db.entferneAlteBuchungen(datum);
 			alleRegisterVeraendert();
 			status.setText(
-					res.getString("status_posting_deleted4") +
+RES.getString("status_posting_deleted4")
+				+
 							" " + datum + " " +
-							res.getString("status_posting_deleted5")
+ RES.getString("status_posting_deleted5")
 					);
 		}
 	}
 
 	public void kategorieErsetzen() {
-		GenerischerDialog dlg = new GenerischerDialog(res.getString("replace_category"), frame);
-		EineKategorieGDP pane1 = new EineKategorieGDP(res.getString("current_category") + ":", db, null);
+		GenerischerDialog dlg = new GenerischerDialog(RES.getString("replace_category"), frame);
+		EineKategorieGDP pane1 = new EineKategorieGDP(RES.getString("current_category") + ":", db, null);
 		dlg.addPane(pane1);
-		EineKategorieGDP pane2 = new EineKategorieGDP(res.getString("new_category") + ":", db, null);
+		EineKategorieGDP pane2 = new EineKategorieGDP(RES.getString("new_category") + ":", db, null);
 		dlg.addPane(pane2);
 
 		if (dlg.showDialog()) {
 			EinzelKategorie alteKategorie = (EinzelKategorie) pane1.getWert();
 			EinzelKategorie neueKategorie = (EinzelKategorie) pane2.getWert();
 			int anzahl = db.ersetzeKategorie(alteKategorie, neueKategorie);
-			status.setText("" + anzahl + " " + res.getString("status_replaced_categories"));
+			status.setText("" + anzahl + " " + RES.getString("status_replaced_categories"));
 			alleRegisterVeraendert();
 		}
 	}
@@ -1121,14 +1134,14 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 			return;
 		int registerIndex = tabbedPane.getSelectedIndex();
 		String regname = tabbedPane.getTitleAt(registerIndex);
-		GenerischerDialog dlg = new GenerischerDialog(res.getString("join_register"), frame);
+		GenerischerDialog dlg = new GenerischerDialog(RES.getString("join_register"), frame);
 		RegisterGDP pane1 = new RegisterGDP(
-				res.getString("select_source_register") + ":",
+RES.getString("select_source_register") + ":",
 				db, regname);
 		pane1.setPreferredSize(new Dimension(330, 60));
 		dlg.addPane(pane1);
 		RegisterGDP pane2 = new RegisterGDP(
-				res.getString("select_destination_register") + ":",
+RES.getString("select_destination_register") + ":",
 				db, regname);
 		pane2.setPreferredSize(new Dimension(330, 60));
 		dlg.addPane(pane2);
@@ -1140,14 +1153,15 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 				db.registerVereinigen(quelle, ziel);
 				entferneRegisterTab(quelle);
 				status.setText(
-						res.getString("status_register_deleted1") +
+RES.getString("status_register_deleted1")
+					+
 								" " + quelle + " " +
-								res.getString("status_register_deleted2")
+ RES.getString("status_register_deleted2")
 						);
 				registerVeraendert(ziel);
 			}
 			else
-				JOptionPane.showMessageDialog(frame, res.getString("message_registers_may_not_be_equal"));
+				JOptionPane.showMessageDialog(frame, RES.getString("message_registers_may_not_be_equal"));
 		}
 	}
 
@@ -1178,8 +1192,8 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 			JScrollPane scrollPane = (JScrollPane) tabbedPane.getComponentAt(tabIndex);
 			JViewport viewport = scrollPane.getViewport();
 			JTable table = (JTable) viewport.getComponent(0);
-			MessageFormat header = new MessageFormat(res.getString("register") + ": " + tabbedPane.getTitleAt(tabIndex));
-			MessageFormat footer = new MessageFormat(res.getString("message_printed_with"));
+			MessageFormat header = new MessageFormat(RES.getString("register") + ": " + tabbedPane.getTitleAt(tabIndex));
+			MessageFormat footer = new MessageFormat(RES.getString("message_printed_with"));
 			try {
 				table.print(JTable.PrintMode.FIT_WIDTH, header, footer, true, null, true);
 			}
@@ -1216,7 +1230,7 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 		String[][] importTabelle = spaltenZuordnung.getImportTabelle();
 		if (importTabelle != null) {
 			db.importBuchungen(regname, importTabelle);
-			status.setText("" + importTabelle.length + " " + res.getString("status_postings_imported"));
+			status.setText("" + importTabelle.length + " " + RES.getString("status_postings_imported"));
 			registerVeraendert(registerIndex);
 		}
 	}
@@ -1226,9 +1240,9 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 			return;
 		int registerIndex = tabbedPane.getSelectedIndex();
 		String regname = tabbedPane.getTitleAt(registerIndex);
-		GenerischerDialog dlg = new GenerischerDialog(res.getString("import_quicken"), frame);
+		GenerischerDialog dlg = new GenerischerDialog(RES.getString("import_quicken"), frame);
 		RegisterGDP pane = new RegisterGDP(
-				res.getString("select_register") + ":", db, regname);
+RES.getString("select_register") + ":", db, regname);
 		pane.setPreferredSize(new Dimension(250, 60));
 		dlg.addPane(pane);
 		if (dlg.showDialog()) {
@@ -1327,9 +1341,10 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 		if (version.compareTo("1.5") < 0) {
 			JOptionPane.showMessageDialog(
 					null,
-					res.getString("message_wrong_java_version1") + " "
+					RES.getString("message_wrong_java_version1")
+						+ " "
 							+ version + " "
-							+ res.getString("message_wrong_java_version2"));
+						+ RES.getString("message_wrong_java_version2"));
 			System.exit(0);
 		}
 		String dateiname = null;

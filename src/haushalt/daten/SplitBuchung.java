@@ -26,6 +26,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.logging.Logger;
 
 /**
  * Die SplitBuchung ist ähnlich der StandardBuchung. Der Buchungsbetrag wurde
@@ -43,6 +44,8 @@ import java.util.ArrayList;
  */
 
 public class SplitBuchung extends AbstractBuchung {
+
+	private static final Logger LOGGER = Logger.getLogger(SplitBuchung.class.getName());
 
 	private MehrfachKategorie splitKategorie = new MehrfachKategorie();
 	private ArrayList<Euro> splitBetrag = new ArrayList<Euro>();
@@ -221,12 +224,21 @@ public class SplitBuchung extends AbstractBuchung {
 	// --------------------------------------
 
 	@Override
-	final public Object clone() {
-		final SplitBuchung kopie = new SplitBuchung((Datum) getDatum().clone(), new String(getText()));
+	public final Object clone() {
+		final Datum clonedDatum = (Datum) getDatum().clone();
+		final String text = new String(getText());
+		SplitBuchung kopie = new SplitBuchung();
+		try {
+			kopie = (SplitBuchung) super.clone();
+		} catch (final CloneNotSupportedException e) {
+			LOGGER.warning("Cloning error. This should never happen.");
+		}
 		for (int i = 0; i < getAnzahl(); i++) {
 			// Kategorien NICHT clonen, da dann nicht in der Kategorie-Liste
 			kopie.add(this.splitKategorie.get(i), (Euro) this.splitBetrag.get(i).clone());
 		}
+		setDatum(clonedDatum);
+		setText(text);
 		return kopie;
 	}
 

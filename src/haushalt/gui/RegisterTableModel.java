@@ -34,6 +34,8 @@ import haushalt.daten.StandardBuchung;
 import haushalt.daten.Umbuchung;
 import haushalt.daten.UmbuchungKategorie;
 
+import java.util.logging.Logger;
+
 import javax.swing.table.AbstractTableModel;
 
 /**
@@ -56,14 +58,12 @@ public class RegisterTableModel extends AbstractTableModel {
 
 	private static final boolean DEBUG = false;
 	private static final long serialVersionUID = 1L;
-	private static final TextResource res = TextResource.get();
+	private static final TextResource RES = TextResource.get();
+	private static final Logger LOGGER = Logger.getLogger(RegisterTableModel.class.getName());
 
-	private static final String[] spaltenNamen = {
-			res.getString("date"),
-			res.getString("posting_text"),
-			res.getString("category"),
-			res.getString("amount"),
-			res.getString("balance")
+	private static final String[] SPALTEN_NAMEN = {
+			RES.getString("date"), RES.getString("posting_text"), RES.getString("category"), RES.getString("amount"),
+			RES.getString("balance")
 	};
 
 	private final Haushalt haushalt;
@@ -91,7 +91,7 @@ public class RegisterTableModel extends AbstractTableModel {
 	}
 
 	public int getColumnCount() {
-		return spaltenNamen.length;
+		return SPALTEN_NAMEN.length;
 	}
 
 	public int getRowCount() {
@@ -102,7 +102,7 @@ public class RegisterTableModel extends AbstractTableModel {
 
 	@Override
 	public String getColumnName(final int col) {
-		return spaltenNamen[col];
+		return SPALTEN_NAMEN[col];
 	}
 
 	@Override
@@ -121,7 +121,7 @@ public class RegisterTableModel extends AbstractTableModel {
 
 	public Object getValueAt(final int row, final int col) {
 		if (DEBUG) {
-			System.out.println("RegisterTableModel: getValue @ " + row + ", " + col);
+			LOGGER.info("RegisterTableModel: getValue @ " + row + ", " + col);
 		}
 		if (row < this.db.getAnzahlBuchungen(this.registerName)) {
 			final AbstractBuchung buchung = this.db.getBuchung(this.registerName, row);
@@ -174,7 +174,7 @@ public class RegisterTableModel extends AbstractTableModel {
 	@Override
 	public void setValueAt(final Object value, int row, final int col) {
 		if (DEBUG) {
-			System.out.println("RegisterTableModel: setValue (" + value + ") @ " + row + ", " + col);
+			LOGGER.info("RegisterTableModel: setValue (" + value + ") @ " + row + ", " + col);
 		}
 		AbstractBuchung buchung;
 		if (row == this.db.getAnzahlBuchungen(this.registerName)) {
@@ -209,7 +209,12 @@ public class RegisterTableModel extends AbstractTableModel {
 		case 1:
 			final AbstractBuchung gemerkteBuchung = this.db.findeGemerkteBuchung("" + value);
 			if (this.haushalt.gemerkteBuchungen() && (gemerkteBuchung != null)) {
-				final AbstractBuchung neueBuchung = (AbstractBuchung) gemerkteBuchung.clone();
+					AbstractBuchung neueBuchung = null;
+					try {
+						neueBuchung = (AbstractBuchung) gemerkteBuchung.clone();
+					} catch (final CloneNotSupportedException e) {
+						LOGGER.warning("Cloning error. This should never happen.");
+					}
 				neueBuchung.setDatum(buchung.getDatum());
 				if (!buchung.getWert().equals(Euro.NULL_EURO)) {
 					neueBuchung.setWert(buchung.getWert());
@@ -248,6 +253,8 @@ public class RegisterTableModel extends AbstractTableModel {
 			fireTableDataChanged();
 			this.haushalt.selektiereBuchung(this.registerName, pos);
 			break;
+			default:
+				break;
 		}
 		this.db.setGeaendert();
 	}
