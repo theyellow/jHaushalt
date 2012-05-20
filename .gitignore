@@ -5,3 +5,5 @@
 .project
 /jar
 /bin
+de.jhaushalt.jar
+*.exe
