@@ -1,5 +1,8 @@
 package haushalt.gui;
 
+import haushalt.auswertung.domain.HaushaltDefinition;
+import haushalt.auswertung.domain.MainWindowProperties;
+
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -7,7 +10,6 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.Properties;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
@@ -16,16 +18,14 @@ import javax.swing.JTextField;
 import javax.swing.WindowConstants;
 
 public class MainWindow {
-	public static final String COPYRIGHT = "jHaushalt v2.6 * (C)opyright 2002-2011 Lars H. Hahn";
-	
 	private final JFrame frame = new JFrame();
-	private Properties properties;
+	private MainWindowProperties properties;
 	private JTabbedPane tabbedPane;
 	private ActionHandler actionHandler;
-	private JTextField status = new JTextField(COPYRIGHT);
+	private JTextField status = new JTextField(HaushaltDefinition.COPYRIGHT);
 	private GemerkteBuchungenGlassPane glassPane;
 	
-	public MainWindow(Properties properties, JTabbedPane tabbedPane, ActionHandler actionHandler,GemerkteBuchungenGlassPane gemerkteBuchungen) {
+	public MainWindow(MainWindowProperties properties, JTabbedPane tabbedPane, ActionHandler actionHandler,GemerkteBuchungenGlassPane gemerkteBuchungen) {
 		this.properties = properties;
 		this.tabbedPane = tabbedPane;
 		this.actionHandler = actionHandler;
@@ -36,8 +36,8 @@ public class MainWindow {
 
 	public void defineMainWindow() {
 		final Container contentPane = frame.getContentPane();
-		final int breite = new Integer(properties.getProperty("jhh.register.breite", "600")).intValue();
-		final int hoehe = new Integer(properties.getProperty("jhh.register.hoehe", "400")).intValue();
+		final int breite = properties.getWidth();
+		final int hoehe = properties.getHeight();
 		this.tabbedPane.setPreferredSize(new Dimension(breite, hoehe));
 		contentPane.add(actionHandler.erzeugeToolBar(), BorderLayout.PAGE_START);
 		contentPane.add(this.status, BorderLayout.PAGE_END);
@@ -48,7 +48,7 @@ public class MainWindow {
 	}
 	
 	public void setCopyrightText() {
-		setStatus(COPYRIGHT);
+		setStatus(HaushaltDefinition.COPYRIGHT);
 	}
 	
 	/**
@@ -63,7 +63,7 @@ public class MainWindow {
 	private void defineFrame() {
 		this.frame.setIconImage(loadIcon("jhh-icon.gif").getImage());
 		this.frame.setGlassPane(this.glassPane);
-		this.frame.setTitle(COPYRIGHT);
+		this.frame.setTitle(HaushaltDefinition.COPYRIGHT);
 		this.frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 		this.frame.addWindowListener(new WindowAdapter() {
 			@Override

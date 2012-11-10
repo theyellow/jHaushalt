@@ -19,6 +19,9 @@ import haushalt.auswertung.CsvHandler;
 import haushalt.auswertung.DlgContainerAuswertung;
 import haushalt.auswertung.FarbPaletten;
 import haushalt.auswertung.domain.HaushaltDefinition;
+import haushalt.auswertung.domain.HaushaltDefinitionException;
+import haushalt.auswertung.domain.HaushaltDefinitionLoader;
+import haushalt.auswertung.domain.MainWindowProperties;
 import haushalt.daten.AbstractBuchung;
 import haushalt.daten.Datenbasis;
 import haushalt.daten.Datenbasis.QuickenImportException;
@@ -70,7 +73,6 @@ import java.net.URLClassLoader;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Locale;
-import java.util.Properties;
 import java.util.logging.Logger;
 
 import javax.swing.DefaultCellEditor;
@@ -97,59 +99,14 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.TableColumnModel;
 
-/**
- * @author Dr. Lars H. Hahn
- * @version 2.6/2010.08.14
- */
 
-/*
- * 2010.08.14 Name der Datei für die Properties jetzt variabel
- * (PROPERTIES_FILENAME)
- * 2009.07.27 Erhöhen der Versionsnummer auf 2.6
- * 2008.04.15 Erhöhen der Versionsnummer auf 2.5.4 :-)
- * 2008.04.04 BugFix: Korrektur Doppelpunkt
- * 2008.03.19 Erhöhen der Versionsnummer auf 2.5.3 :-)
- * 2008.03.11 Erhöhen der Versionsnummer auf 2.5.2 :-)
- * 2008.03.10 Erhöhen der Versionsnummer auf 2.5.1 :-)
- * 2008.02.12 Überprüfung, ob Auswertungen geaendert, hinzugefügt
- * 2008.01.15 Internationalisierung
- * 2007.04.03 Automatisches Anlegen des ersten Registers beim Neueinrichten
- * eines Haushaltsbuchs
- * 2007.02.22 Erweiterung: Export aller Buchungen
- * 2007.02.14 Register können umbenannt und von Hand verschoben werden
- * 2007.02.06 Erweiterung: Beim Erstellen eines neuen Registers kann
- * optional ein Eröffnungssaldo übergeben werden
- * 2007.01.31 BugFix: Korrektes Merken der Größe des Auswertungsdialog
- * Erhöhen der Versionsnummer auf 2.5 :-)
- * 2006.06.21 Erhöhen der Versionsnummer auf 2.1.3 :-)
- * 2006.06.19 Speicherung der Fenstergröße des Auswertungsdialog
- * 2006.06.11 Erhöhen der Versionsnummer auf 2.1.2 :-)
- * 2006.04.19 Erhöhen der Versionsnummer auf 2.1.1 :-)
- * 2006.02.09 Ausdruck eines Registers; Verlagerung der
- * Druckereinstellungen in den Auswertungsdialog
- * 2006.02.06 Erweiterung: Planungen hinzugefügt
- * 2006.02.03 BugFix: Nur reduzierte Split-Buchungen speichern
- * 2006.02.01 Umwandeln von Buchungen hinzugefügt
- * 2006.01.31 Methode zum Anzeigen von Änderungen in einem
- * Register
- * 2006.01.24 Erhöhen der Versionsnummer auf 2.1 :-)
- * 2005.04.30 BugFix: Nach Splitten Buchung merken
- * 2005.03.10 Erweiterung: Gemerkte Buchungen ab Datum
- * 2005.02.18 BugFix: Nachdem Splitten einer Buchung wurde
- * nicht "mitgesprungen".
- * 2004.08.25 BugFix: Abbruch beim CSV-Import berücksichtigt.
- */
 public class Haushalt implements KeyListener, ListSelectionListener {
-
-	//public static final String COPYRIGHT = "jHaushalt v2.6 * (C)opyright 2002-2011 Lars H. Hahn";
-	public static final String VERSION = "2.6";
-	public static final String PROPERTIES_FILENAME = ".jhh";
-
 	private static final Logger LOGGER = Logger.getLogger(Haushalt.class.getName());
 
 	private static final TextResource RES = TextResource.get();
 
-	private final Properties properties = new Properties();
+	// properties will be replaced by haushaltDefinition
+	//private final Properties properties = new Properties();
 	private HaushaltDefinition haushaltDefinition;
 	
 	private JTabbedPane tabbedPane = new JTabbedPane(SwingConstants.BOTTOM);
@@ -171,13 +128,14 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 		
 		// Properties laden		
 		try {
-			loadPropertiesFromJHHFile();
-		} catch (IOException e) {
+			haushaltDefinition = HaushaltDefinitionLoader.getHaushaltDefinition();
+			//loadPropertiesFromJHHFile();
+		} catch (HaushaltDefinitionException e) {
 			showDialogToCreateJHHFile();
 		}
 
-		
-		mainWindow = new MainWindow(properties, tabbedPane, actionHandler, glassPane);
+		MainWindowProperties mainWindowProperties = new MainWindowProperties(haushaltDefinition.getProperties());
+		mainWindow = new MainWindow(mainWindowProperties, tabbedPane, actionHandler, glassPane);
 		mainWindow.defineMainWindow();
 		setLocaleAndFrameLocale();
 		setLookAndFeelDependingOnSystem();
@@ -204,7 +162,7 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 	private void defineOptionsDialog() {
 		// Dialog für die Optionen erzeugen; die Optionen sind eine
 		// Teilmenge der Properties
-		this.dlgOptionen = new DlgOptionen(this, this.properties);
+		this.dlgOptionen = new DlgOptionen(this, haushaltDefinition.getProperties());
 	}
 
 	private void loadOrCreateJHHFile(final String dateiname) {
@@ -237,35 +195,16 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 
 	private void setLocaleAndFrameLocale() {
 		// Das Neusetzen der Locale geht leider nicht an einer zentralen Stelle
-		RES.setLocale(this.properties.getProperty("jhh.opt.sprache", "" + Locale.getDefault()));
+		RES.setLocale(haushaltDefinition.getProperty("jhh.opt.sprache", "" + Locale.getDefault()));
 		Locale.setDefault(RES.getLocale());
 		mainWindow.getFrame().setLocale(RES.getLocale());
 	}
 
 	private void showDialogToCreateJHHFile() {
-		final DlgEinrichtung einrichten = new DlgEinrichtung(mainWindow.getFrame(), this.properties);
+		final DlgEinrichtung einrichten = new DlgEinrichtung(mainWindow.getFrame(), haushaltDefinition.getProperties());
 		einrichten.pack();
 		einrichten.setVisible(true);
 	}
-
-	private void loadPropertiesFromJHHFile() throws IOException {
-		final String userHome = System.getProperty("user.home");
-		final File datei = new File(userHome, PROPERTIES_FILENAME);
-		final FileInputStream fis = new FileInputStream(datei);
-		try {
-			this.properties.load(fis);
-		} finally {
-			fis.close();			
-		}
-		
-		haushaltDefinition = createHaushaltDomain(properties);
-	}
-
-	private HaushaltDefinition createHaushaltDomain(Properties properties) {
-		HaushaltDefinition haushalt = new HaushaltDefinition(properties);
-		return haushalt;
-	}
-
 
 	/**
 	 * Liefert das Arbeitsverzeichnis.
@@ -273,7 +212,7 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 	 * @return Arbeitsverzeichnis
 	 */
 	public String getOrdner() {
-		return properties.getProperty("jhh.ordner");
+		return haushaltDefinition.getJhhFolder();
 	}
 
 	// -- Einstellungen
@@ -284,23 +223,23 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 	 * 
 	 */
 	private void oberflaecheAnpassen() {
-		Euro.setWaehrungssymbol(properties.getProperty("jhh.opt.waehrung", "€"));
-		setTabPlacement(properties.getProperty("jhh.opt.reiter", "BOTTOM"));
+		Euro.setWaehrungssymbol(haushaltDefinition.getProperty("jhh.opt.waehrung", "€"));
+		setTabPlacement(haushaltDefinition.getProperty("jhh.opt.reiter", "BOTTOM"));
 		for (int i = 0; i < tabbedPane.getTabCount(); i++) {
 			final JScrollPane scrollPane = (JScrollPane) tabbedPane.getComponent(i);
 			final JTable table = (JTable) scrollPane.getViewport().getView();
 			table.setSelectionBackground(getFarbeSelektion());
 			table.setGridColor(getFarbeGitter());
 		}
-		db.setStartDatum(new Datum(properties.getProperty("jhh.opt.startdatum", "01.01.00")));
+		db.setStartDatum(new Datum(haushaltDefinition.getProperty("jhh.opt.startdatum", "01.01.00")));
 		int idx;
 		try {
-			idx = Integer.parseInt(properties.getProperty("jhh.opt.deltaste", "0"));
+			idx = Integer.parseInt(haushaltDefinition.getProperty("jhh.opt.deltaste", "0"));
 		} catch (final NumberFormatException e) {
 			// Kann Auftreten, da Version < 2.5 noch kein Index, sondern
 			// Klartext gespeichert hat
 			idx = 0;
-			properties.setProperty("jhh.opt.deltaste", "0");
+			haushaltDefinition.setProperty("jhh.opt.deltaste", "0");
 		}
 		int deltaste;
 		switch (idx) {
@@ -317,30 +256,30 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 				deltaste = 0;
 		}
 		DeleteableTextField.setDeltaste(deltaste);
-		FarbPaletten.setCustomColor(properties.getProperty("jhh.opt.custom", "16776960"));
+		FarbPaletten.setCustomColor(haushaltDefinition.getProperty("jhh.opt.custom", "16776960"));
 	}
 
 	public Color getFarbeSelektion() {
-		final int farbe = new Integer(properties.getProperty("jhh.opt.selektion", "12632256")).intValue(); // #c0c0c0
+		final int farbe = new Integer(haushaltDefinition.getProperty("jhh.opt.selektion", "12632256")).intValue(); // #c0c0c0
 		return new Color(farbe);
 	}
 
 	public Color getFarbeGitter() {
-		final int farbe = new Integer(properties.getProperty("jhh.opt.gitter", "10066329")).intValue(); // #999999
+		final int farbe = new Integer(haushaltDefinition.getProperty("jhh.opt.gitter", "10066329")).intValue(); // #999999
 		return new Color(farbe);
 	}
 
 	public Color getFarbeZukunft() {
-		final int farbe = new Integer(properties.getProperty("jhh.opt.zukunft", "16777088")).intValue(); // #ffff80
+		final int farbe = new Integer(haushaltDefinition.getProperty("jhh.opt.zukunft", "16777088")).intValue(); // #ffff80
 		return new Color(farbe);
 	}
 
 	public String getFontname() {
-		return properties.getProperty("jhh.opt.font", "SansSerif");
+		return haushaltDefinition.getProperty("jhh.opt.font", "SansSerif");
 	}
 
 	public int getFontgroesse() {
-		return new Integer(properties.getProperty("jhh.opt.punkt", "12")).intValue();
+		return new Integer(haushaltDefinition.getProperty("jhh.opt.punkt", "12")).intValue();
 	}
 
 	/**
@@ -412,9 +351,9 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 			// Spalten-Breiten.
 			table = new JTable(tableModel);
 			columnModel = table.getColumnModel();
-			if (properties.containsKey("jhh.register.spalte0")) {
+			if (haushaltDefinition.getProperties().containsKey("jhh.register.spalte0")) {
 				for (int j = 0; j < columnModel.getColumnCount(); j++) {
-					final int breite = new Integer(properties.getProperty("jhh.register.spalte" + j)).intValue();
+					final int breite = new Integer(haushaltDefinition.getProperty("jhh.register.spalte" + j)).intValue();
 					columnModel.getColumn(j).setPreferredWidth(breite);
 				}
 			}
@@ -437,7 +376,7 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 		table.setDefaultEditor(Object.class, new KategorieCellEditor(this, db));
 		table.setDefaultEditor(Euro.class, new DefaultCellEditor(new EuroField()));
 		// Cell-Renderer erzeugen
-		table.setDefaultRenderer(Datum.class, new DatumRenderer(properties));
+		table.setDefaultRenderer(Datum.class, new DatumRenderer(haushaltDefinition.getProperties()));
 		table.setDefaultRenderer(String.class, new DefaultTableCellRenderer());
 		table.setDefaultRenderer(Object.class, new KategorieRenderer());
 		table.setDefaultRenderer(Euro.class, new EuroRenderer());
@@ -614,7 +553,7 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 	}
 
 	public boolean gemerkteBuchungen() {
-		return Boolean.valueOf(properties.getProperty("jhh.opt.gemerkte", "true")).booleanValue();
+		return Boolean.valueOf(haushaltDefinition.getProperty("jhh.opt.gemerkte", "true")).booleanValue();
 	}
 
 	/**
@@ -695,8 +634,8 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 			entferneAlleRegisterTabs();
 			db = new Datenbasis();
 			containerAuswertung = new DlgContainerAuswertung(this, db);
-			final int auswertungBreite = new Integer(properties.getProperty("jhh.auswertung.breite", "600")).intValue();
-			final int auswertungHoehe = new Integer(properties.getProperty("jhh.auswertung.hoehe", "400")).intValue();
+			final int auswertungBreite = new Integer(haushaltDefinition.getProperty("jhh.auswertung.breite", "600")).intValue();
+			final int auswertungHoehe = new Integer(haushaltDefinition.getProperty("jhh.auswertung.hoehe", "400")).intValue();
 			containerAuswertung.setPreferredSize(new Dimension(auswertungBreite, auswertungHoehe));
 			mainWindow.setCopyrightText();
 			final String name = db.erzeugeRegister(RES.getString("default_register_name"));
@@ -709,7 +648,7 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 		if (abfrageGeaendert()) {
 			final JFileChooser dateidialog = new JFileChooser();
 			dateidialog.setFileFilter(fileFilter);
-			dateidialog.setCurrentDirectory(new File(properties.getProperty("jhh.ordner")));
+			dateidialog.setCurrentDirectory(new File(haushaltDefinition.getJhhFolder()));
 			if (dateidialog.showOpenDialog(mainWindow.getFrame()) == JFileChooser.APPROVE_OPTION) {
 				laden(dateidialog.getSelectedFile());
 			}
@@ -719,7 +658,7 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 	private void laden(final File datei) {
 		entferneAlleRegisterTabs();
 		db = new Datenbasis();
-		db.setStartDatum(new Datum(properties.getProperty("jhh.opt.startdatum", "01.01.00")));
+		db.setStartDatum(new Datum(haushaltDefinition.getProperty("jhh.opt.startdatum", "01.01.00")));
 		try {
 			final FileInputStream fis = new FileInputStream(datei);
 			final ProgressMonitorInputStream pmis = new ProgressMonitorInputStream(mainWindow.getFrame(), RES.getString("reading")
@@ -765,8 +704,8 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 		containerAuswertung = new DlgContainerAuswertung(this, db);
 		final String dateiname = datei.getPath() + ".jha";
 		containerAuswertung.laden(dateiname);
-		final int auswertungBreite = new Integer(properties.getProperty("jhh.auswertung.breite", "600")).intValue();
-		final int auswertungHoehe = new Integer(properties.getProperty("jhh.auswertung.hoehe", "400")).intValue();
+		final int auswertungBreite = new Integer(haushaltDefinition.getProperty("jhh.auswertung.breite", "600")).intValue();
+		final int auswertungHoehe = new Integer(haushaltDefinition.getProperty("jhh.auswertung.hoehe", "400")).intValue();
 		containerAuswertung.setPreferredSize(new Dimension(auswertungBreite, auswertungHoehe));
 
 	}
@@ -812,7 +751,7 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 	public void speichernUnter() {
 		final JFileChooser dateidialog = new JFileChooser();
 		dateidialog.setFileFilter(fileFilter);
-		dateidialog.setCurrentDirectory(new File(properties.getProperty("jhh.ordner")));
+		dateidialog.setCurrentDirectory(new File(haushaltDefinition.getJhhFolder()));
 		if (dateidialog.showSaveDialog(mainWindow.getFrame()) == JFileChooser.APPROVE_OPTION) {
 			speichern(dateidialog.getSelectedFile());
 		}
@@ -821,31 +760,25 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 	public void beenden() {
 		if (abfrageGeaendert()) {
 			final Dimension dimension = tabbedPane.getSize();
-			properties.setProperty("jhh.register.breite", "" + dimension.width);
+			haushaltDefinition.setProperty("jhh.register.breite", "" + dimension.width);
 			if (dimension.height > 100) {
-				properties.setProperty("jhh.register.hoehe", "" + dimension.height);
+				haushaltDefinition.setProperty("jhh.register.hoehe", "" + dimension.height);
 			} else {
-				properties.setProperty("jhh.register.hoehe", "100");
+				haushaltDefinition.setProperty("jhh.register.hoehe", "100");
 			}
 			if (columnModel != null) {
 				for (int i = 0; i < columnModel.getColumnCount(); i++) {
-					properties.setProperty("jhh.register.spalte" + i, "" + columnModel.getColumn(i).getWidth());
+					haushaltDefinition.getProperty("jhh.register.spalte" + i, "" + columnModel.getColumn(i).getWidth());
 				}
 			}
 
-			// Speichert die individuellen Programmeigenschaften in die Datei
-			// <i>PROPERTIES_FILENAME</i>.
-			final String userHome = System.getProperty("user.home");
-			final File datei = new File(userHome, PROPERTIES_FILENAME);
 			try {
-				final FileOutputStream fos = new FileOutputStream(datei);
-				properties.store(fos, "Properties: " + VERSION);
-				fos.close();
-			} catch (final FileNotFoundException e1) {
-				LOGGER.warning("-W- 'Datei nicht gefunden' beim Speichern der Properties.");
-			} catch (final IOException e) {
-				LOGGER.warning("-W- Properties konnten nicht ins Home-Verzeichnis geschrieben werden.");
+				haushaltDefinition.save();
+			} catch (HaushaltDefinitionException e) {
+				LOGGER.info("Could not save haushalt definition.");
+				e.printStackTrace();
 			}
+			
 			System.exit(0);
 		}
 	}
@@ -1105,8 +1038,8 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 		}
 		containerAuswertung.zeigeDialog();
 		final Dimension dimension = containerAuswertung.getSize();
-		properties.setProperty("jhh.auswertung.breite", "" + dimension.width);
-		properties.setProperty("jhh.auswertung.hoehe", "" + dimension.height);
+		haushaltDefinition.setProperty("jhh.auswertung.breite", "" + dimension.width);
+		haushaltDefinition.setProperty("jhh.auswertung.hoehe", "" + dimension.height);
 		containerAuswertung.setPreferredSize(dimension);
 	}
 
@@ -1116,7 +1049,7 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 		}
 		final ArrayList<String[]> buchungen = db.getBuchungen();
 		final CsvHandler handler = new CsvHandler(buchungen);
-		handler.exportDlg(mainWindow.getFrame(), properties.getProperty("jhh.ordner"));
+		handler.exportDlg(mainWindow.getFrame(), haushaltDefinition.getJhhFolder());
 	}
 
 	public void drucken() {
@@ -1181,12 +1114,12 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 		dlg.addPane(pane);
 		if (dlg.showDialog()) {
 			final JFileChooser dateidialog = new JFileChooser();
-			dateidialog.setCurrentDirectory(new File(properties.getProperty("jhh.ordner")));
+			dateidialog.setCurrentDirectory(new File(haushaltDefinition.getJhhFolder()));
 			if (dateidialog.showOpenDialog(mainWindow.getFrame()) == JFileChooser.APPROVE_OPTION) {
 				final File datei = dateidialog.getSelectedFile();
 				try {
 					final FileInputStream in = new FileInputStream(datei);
-					final boolean euroImport = Boolean.valueOf(properties.getProperty("jhh.opt.euroimport", "true")).booleanValue();
+					final boolean euroImport = Boolean.valueOf(haushaltDefinition.getProperty("jhh.opt.euroimport", "true")).booleanValue();
 					db.importQuickenRegister(in, (String) pane.getRefreshedWert(), euroImport);
 					in.close();
 					zeigeAlleRegisterTabs();
