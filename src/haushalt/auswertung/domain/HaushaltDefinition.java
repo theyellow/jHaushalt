@@ -15,8 +15,13 @@ public class HaushaltDefinition {
 	private static final String KEY_JHH_FILENAME = "jhh.dateiname";
 	private Properties properties;
 	
+	private MainWindowProperties mainWindowProperties;
+	private ColumnModelProperties columnModelProperties;
+	
+	
 	public HaushaltDefinition(Properties properties) {
 		this.properties = properties;
+		mainWindowProperties = new MainWindowProperties(getProperties());
 	}
 	
 	public String getJhhFileName() {
@@ -35,7 +40,8 @@ public class HaushaltDefinition {
 		this.properties.setProperty(KEY_JHH_FOLDER_NAME, jhhFolderName);
 	}
 	
-	public String getProperty(String key) {
+	@Deprecated
+	private String getProperty(String key) {
 		return this.properties.getProperty(key);
 	}
 
@@ -44,6 +50,23 @@ public class HaushaltDefinition {
 		return (value != null && "".equals(value))? value : defaultValue;
 	}
 
+	public MainWindowProperties getMainWindowProperties() {
+		return mainWindowProperties;
+	}
+	
+	public ColumnModelProperties getColumnModelProperties() {
+		return columnModelProperties;
+	}
+	
+	public Properties getDlgOptionProperties() {
+		return getProperties();
+	}
+	
+	public Properties getDlgCreateProperties() {
+		return getProperties();
+	}
+	
+	@Deprecated
 	public Properties getProperties() {
 		return this.properties;
 	}
@@ -66,6 +89,14 @@ public class HaushaltDefinition {
 		} catch (IOException e) {
 			throw new HaushaltDefinitionException();
 		}
+	}
+
+	public Properties createJHHDialogProperties() {
+		return getProperties();
+	}
+
+	public Properties getDateRendererProperties() {
+		return getProperties();
 	}
 	
 }

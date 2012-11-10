@@ -18,10 +18,10 @@ package haushalt.gui;
 import haushalt.auswertung.CsvHandler;
 import haushalt.auswertung.DlgContainerAuswertung;
 import haushalt.auswertung.FarbPaletten;
+import haushalt.auswertung.domain.ColumnModelProperties;
 import haushalt.auswertung.domain.HaushaltDefinition;
 import haushalt.auswertung.domain.HaushaltDefinitionException;
 import haushalt.auswertung.domain.HaushaltDefinitionLoader;
-import haushalt.auswertung.domain.MainWindowProperties;
 import haushalt.daten.AbstractBuchung;
 import haushalt.daten.Datenbasis;
 import haushalt.daten.Datenbasis.QuickenImportException;
@@ -105,8 +105,6 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 
 	private static final TextResource RES = TextResource.get();
 
-	// properties will be replaced by haushaltDefinition
-	//private final Properties properties = new Properties();
 	private HaushaltDefinition haushaltDefinition;
 	
 	private JTabbedPane tabbedPane = new JTabbedPane(SwingConstants.BOTTOM);
@@ -129,13 +127,15 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 		// Properties laden		
 		try {
 			haushaltDefinition = HaushaltDefinitionLoader.getHaushaltDefinition();
-			//loadPropertiesFromJHHFile();
 		} catch (HaushaltDefinitionException e) {
 			showDialogToCreateJHHFile();
 		}
 
-		MainWindowProperties mainWindowProperties = new MainWindowProperties(haushaltDefinition.getProperties());
-		mainWindow = new MainWindow(mainWindowProperties, tabbedPane, actionHandler, glassPane);
+		mainWindow = new MainWindow(
+				haushaltDefinition.getMainWindowProperties(),
+				tabbedPane,
+				actionHandler,
+				glassPane);
 		mainWindow.defineMainWindow();
 		setLocaleAndFrameLocale();
 		setLookAndFeelDependingOnSystem();
@@ -160,9 +160,7 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 	} 
 	
 	private void defineOptionsDialog() {
-		// Dialog für die Optionen erzeugen; die Optionen sind eine
-		// Teilmenge der Properties
-		this.dlgOptionen = new DlgOptionen(this, haushaltDefinition.getProperties());
+		this.dlgOptionen = new DlgOptionen(this, haushaltDefinition.getDlgOptionProperties());
 	}
 
 	private void loadOrCreateJHHFile(final String dateiname) {
@@ -201,7 +199,9 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 	}
 
 	private void showDialogToCreateJHHFile() {
-		final DlgEinrichtung einrichten = new DlgEinrichtung(mainWindow.getFrame(), haushaltDefinition.getProperties());
+		final DlgEinrichtung einrichten = new DlgEinrichtung(
+				mainWindow.getFrame(),
+				haushaltDefinition.createJHHDialogProperties());
 		einrichten.pack();
 		einrichten.setVisible(true);
 	}
@@ -336,6 +336,8 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 	 */
 	public int zeigeRegisterTab(final String regname) {
 		final int tabNr = tabbedPane.indexOfTab(regname);
+		
+		ColumnModelProperties columnModelProperties = haushaltDefinition.getColumnModelProperties();
 		// int tabNr = getRegisterTabNr(""+tableModel);
 		if (tabNr > -1) {
 			// Register wird schon angezeigt, wahrscheinlich wurde es verändert:
@@ -346,14 +348,12 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 		JTable table;
 		if (columnModel == null) {
 			// Das ColumnModel wird von der ersten erzeugten Tabelle genommen
-			// und
-			// initialisiert. Alle Tabellen erhalten so die gleichen
-			// Spalten-Breiten.
+			// und initialisiert. Alle Tabellen erhalten so die gleichen Spalten-Breiten.
 			table = new JTable(tableModel);
 			columnModel = table.getColumnModel();
-			if (haushaltDefinition.getProperties().containsKey("jhh.register.spalte0")) {
+			if (columnModelProperties.doesWidthExistForColumnNumber(0)) {
 				for (int j = 0; j < columnModel.getColumnCount(); j++) {
-					final int breite = new Integer(haushaltDefinition.getProperty("jhh.register.spalte" + j)).intValue();
+					final int breite = columnModelProperties.getRegisterWidthForColumnNumber(j);
 					columnModel.getColumn(j).setPreferredWidth(breite);
 				}
 			}
@@ -376,7 +376,7 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 		table.setDefaultEditor(Object.class, new KategorieCellEditor(this, db));
 		table.setDefaultEditor(Euro.class, new DefaultCellEditor(new EuroField()));
 		// Cell-Renderer erzeugen
-		table.setDefaultRenderer(Datum.class, new DatumRenderer(haushaltDefinition.getProperties()));
+		table.setDefaultRenderer(Datum.class, new DatumRenderer(haushaltDefinition.getDateRendererProperties()));
 		table.setDefaultRenderer(String.class, new DefaultTableCellRenderer());
 		table.setDefaultRenderer(Object.class, new KategorieRenderer());
 		table.setDefaultRenderer(Euro.class, new EuroRenderer());
