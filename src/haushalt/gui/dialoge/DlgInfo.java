@@ -18,6 +18,7 @@ package haushalt.gui.dialoge;
 import haushalt.auswertung.DlgContainerAuswertung;
 import haushalt.daten.Datenbasis;
 import haushalt.gui.Haushalt;
+import haushalt.gui.MainWindow;
 import haushalt.gui.TextResource;
 
 import java.awt.BorderLayout;
@@ -70,7 +71,7 @@ public class DlgInfo extends JDialog {
 		this.textArea.selectAll();
 		this.textArea.cut();
 		this.textArea.setEditable(false);
-		this.textArea.append(Haushalt.COPYRIGHT + "\n\n");
+		this.textArea.append(MainWindow.COPYRIGHT + "\n\n");
 		this.textArea.append(RES.getString("info_gpl_text1") + "\n");
 		this.textArea.append(RES.getString("info_gpl_text2") + "\n");
 		this.textArea.append(RES.getString("info_gpl_text3") + "\n\n");

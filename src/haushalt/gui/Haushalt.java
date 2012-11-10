@@ -51,13 +51,10 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
-import java.awt.Image;
 import java.awt.Point;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.awt.print.PrinterException;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -85,7 +82,6 @@ import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
-import javax.swing.JTextField;
 import javax.swing.JViewport;
 import javax.swing.ListSelectionModel;
 import javax.swing.ProgressMonitorInputStream;
@@ -93,7 +89,6 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
-import javax.swing.WindowConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileFilter;
@@ -145,7 +140,7 @@ import javax.swing.table.TableColumnModel;
  */
 public class Haushalt implements KeyListener, ListSelectionListener {
 
-	public static final String COPYRIGHT = "jHaushalt v2.6 * (C)opyright 2002-2011 Lars H. Hahn";
+	//public static final String COPYRIGHT = "jHaushalt v2.6 * (C)opyright 2002-2011 Lars H. Hahn";
 	public static final String VERSION = "2.6";
 	public static final String PROPERTIES_FILENAME = ".jhh";
 
@@ -153,12 +148,11 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 
 	private static final TextResource RES = TextResource.get();
 
-	private final JTextField status = new JTextField(COPYRIGHT);
 	private final Properties properties = new Properties();
-	private final JFrame frame = new JFrame();
+	
 	private JTabbedPane tabbedPane = new JTabbedPane(SwingConstants.BOTTOM);
 	private TableColumnModel columnModel = null;
-	private final Image icon;
+
 	private final GemerkteBuchungenGlassPane glassPane = new GemerkteBuchungenGlassPane();
 	private DlgOptionen dlgOptionen;
 	private DlgSuchenErsetzen dlgSuchenErsetzen;
@@ -166,6 +160,8 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 	private DlgContainerAuswertung containerAuswertung;
 	private ActionHandler actionHandler;
 
+	private MainWindow mainWindow;
+	
 	private final FileFilter fileFilter = new JHaushaltFileFilter();
 
 	/**
@@ -173,8 +169,7 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 	 */
 	public Haushalt(final String dateiname) {
 		this.actionHandler = new ActionHandler(this);
-		this.dlgSuchenErsetzen = new DlgSuchenErsetzen(this);
-		this.icon = bildLaden("jhh-icon.gif").getImage();
+		//this.icon = bildLaden("jhh-icon.gif").getImage();
 		
 		// Properties laden		
 		try {
@@ -183,15 +178,16 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 			showDialogToCreateJHHFile();
 		}
 
+		
+		mainWindow = new MainWindow(properties, tabbedPane, actionHandler, glassPane);
+		mainWindow.defineMainWindow();
 		setLocaleAndFrameLocale();
 		setLookAndFeelDependingOnSystem();
-
-		defineFrame();
-		defineMainWindow();
+		
+		this.dlgSuchenErsetzen = new DlgSuchenErsetzen(this);
+		
 		defineMenuBar();
 		
-		this.status.setEditable(false);
-
 		loadOrCreateJHHFile(dateiname);
 		
 		defineOptionsDialog();
@@ -203,6 +199,10 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 		}
 	}
 
+	public JFrame getFrame() {
+		return mainWindow.getFrame();
+	} 
+	
 	private void defineOptionsDialog() {
 		// Dialog für die Optionen erzeugen; die Optionen sind eine
 		// Teilmenge der Properties
@@ -222,31 +222,18 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 	}
 
 	private void defineMenuBar() {
-		this.frame.setJMenuBar(this.actionHandler.erzeugeMenuBar());
+		mainWindow.getFrame().setJMenuBar(this.actionHandler.erzeugeMenuBar());
 	}
 
-	private void defineFrame() {
-		this.frame.setIconImage(this.icon);
-		this.frame.setGlassPane(this.glassPane);
-		this.frame.setTitle(COPYRIGHT);
-		this.frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
-		this.frame.addWindowListener(new WindowAdapter() {
-			@Override
-			public void windowClosing(final WindowEvent e) {
-				beenden();
-			}
-		});
-		
-	}
 	
-	private void defineMainWindow() {
-		final Container contentPane = this.frame.getContentPane();
-		final int breite = new Integer(this.properties.getProperty("jhh.register.breite", "600")).intValue();
-		final int hoehe = new Integer(this.properties.getProperty("jhh.register.hoehe", "400")).intValue();
-		this.tabbedPane.setPreferredSize(new Dimension(breite, hoehe));
-		contentPane.add(this.actionHandler.erzeugeToolBar(), BorderLayout.PAGE_START);
-		contentPane.add(this.status, BorderLayout.PAGE_END);
-	}
+//	private void defineMainWindow() {
+//		final Container contentPane = this.frame.getContentPane();
+//		final int breite = new Integer(this.properties.getProperty("jhh.register.breite", "600")).intValue();
+//		final int hoehe = new Integer(this.properties.getProperty("jhh.register.hoehe", "400")).intValue();
+//		this.tabbedPane.setPreferredSize(new Dimension(breite, hoehe));
+//		contentPane.add(this.actionHandler.erzeugeToolBar(), BorderLayout.PAGE_START);
+//		contentPane.add(this.status, BorderLayout.PAGE_END);
+//	}
 
 	private void setLookAndFeelDependingOnSystem() {
 		final String systemClassName = UIManager.getSystemLookAndFeelClassName();
@@ -261,11 +248,11 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 		// Das Neusetzen der Locale geht leider nicht an einer zentralen Stelle
 		RES.setLocale(this.properties.getProperty("jhh.opt.sprache", "" + Locale.getDefault()));
 		Locale.setDefault(RES.getLocale());
-		this.frame.setLocale(RES.getLocale());
+		mainWindow.getFrame().setLocale(RES.getLocale());
 	}
 
 	private void showDialogToCreateJHHFile() {
-		final DlgEinrichtung einrichten = new DlgEinrichtung(this.frame, this.properties);
+		final DlgEinrichtung einrichten = new DlgEinrichtung(mainWindow.getFrame(), this.properties);
 		einrichten.pack();
 		einrichten.setVisible(true);
 	}
@@ -281,14 +268,7 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 		}
 	}
 
-	/**
-	 * Liefert das Hauptfenster.
-	 * 
-	 * @return Hauptfenster
-	 */
-	public JFrame getFrame() {
-		return frame;
-	}
+
 
 	/**
 	 * Liefert das Arbeitsverzeichnis.
@@ -476,10 +456,10 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 		scrollBar.setValue(scrollBar.getMaximum());
 
 		if (tabbedPane.getTabCount() == 1) {
-			frame.getContentPane().add(tabbedPane, BorderLayout.CENTER);
-			frame.validate();
+			mainWindow.getFrame().getContentPane().add(tabbedPane, BorderLayout.CENTER);
+			mainWindow.getFrame().validate();
 		}
-		frame.repaint();
+		mainWindow.getFrame().repaint();
 		return tabbedPane.getTabCount() - 1;
 	}
 
@@ -552,19 +532,19 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 			// Dies ist ein Relikt aus der Zeit als noch ein Hintergrund
 			// angezeigt wurde
 			columnModel = null;
-			frame.getContentPane().remove(tabbedPane);
-			frame.validate();
+			mainWindow.getFrame().getContentPane().remove(tabbedPane);
+			mainWindow.getFrame().validate();
 		}
-		frame.repaint();
+		mainWindow.getFrame().repaint();
 	}
 
 	private void entferneAlleRegisterTabs() {
-		final Container contentPane = frame.getContentPane();
+		final Container contentPane = mainWindow.getFrame().getContentPane();
 		tabbedPane.removeAll();
 		contentPane.remove(tabbedPane);
 		columnModel = null;
-		frame.validate();
-		frame.repaint();
+		mainWindow.getFrame().validate();
+		mainWindow.getFrame().repaint();
 	}
 
 	/**
@@ -611,7 +591,7 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 			table.setRowSelectionInterval(buchungIndex, buchungIndex);
 			table.scrollRectToVisible(table.getCellRect(buchungIndex, 0, true));
 		} else {
-			status.setText("-E- "
+			mainWindow.setStatus("-E- "
 				+ RES.getString("status_register_not_found1")
 				+ " "
 				+ regname
@@ -667,7 +647,7 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 	private boolean keinRegisterVorhanden() {
 		if (tabbedPane.getTabCount() == 0) {
 			final int n = JOptionPane.showConfirmDialog(
-					frame,
+					mainWindow.getFrame(),
 					RES.getString("message_no_register"),
 					RES.getString("warning"),
 					JOptionPane.YES_NO_OPTION);
@@ -690,7 +670,7 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 	 */
 	private boolean abfrageGeaendert() {
 		if ((db != null) && (db.isGeaendert() || containerAuswertung.isGeaendert())) {
-			final int n = JOptionPane.showConfirmDialog(frame, RES.getString("message_data_changed"));
+			final int n = JOptionPane.showConfirmDialog(mainWindow.getFrame(), RES.getString("message_data_changed"));
 			switch (n) {
 				case JOptionPane.CANCEL_OPTION:
 					return false;
@@ -721,7 +701,7 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 			final int auswertungBreite = new Integer(properties.getProperty("jhh.auswertung.breite", "600")).intValue();
 			final int auswertungHoehe = new Integer(properties.getProperty("jhh.auswertung.hoehe", "400")).intValue();
 			containerAuswertung.setPreferredSize(new Dimension(auswertungBreite, auswertungHoehe));
-			status.setText(COPYRIGHT);
+			mainWindow.setCopyrightText();
 			final String name = db.erzeugeRegister(RES.getString("default_register_name"));
 			zeigeRegisterTab(name);
 			db.addUmbuchung(new Datum(), RES.getString("opening_balance"), name, name, Euro.NULL_EURO);
@@ -733,7 +713,7 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 			final JFileChooser dateidialog = new JFileChooser();
 			dateidialog.setFileFilter(fileFilter);
 			dateidialog.setCurrentDirectory(new File(properties.getProperty("jhh.ordner")));
-			if (dateidialog.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION) {
+			if (dateidialog.showOpenDialog(mainWindow.getFrame()) == JFileChooser.APPROVE_OPTION) {
 				laden(dateidialog.getSelectedFile());
 			}
 		}
@@ -745,7 +725,7 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 		db.setStartDatum(new Datum(properties.getProperty("jhh.opt.startdatum", "01.01.00")));
 		try {
 			final FileInputStream fis = new FileInputStream(datei);
-			final ProgressMonitorInputStream pmis = new ProgressMonitorInputStream(frame, RES.getString("reading")
+			final ProgressMonitorInputStream pmis = new ProgressMonitorInputStream(mainWindow.getFrame(), RES.getString("reading")
 				+ " "
 				+ datei
 				+ " ...", fis);
@@ -767,18 +747,18 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 				db.laden(in, versionInfo);
 				fis.close();
 				properties.setProperty("jhh.dateiname", datei.getPath());
-				status.setText(datei.getPath() + " " + RES.getString("status_loaded") + ".");
+				mainWindow.setStatus(datei.getPath() + " " + RES.getString("status_loaded") + ".");
 			}
 		} catch (final FileNotFoundException e) {
-			status.setText("-E- " + datei.getPath() + " " + RES.getString("status_not_found"));
+			mainWindow.setStatus("-E- " + datei.getPath() + " " + RES.getString("status_not_found"));
 			properties.remove("jhh.dateiname");
 		} catch (final IOException e) {
-			status.setText("-E- " + RES.getString("status_load_error") + ": " + datei.getPath());
+			mainWindow.setStatus("-E- " + RES.getString("status_load_error") + ": " + datei.getPath());
 			properties.remove("jhh.dateiname");
 		}
 		final int anzahl = db.ausfuehrenAutoBuchungen(new Datum());
 		if (anzahl > 0) {
-			status.setText(RES.getString("executed_automatic_bookings1")
+			mainWindow.setStatus(RES.getString("executed_automatic_bookings1")
 				+ " "
 				+ anzahl
 				+ " "
@@ -817,11 +797,11 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 			out.flush();
 			fos.close();
 			properties.setProperty("jhh.dateiname", datei.getPath());
-			status.setText(datei.getPath() + " " + RES.getString("status_saved") + ".");
+			mainWindow.setStatus(datei.getPath() + " " + RES.getString("status_saved") + ".");
 		} catch (final FileNotFoundException e1) {
-			status.setText("-E- " + datei.getPath() + " " + RES.getString("status_not_found"));
+			mainWindow.setStatus("-E- " + datei.getPath() + " " + RES.getString("status_not_found"));
 		} catch (final IOException e2) {
-			status.setText("-E- " + RES.getString("status_write_error") + ": " + datei.getPath());
+			mainWindow.setStatus("-E- " + RES.getString("status_write_error") + ": " + datei.getPath());
 		}
 
 		// Speichern der Auswertungen
@@ -833,7 +813,7 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 		final JFileChooser dateidialog = new JFileChooser();
 		dateidialog.setFileFilter(fileFilter);
 		dateidialog.setCurrentDirectory(new File(properties.getProperty("jhh.ordner")));
-		if (dateidialog.showSaveDialog(frame) == JFileChooser.APPROVE_OPTION) {
+		if (dateidialog.showSaveDialog(mainWindow.getFrame()) == JFileChooser.APPROVE_OPTION) {
 			speichern(dateidialog.getSelectedFile());
 		}
 	}
@@ -898,7 +878,7 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 		}
 		final int registerIndex = tabbedPane.getSelectedIndex();
 		final String regname = tabbedPane.getTitleAt(registerIndex);
-		final GenerischerDialog dlg = new GenerischerDialog(RES.getString("create_rebooking"), frame);
+		final GenerischerDialog dlg = new GenerischerDialog(RES.getString("create_rebooking"), mainWindow.getFrame());
 		final DatumGDP pane1 = new DatumGDP(RES.getString("insert_date") + ":", new Datum());
 		dlg.addPane(pane1);
 		final TextGDP pane2 = new TextGDP(RES.getString("insert_posting_text") + ":", RES.getString("default_posting_text"));
@@ -931,11 +911,11 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 		final JTable table = (JTable) scrollPane.getViewport().getView();
 		final int buchungIndex = table.getSelectedRow();
 		if (buchungIndex == -1) {
-			JOptionPane.showMessageDialog(frame, RES.getString("message_no_row_selected"));
+			JOptionPane.showMessageDialog(mainWindow.getFrame(), RES.getString("message_no_row_selected"));
 			return;
 		}
 		if (buchungIndex == db.getAnzahlBuchungen(regname)) {
-			JOptionPane.showMessageDialog(frame, RES.getString("message_row_can_not_be_deleted"));
+			JOptionPane.showMessageDialog(mainWindow.getFrame(), RES.getString("message_row_can_not_be_deleted"));
 			return;
 		}
 		db.entferneBuchung(regname, buchungIndex);
@@ -946,7 +926,7 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 		}
 		table.requestFocus();
 		table.setRowSelectionInterval(buchungIndex, buchungIndex);
-		status.setText(RES.getString("status_posting_deleted1")
+		mainWindow.setStatus(RES.getString("status_posting_deleted1")
 			+ " "
 			+ (buchungIndex + 1)
 			+ " "
@@ -967,12 +947,12 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 		final JTable table = (JTable) scrollPane.getViewport().getView();
 		final int buchungIndex = table.getSelectedRow();
 		if (buchungIndex == -1) {
-			JOptionPane.showMessageDialog(frame, RES.getString("message_no_row_selected"));
+			JOptionPane.showMessageDialog(mainWindow.getFrame(), RES.getString("message_no_row_selected"));
 			return;
 		}
 		final AbstractBuchung buchung = db.getBuchung(regname, buchungIndex);
 		if (buchung.getClass() == Umbuchung.class) {
-			JOptionPane.showMessageDialog(frame, RES.getString("message_rebookings_can_not_be_split"));
+			JOptionPane.showMessageDialog(mainWindow.getFrame(), RES.getString("message_rebookings_can_not_be_split"));
 		} else {
 			SplitBuchung splitBuchung;
 			if (buchung.getClass() == StandardBuchung.class) {
@@ -1004,19 +984,19 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 		final JTable table = (JTable) scrollPane.getViewport().getView();
 		final int buchungIndex = table.getSelectedRow();
 		if (buchungIndex == -1) {
-			JOptionPane.showMessageDialog(frame, RES.getString("message_no_row_selected"));
+			JOptionPane.showMessageDialog(mainWindow.getFrame(), RES.getString("message_no_row_selected"));
 			return;
 		}
 		if (buchungIndex == db.getAnzahlBuchungen(regname)) {
-			JOptionPane.showMessageDialog(frame, RES.getString("message_row_can_not_be_deleted"));
+			JOptionPane.showMessageDialog(mainWindow.getFrame(), RES.getString("message_row_can_not_be_deleted"));
 			return;
 		}
 		final AbstractBuchung buchung = db.getBuchung(regname, buchungIndex);
 		if (buchung.getClass() == Umbuchung.class) {
-			JOptionPane.showMessageDialog(frame, RES.getString("message_posting_is_already_a_reposting"));
+			JOptionPane.showMessageDialog(mainWindow.getFrame(), RES.getString("message_posting_is_already_a_reposting"));
 			return;
 		}
-		final GenerischerDialog dlg = new GenerischerDialog(RES.getString("convert"), frame);
+		final GenerischerDialog dlg = new GenerischerDialog(RES.getString("convert"), mainWindow.getFrame());
 		final RegisterGDP pane = new RegisterGDP(RES.getString("select_destination_register") + ":", db, regname);
 		dlg.addPane(pane);
 		if (dlg.showDialog()) {
@@ -1044,7 +1024,7 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 	}
 
 	public void alteBuchungenLoeschen() {
-		final GenerischerDialog dlg = new GenerischerDialog(RES.getString("delete_old_bookings"), frame);
+		final GenerischerDialog dlg = new GenerischerDialog(RES.getString("delete_old_bookings"), mainWindow.getFrame());
 		final DatumGDP pane = new DatumGDP(RES.getString("cutoff_date") + ":", new Datum());
 		pane.setPreferredSize(new Dimension(320, 60));
 		dlg.addPane(pane);
@@ -1053,7 +1033,7 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 			final Datum datum = (Datum) pane.getRefreshedWert();
 			db.entferneAlteBuchungen(datum);
 			alleRegisterVeraendert();
-			status.setText(RES.getString("status_posting_deleted4")
+			mainWindow.setStatus(RES.getString("status_posting_deleted4")
 				+ " "
 				+ datum
 				+ " "
@@ -1062,7 +1042,7 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 	}
 
 	public void kategorieErsetzen() {
-		final GenerischerDialog dlg = new GenerischerDialog(RES.getString("replace_category"), frame);
+		final GenerischerDialog dlg = new GenerischerDialog(RES.getString("replace_category"), mainWindow.getFrame());
 		final EineKategorieGDP pane1 = new EineKategorieGDP(RES.getString("current_category") + ":", db, null);
 		dlg.addPane(pane1);
 		final EineKategorieGDP pane2 = new EineKategorieGDP(RES.getString("new_category") + ":", db, null);
@@ -1072,7 +1052,7 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 			final EinzelKategorie alteKategorie = (EinzelKategorie) pane1.getRefreshedWert();
 			final EinzelKategorie neueKategorie = (EinzelKategorie) pane2.getRefreshedWert();
 			final int anzahl = db.ersetzeKategorie(alteKategorie, neueKategorie);
-			status.setText("" + anzahl + " " + RES.getString("status_replaced_categories"));
+			mainWindow.setStatus("" + anzahl + " " + RES.getString("status_replaced_categories"));
 			alleRegisterVeraendert();
 		}
 	}
@@ -1090,7 +1070,7 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 		}
 		final int registerIndex = tabbedPane.getSelectedIndex();
 		final String regname = tabbedPane.getTitleAt(registerIndex);
-		final GenerischerDialog dlg = new GenerischerDialog(RES.getString("join_register"), frame);
+		final GenerischerDialog dlg = new GenerischerDialog(RES.getString("join_register"), mainWindow.getFrame());
 		final RegisterGDP pane1 = new RegisterGDP(RES.getString("select_source_register") + ":", db, regname);
 		pane1.setPreferredSize(new Dimension(330, 60));
 		dlg.addPane(pane1);
@@ -1104,14 +1084,14 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 			if (!quelle.equals(ziel)) {
 				db.registerVereinigen(quelle, ziel);
 				entferneRegisterTab(quelle);
-				status.setText(RES.getString("status_register_deleted1")
+				mainWindow.setStatus(RES.getString("status_register_deleted1")
 					+ " "
 					+ quelle
 					+ " "
 					+ RES.getString("status_register_deleted2"));
 				registerVeraendert(ziel);
 			} else {
-				JOptionPane.showMessageDialog(frame, RES.getString("message_registers_may_not_be_equal"));
+				JOptionPane.showMessageDialog(mainWindow.getFrame(), RES.getString("message_registers_may_not_be_equal"));
 			}
 		}
 	}
@@ -1136,7 +1116,7 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 		}
 		final ArrayList<String[]> buchungen = db.getBuchungen();
 		final CsvHandler handler = new CsvHandler(buchungen);
-		handler.exportDlg(frame, properties.getProperty("jhh.ordner"));
+		handler.exportDlg(mainWindow.getFrame(), properties.getProperty("jhh.ordner"));
 	}
 
 	public void drucken() {
@@ -1184,7 +1164,7 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 		final String[][] importTabelle = spaltenZuordnung.getImportTabelle();
 		if (importTabelle != null) {
 			db.importBuchungen(regname, importTabelle);
-			status.setText("" + importTabelle.length + " " + RES.getString("status_postings_imported"));
+			mainWindow.setStatus("" + importTabelle.length + " " + RES.getString("status_postings_imported"));
 			registerVeraendert(registerIndex);
 		}
 	}
@@ -1195,14 +1175,14 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 		}
 		final int registerIndex = tabbedPane.getSelectedIndex();
 		final String regname = tabbedPane.getTitleAt(registerIndex);
-		final GenerischerDialog dlg = new GenerischerDialog(RES.getString("import_quicken"), frame);
+		final GenerischerDialog dlg = new GenerischerDialog(RES.getString("import_quicken"), mainWindow.getFrame());
 		final RegisterGDP pane = new RegisterGDP(RES.getString("select_register") + ":", db, regname);
 		pane.setPreferredSize(new Dimension(250, 60));
 		dlg.addPane(pane);
 		if (dlg.showDialog()) {
 			final JFileChooser dateidialog = new JFileChooser();
 			dateidialog.setCurrentDirectory(new File(properties.getProperty("jhh.ordner")));
-			if (dateidialog.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION) {
+			if (dateidialog.showOpenDialog(mainWindow.getFrame()) == JFileChooser.APPROVE_OPTION) {
 				final File datei = dateidialog.getSelectedFile();
 				try {
 					final FileInputStream in = new FileInputStream(datei);
@@ -1212,13 +1192,13 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 					zeigeAlleRegisterTabs();
 				} catch (final FileNotFoundException e1) {
 					LOGGER.warning("-E- " + datei.getPath() + " nicht gefunden!");
-					status.setText(e1.getMessage());
+					mainWindow.setStatus(e1.getMessage());
 				} catch (final IOException e2) {
 					LOGGER.warning("-E- Fehler beim Importieren: " + datei.getPath());
-					status.setText(e2.getMessage());
+					mainWindow.setStatus(e2.getMessage());
 				} catch (final QuickenImportException e) {
 					LOGGER.warning("-E- Fehler beim Importieren: " + datei.getPath());
-					status.setText(e.getMessage());
+					mainWindow.setStatus(e.getMessage());
 				}
 			}
 		}
@@ -1232,7 +1212,7 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 	 * Es wird standardmäßig die Datei "html/help.html" angezeigt.
 	 */
 	public void hilfeInhalt() {
-		final DlgHilfe dlg = new DlgHilfe(frame);
+		final DlgHilfe dlg = new DlgHilfe(mainWindow.getFrame());
 		dlg.pack();
 		dlg.setVisible(true);
 	}
@@ -1242,7 +1222,7 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 	 * aufgerufen.
 	 */
 	public void programmInfo() {
-		final DlgInfo dlg = new DlgInfo(frame);
+		final DlgInfo dlg = new DlgInfo(mainWindow.getFrame());
 		dlg.pack();
 		dlg.setVisible(true);
 	}
