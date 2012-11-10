@@ -18,6 +18,7 @@ package haushalt.gui;
 import haushalt.auswertung.CsvHandler;
 import haushalt.auswertung.DlgContainerAuswertung;
 import haushalt.auswertung.FarbPaletten;
+import haushalt.auswertung.domain.HaushaltDefinition;
 import haushalt.daten.AbstractBuchung;
 import haushalt.daten.Datenbasis;
 import haushalt.daten.Datenbasis.QuickenImportException;
@@ -149,6 +150,7 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 	private static final TextResource RES = TextResource.get();
 
 	private final Properties properties = new Properties();
+	private HaushaltDefinition haushaltDefinition;
 	
 	private JTabbedPane tabbedPane = new JTabbedPane(SwingConstants.BOTTOM);
 	private TableColumnModel columnModel = null;
@@ -164,12 +166,8 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 	
 	private final FileFilter fileFilter = new JHaushaltFileFilter();
 
-	/**
-	 * Einziger Konstruktor.
-	 */
 	public Haushalt(final String dateiname) {
 		this.actionHandler = new ActionHandler(this);
-		//this.icon = bildLaden("jhh-icon.gif").getImage();
 		
 		// Properties laden		
 		try {
@@ -212,10 +210,13 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 	private void loadOrCreateJHHFile(final String dateiname) {
 		// Letzte Datei laden oder neu initialisieren
 		// In jedem Fall wird die Datenbasis erzeugt.
-		if (dateiname != null) {
-			laden(new File(dateiname));
-		} else if (this.properties.containsKey("jhh.dateiname")) {
-			laden(new File(this.properties.getProperty("jhh.dateiname")));
+		String fileToLoad = (dateiname != null)? 
+				dateiname:
+				(haushaltDefinition.getJhhFileName() != null)? 
+						haushaltDefinition.getJhhFileName() :
+						"";
+		if (fileToLoad != null) {
+			laden(new File(fileToLoad));
 		} else {
 			neu();
 		}
@@ -224,16 +225,6 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 	private void defineMenuBar() {
 		mainWindow.getFrame().setJMenuBar(this.actionHandler.erzeugeMenuBar());
 	}
-
-	
-//	private void defineMainWindow() {
-//		final Container contentPane = this.frame.getContentPane();
-//		final int breite = new Integer(this.properties.getProperty("jhh.register.breite", "600")).intValue();
-//		final int hoehe = new Integer(this.properties.getProperty("jhh.register.hoehe", "400")).intValue();
-//		this.tabbedPane.setPreferredSize(new Dimension(breite, hoehe));
-//		contentPane.add(this.actionHandler.erzeugeToolBar(), BorderLayout.PAGE_START);
-//		contentPane.add(this.status, BorderLayout.PAGE_END);
-//	}
 
 	private void setLookAndFeelDependingOnSystem() {
 		final String systemClassName = UIManager.getSystemLookAndFeelClassName();
@@ -266,8 +257,14 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 		} finally {
 			fis.close();			
 		}
+		
+		haushaltDefinition = createHaushaltDomain(properties);
 	}
 
+	private HaushaltDefinition createHaushaltDomain(Properties properties) {
+		HaushaltDefinition haushalt = new HaushaltDefinition(properties);
+		return haushalt;
+	}
 
 
 	/**
@@ -694,7 +691,7 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 
 	public void neu() {
 		if (abfrageGeaendert()) {
-			properties.remove("jhh.dateiname");
+			haushaltDefinition.setJhhFileName(null);
 			entferneAlleRegisterTabs();
 			db = new Datenbasis();
 			containerAuswertung = new DlgContainerAuswertung(this, db);
@@ -746,15 +743,13 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 			} else {
 				db.laden(in, versionInfo);
 				fis.close();
-				properties.setProperty("jhh.dateiname", datei.getPath());
+				haushaltDefinition.setJhhFileName(datei.getPath());
 				mainWindow.setStatus(datei.getPath() + " " + RES.getString("status_loaded") + ".");
 			}
 		} catch (final FileNotFoundException e) {
-			mainWindow.setStatus("-E- " + datei.getPath() + " " + RES.getString("status_not_found"));
-			properties.remove("jhh.dateiname");
+			handleJhhFileException("-E- " + datei.getPath() + " " + RES.getString("status_not_found"));
 		} catch (final IOException e) {
-			mainWindow.setStatus("-E- " + RES.getString("status_load_error") + ": " + datei.getPath());
-			properties.remove("jhh.dateiname");
+			handleJhhFileException("-E- " + RES.getString("status_load_error") + ": " + datei.getPath());
 		}
 		final int anzahl = db.ausfuehrenAutoBuchungen(new Datum());
 		if (anzahl > 0) {
@@ -776,8 +771,13 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 
 	}
 
+	private void handleJhhFileException(String message) {
+		mainWindow.setStatus(message);
+		haushaltDefinition.setJhhFileName(null);
+	}
+	
 	public void speichern() {
-		final String dateiname = properties.getProperty("jhh.dateiname");
+		final String dateiname = haushaltDefinition.getJhhFileName();
 		if (dateiname == null) {
 			speichernUnter();
 		} else {
@@ -796,7 +796,7 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 			db.speichern(out);
 			out.flush();
 			fos.close();
-			properties.setProperty("jhh.dateiname", datei.getPath());
+			haushaltDefinition.setJhhFileName(datei.getPath());
 			mainWindow.setStatus(datei.getPath() + " " + RES.getString("status_saved") + ".");
 		} catch (final FileNotFoundException e1) {
 			mainWindow.setStatus("-E- " + datei.getPath() + " " + RES.getString("status_not_found"));
