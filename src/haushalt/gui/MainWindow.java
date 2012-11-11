@@ -1,6 +1,6 @@
 package haushalt.gui;
 
-import haushalt.auswertung.domain.HaushaltDefinition;
+import haushalt.auswertung.domain.HaushaltProperties;
 import haushalt.auswertung.domain.MainWindowProperties;
 
 import java.awt.BorderLayout;
@@ -22,7 +22,7 @@ public class MainWindow {
 	private MainWindowProperties properties;
 	private JTabbedPane tabbedPane;
 	private ActionHandler actionHandler;
-	private JTextField status = new JTextField(HaushaltDefinition.COPYRIGHT);
+	private JTextField status = new JTextField(HaushaltProperties.COPYRIGHT);
 	private GemerkteBuchungenGlassPane glassPane;
 	
 	public MainWindow(MainWindowProperties properties, JTabbedPane tabbedPane, ActionHandler actionHandler,GemerkteBuchungenGlassPane gemerkteBuchungen) {
@@ -48,7 +48,7 @@ public class MainWindow {
 	}
 	
 	public void setCopyrightText() {
-		setStatus(HaushaltDefinition.COPYRIGHT);
+		setStatus(HaushaltProperties.COPYRIGHT);
 	}
 	
 	/**
@@ -63,7 +63,7 @@ public class MainWindow {
 	private void defineFrame() {
 		this.frame.setIconImage(loadIcon("jhh-icon.gif").getImage());
 		this.frame.setGlassPane(this.glassPane);
-		this.frame.setTitle(HaushaltDefinition.COPYRIGHT);
+		this.frame.setTitle(HaushaltProperties.COPYRIGHT);
 		this.frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 		this.frame.addWindowListener(new WindowAdapter() {
 			@Override

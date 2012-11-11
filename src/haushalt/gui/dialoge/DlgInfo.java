@@ -16,7 +16,7 @@
 package haushalt.gui.dialoge;
 
 import haushalt.auswertung.DlgContainerAuswertung;
-import haushalt.auswertung.domain.HaushaltDefinition;
+import haushalt.auswertung.domain.HaushaltProperties;
 import haushalt.daten.Datenbasis;
 import haushalt.gui.Haushalt;
 import haushalt.gui.MainWindow;
@@ -72,13 +72,13 @@ public class DlgInfo extends JDialog {
 		this.textArea.selectAll();
 		this.textArea.cut();
 		this.textArea.setEditable(false);
-		this.textArea.append(HaushaltDefinition.COPYRIGHT + "\n\n");
+		this.textArea.append(HaushaltProperties.COPYRIGHT + "\n\n");
 		this.textArea.append(RES.getString("info_gpl_text1") + "\n");
 		this.textArea.append(RES.getString("info_gpl_text2") + "\n");
 		this.textArea.append(RES.getString("info_gpl_text3") + "\n\n");
 		this.textArea.append(RES.getString("info_icons") + "\n\n");
 
-		this.textArea.append(RES.getString("info_version_text1") + " " + HaushaltDefinition.VERSION + "\n");
+		this.textArea.append(RES.getString("info_version_text1") + " " + HaushaltProperties.VERSION + "\n");
 		this.textArea.append(RES.getString("info_version_text2") + " " + Datenbasis.VERSION_DATENBASIS + "\n");
 		this.textArea.append(RES.getString("info_version_text3") + " " + DlgContainerAuswertung.VERSION_AUSWERTUNG + "\n");
 

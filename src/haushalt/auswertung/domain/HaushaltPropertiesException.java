@@ -1,6 +1,6 @@
 package haushalt.auswertung.domain;
 
 @SuppressWarnings("serial")
-public class HaushaltDefinitionException extends Exception {
+public class HaushaltPropertiesException extends Exception {
 
 }

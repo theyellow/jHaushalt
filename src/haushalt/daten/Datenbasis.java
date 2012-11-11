@@ -107,6 +107,10 @@ public class Datenbasis {
 		this.kategorieListe.add(EinzelKategorie.SONSTIGES);
 	}
 
+	public static boolean givenVersionEqualsDatabaseVersion(String version) {
+		 return version.equals("jHaushalt" + VERSION_DATENBASIS);
+	}
+	
 	/**
 	 * Ist <code>true</code>, wenn Daten geändert wurden.
 	 * 

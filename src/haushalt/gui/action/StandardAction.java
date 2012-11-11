@@ -113,6 +113,7 @@ public class StandardAction extends AbstractAction {
 		} catch (final InvocationTargetException e) {
 			logger.warning("InvocationTargetException wenn calling actionPerformed of " + name);
 			logger.warning(e.getMessage());
+			logger.warning(e.getTargetException().getMessage());
 		}
 
 	}

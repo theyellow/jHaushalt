@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.util.Locale;
 import java.util.Properties;
 
-public class HaushaltDefinition {
+public class HaushaltProperties {
 	public static final String COPYRIGHT = "jHaushalt v2.6 * (C)opyright 2002-2011 Lars H. Hahn";
 	public static final String VERSION = "2.6";
 	public static final String PROPERTIES_FILENAME = ".jhh";
@@ -23,7 +23,7 @@ public class HaushaltDefinition {
 	private ColumnModelProperties columnModelProperties;
 	
 	
-	public HaushaltDefinition(Properties properties) {
+	public HaushaltProperties(Properties properties) {
 		this.properties = properties;
 		mainWindowProperties = new MainWindowProperties(getProperties());
 		columnModelProperties = new ColumnModelProperties(getProperties());
@@ -110,19 +110,19 @@ public class HaushaltDefinition {
 		this.properties.setProperty(key, value);
 	}
 	
-	public void save() throws HaushaltDefinitionException {
+	public void save() throws HaushaltPropertiesException {
 		// Speichert die individuellen Programmeigenschaften in die Datei
 		// <i>PROPERTIES_FILENAME</i>.
 		final String userHome = System.getProperty("user.home");
-		final File datei = new File(userHome, HaushaltDefinition.PROPERTIES_FILENAME);
+		final File datei = new File(userHome, HaushaltProperties.PROPERTIES_FILENAME);
 		try {
 			final FileOutputStream fos = new FileOutputStream(datei);
-			properties.store(fos, "Properties: " + HaushaltDefinition.VERSION);
+			properties.store(fos, "Properties: " + HaushaltProperties.VERSION);
 			fos.close();
 		} catch (FileNotFoundException e1) {
-			throw new HaushaltDefinitionException();
+			throw new HaushaltPropertiesException();
 		} catch (IOException e) {
-			throw new HaushaltDefinitionException();
+			throw new HaushaltPropertiesException();
 		}
 	}
 

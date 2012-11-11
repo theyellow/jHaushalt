@@ -8,41 +8,41 @@ import java.util.Properties;
 
 public class HaushaltDefinitionLoader {
 
-	private static HaushaltDefinition haushaltDefinition;
+	private static HaushaltProperties haushaltDefinition;
 	
-	public static synchronized HaushaltDefinition getHaushaltDefinition() throws HaushaltDefinitionException {
+	public static synchronized HaushaltProperties getHaushaltDefinition() throws HaushaltPropertiesException {
 		if (haushaltDefinition == null) {
 			haushaltDefinition = loadPropertiesFromJHHFile();
 		}
 		return haushaltDefinition;
 	}
 
-	private static HaushaltDefinition loadPropertiesFromJHHFile() throws HaushaltDefinitionException {
+	private static HaushaltProperties loadPropertiesFromJHHFile() throws HaushaltPropertiesException {
 		final String userHome = System.getProperty("user.home");
-		final File datei = new File(userHome, HaushaltDefinition.PROPERTIES_FILENAME);
+		final File datei = new File(userHome, HaushaltProperties.PROPERTIES_FILENAME);
 		FileInputStream fis;
 		try {
 			fis = new FileInputStream(datei);			
 		} catch (FileNotFoundException e) {
-			throw new HaushaltDefinitionException();
+			throw new HaushaltPropertiesException();
 		}
 		Properties properties = new Properties(); 
 		try {
 			properties.load(fis);
 		} catch (IOException e) {
-			throw new HaushaltDefinitionException();
+			throw new HaushaltPropertiesException();
 		} finally {
 			try {
 				fis.close();
 			} catch (IOException e) {
-				throw new HaushaltDefinitionException();
+				throw new HaushaltPropertiesException();
 			}			
 		}		
 		return createHaushaltDomain(properties);
 	}
 	
-	private static HaushaltDefinition createHaushaltDomain(Properties properties) {
-		HaushaltDefinition haushalt = new HaushaltDefinition(properties);
+	private static HaushaltProperties createHaushaltDomain(Properties properties) {
+		HaushaltProperties haushalt = new HaushaltProperties(properties);
 		return haushalt;
 	}
 

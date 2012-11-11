@@ -19,8 +19,8 @@ import haushalt.auswertung.CsvHandler;
 import haushalt.auswertung.DlgContainerAuswertung;
 import haushalt.auswertung.FarbPaletten;
 import haushalt.auswertung.domain.ColumnModelProperties;
-import haushalt.auswertung.domain.HaushaltDefinition;
-import haushalt.auswertung.domain.HaushaltDefinitionException;
+import haushalt.auswertung.domain.HaushaltProperties;
+import haushalt.auswertung.domain.HaushaltPropertiesException;
 import haushalt.auswertung.domain.HaushaltDefinitionLoader;
 import haushalt.daten.AbstractBuchung;
 import haushalt.daten.Datenbasis;
@@ -28,6 +28,7 @@ import haushalt.daten.Datenbasis.QuickenImportException;
 import haushalt.daten.Datum;
 import haushalt.daten.EinzelKategorie;
 import haushalt.daten.Euro;
+import haushalt.daten.ExtendedDatabase;
 import haushalt.daten.SplitBuchung;
 import haushalt.daten.StandardBuchung;
 import haushalt.daten.Umbuchung;
@@ -49,6 +50,8 @@ import haushalt.gui.generischerdialog.GenerischerDialog;
 import haushalt.gui.generischerdialog.RegisterGDP;
 import haushalt.gui.generischerdialog.TextGDP;
 import haushalt.gui.mac.MacAdapter;
+import haushalt.service.data.DatabaseService;
+import haushalt.service.data.DatabaseServiceException;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -59,12 +62,9 @@ import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.print.PrinterException;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.net.URL;
@@ -86,7 +86,6 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JViewport;
 import javax.swing.ListSelectionModel;
-import javax.swing.ProgressMonitorInputStream;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
@@ -104,7 +103,7 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 
 	private static final TextResource RES = TextResource.get();
 
-	private HaushaltDefinition haushaltDefinition;
+	private HaushaltProperties haushaltDefinition;
 	
 	private JTabbedPane tabbedPane = new JTabbedPane(SwingConstants.BOTTOM);
 	private TableColumnModel columnModel = null;
@@ -120,13 +119,16 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 	
 	private final FileFilter fileFilter = new JHaushaltFileFilter();
 
+	// FIXME Dependency Injection
+	private DatabaseService databaseService = new DatabaseService();
+	
 	public Haushalt(final String dateiname) {
 		this.actionHandler = new ActionHandler(this);
 		
 		// Properties laden		
 		try {
 			haushaltDefinition = HaushaltDefinitionLoader.getHaushaltDefinition();
-		} catch (HaushaltDefinitionException e) {
+		} catch (HaushaltPropertiesException e) {
 			showDialogToCreateJHHFile();
 		}
 
@@ -171,7 +173,7 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 						haushaltDefinition.getJhhFileName() :
 						"";
 		if (fileToLoad != null) {
-			laden(new File(fileToLoad));
+			loadDatabase(new File(fileToLoad));
 		} else {
 			neu();
 		}
@@ -577,8 +579,11 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 	 * 
 	 * @return <code>true</code> - Applikation wurde geändert, <code>false</code> - Daten sind gespeichert
 	 */
-	private boolean abfrageGeaendert() {
-		if ((db != null) && (db.isGeaendert() || containerAuswertung.isGeaendert())) {
+	private boolean areAllFilesInASavedStatus() {
+		if (db == null) {
+			return true; // FIXME well, seems to be the most reasonable one
+		}
+		if (areThereUnsavedChanges()) {
 			final int n = JOptionPane.showConfirmDialog(mainWindow.getFrame(), RES.getString("message_data_changed"));
 			switch (n) {
 				case JOptionPane.CANCEL_OPTION:
@@ -587,32 +592,86 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 					return true;
 				case JOptionPane.OK_OPTION:
 					speichern();
-					break;
+					return !areThereUnsavedChanges();
 				default:
 					break;
-			}
-			if (db.isGeaendert() || containerAuswertung.isGeaendert()) {
-				// war
-				// nicht
-				// erfolgreich!
-				return false;
 			}
 		}
 		return true;
 	}
+	
+	private boolean areThereUnsavedChanges() {
+		return (db.isGeaendert() || containerAuswertung.isGeaendert());
+	}
 
 	public void neu() {
-		if (abfrageGeaendert()) {
-			haushaltDefinition.setJhhFileName(null);
+		if (areAllFilesInASavedStatus()) {
+			haushaltDefinition.setJhhFileName("");
 			entferneAlleRegisterTabs();
 			db = new Datenbasis();
-			containerAuswertung = new DlgContainerAuswertung(this, db);
-			containerAuswertung.setPreferredSize(getPreferredEvaluationDimension());
+			showDialogEvaluation(db);
 			mainWindow.setCopyrightText();
 			final String name = db.erzeugeRegister(RES.getString("default_register_name"));
 			zeigeRegisterTab(name);
 			db.addUmbuchung(new Datum(), RES.getString("opening_balance"), name, name, Euro.NULL_EURO);
 		}
+	}
+
+	private void loadDatabase(final File datei) {	
+		entferneAlleRegisterTabs();		
+		reallyLoadDatabase(datei);
+		doAutomatedTransactions();
+		zeigeAlleRegisterTabs();
+		final String dateiname = datei.getPath() + ".jha";
+		showDialogEvaluation(db);
+		containerAuswertung.laden(dateiname);
+	}
+
+	private void showDialogEvaluation(Datenbasis db) {
+		containerAuswertung = new DlgContainerAuswertung(this, db);
+		containerAuswertung.setPreferredSize(getPreferredEvaluationDimension());
+	}
+
+	private void doAutomatedTransactions() {
+		final int anzahl = db.ausfuehrenAutoBuchungen(new Datum());
+		if (anzahl > 0) {
+			mainWindow.setStatus(RES.getString("executed_automatic_bookings1")
+				+ " "
+				+ anzahl
+				+ " "
+				+ RES.getString("executed_automatic_bookings2"));
+		}
+	}
+
+	private void reallyLoadDatabase(final File datei) {
+		ExtendedDatabase loadedDatabase = null;
+		
+		try {
+			loadedDatabase = databaseService.loadDatabase(datei);
+		} catch (FileNotFoundException e) {
+			handleJhhFileException("-E- " + datei.getPath() + " " + RES.getString("status_not_found"));
+		} catch (DatabaseServiceException e) {
+			handleJhhFileException("-E- " + RES.getString("status_load_error") + ": " + datei.getPath());
+		}
+
+		if (Datenbasis.givenVersionEqualsDatabaseVersion(loadedDatabase.getVersionId())
+				|| hasUserConfirmedWarningMessage(loadedDatabase.getVersionId())) {
+			this.db = loadedDatabase.getDataBase();			
+		}
+	}
+
+	private boolean hasUserConfirmedWarningMessage(String versionInfo) {
+		final String warningTitle = RES.getString("warning");
+		final String warningMessage = getWarningMessage(versionInfo);
+		int confirmationAnswer = JOptionPane.showConfirmDialog(null, warningMessage, warningTitle, JOptionPane.YES_NO_OPTION);
+		return confirmationAnswer == JOptionPane.YES_OPTION;
+	}
+	
+	private String getWarningMessage(final String versionInfo) {
+		final String warningMessage = RES.getString("message_old_version1")
+			+ " " + versionInfo + " " + RES.getString("message_old_version2")
+			+ Datenbasis.VERSION_DATENBASIS + RES.getString("message_old_version3");
+		return warningMessage;
 	}
 
 	private Dimension getPreferredEvaluationDimension() {
@@ -622,69 +681,15 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 	}
 
 	
-	
 	public void laden() {
-		if (abfrageGeaendert()) {
+		if (areAllFilesInASavedStatus()) {
 			final JFileChooser dateidialog = new JFileChooser();
 			dateidialog.setFileFilter(fileFilter);
 			dateidialog.setCurrentDirectory(new File(haushaltDefinition.getJhhFolder()));
 			if (dateidialog.showOpenDialog(mainWindow.getFrame()) == JFileChooser.APPROVE_OPTION) {
-				laden(dateidialog.getSelectedFile());
+				loadDatabase(dateidialog.getSelectedFile());
 			}
 		}
-	}
-
-	private void laden(final File datei) {
-		entferneAlleRegisterTabs();
-		db = new Datenbasis();
-		db.setStartDatum(haushaltDefinition.getTransactionStartDate());
-		try {
-			final FileInputStream fis = new FileInputStream(datei);
-			final ProgressMonitorInputStream pmis = new ProgressMonitorInputStream(mainWindow.getFrame(), RES.getString("reading")
-				+ " "
-				+ datei
-				+ " ...", fis);
-			final DataInputStream in = new DataInputStream(pmis);
-			final String versionInfo = in.readUTF();
-			final boolean isCurrentVersion = versionInfo.equals("jHaushalt" + Datenbasis.VERSION_DATENBASIS);
-			final String warningMessage = RES.getString("message_old_version1")
-				+ " "
-				+ versionInfo
-				+ " "
-				+ RES.getString("message_old_version2")
-				+ Datenbasis.VERSION_DATENBASIS
-				+ RES.getString("message_old_version3");
-			final String warningTitle = RES.getString("warning");
-			if ((!isCurrentVersion)
-				&& (JOptionPane.showConfirmDialog(null, warningMessage, warningTitle, JOptionPane.YES_NO_OPTION) == JOptionPane.NO_OPTION)) {
-				fis.close();
-			} else {
-				db.laden(in, versionInfo);
-				fis.close();
-				haushaltDefinition.setJhhFileName(datei.getPath());
-				mainWindow.setStatus(datei.getPath() + " " + RES.getString("status_loaded") + ".");
-			}
-		} catch (final FileNotFoundException e) {
-			handleJhhFileException("-E- " + datei.getPath() + " " + RES.getString("status_not_found"));
-		} catch (final IOException e) {
-			handleJhhFileException("-E- " + RES.getString("status_load_error") + ": " + datei.getPath());
-		}
-		final int anzahl = db.ausfuehrenAutoBuchungen(new Datum());
-		if (anzahl > 0) {
-			mainWindow.setStatus(RES.getString("executed_automatic_bookings1")
-				+ " "
-				+ anzahl
-				+ " "
-				+ RES.getString("executed_automatic_bookings2"));
-		}
-		zeigeAlleRegisterTabs();
-
-		// Auswertungen laden
-		containerAuswertung = new DlgContainerAuswertung(this, db);
-		final String dateiname = datei.getPath() + ".jha";
-		containerAuswertung.laden(dateiname);
-		containerAuswertung.setPreferredSize(getPreferredEvaluationDimension());
-
 	}
 
 	private void handleJhhFileException(String message) {
@@ -702,27 +707,22 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 	}
 
 	private void speichern(File datei) {
+		if (!datei.getName().toLowerCase().endsWith(".jhh")) {
+			final String name = datei.getAbsolutePath() + ".jhh";
+			datei = new File(name);
+		}
 		try {
-			if (!datei.getName().toLowerCase().endsWith(".jhh")) {
-				final String name = datei.getAbsolutePath() + ".jhh";
-				datei = new File(name);
-			}
-			final FileOutputStream fos = new FileOutputStream(datei);
-			final DataOutputStream out = new DataOutputStream(fos);
-			db.speichern(out);
-			out.flush();
-			fos.close();
+			databaseService.saveDbFile(datei, db);
 			haushaltDefinition.setJhhFileName(datei.getPath());
 			mainWindow.setStatus(datei.getPath() + " " + RES.getString("status_saved") + ".");
 		} catch (final FileNotFoundException e1) {
 			mainWindow.setStatus("-E- " + datei.getPath() + " " + RES.getString("status_not_found"));
-		} catch (final IOException e2) {
+		} catch (DatabaseServiceException e) {
 			mainWindow.setStatus("-E- " + RES.getString("status_write_error") + ": " + datei.getPath());
 		}
 
 		// Speichern der Auswertungen
 		containerAuswertung.speichern(datei.getPath() + ".jha");
-
 	}
 
 	public void speichernUnter() {
@@ -735,7 +735,7 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 	}
 
 	public void beenden() {
-		if (abfrageGeaendert()) {
+		if (areAllFilesInASavedStatus()) {
 			final Dimension dimension = tabbedPane.getSize();
 			haushaltDefinition.setProperty("jhh.register.breite", "" + dimension.width);
 			if (dimension.height > 100) {
@@ -751,7 +751,7 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 
 			try {
 				haushaltDefinition.save();
-			} catch (HaushaltDefinitionException e) {
+			} catch (HaushaltPropertiesException e) {
 				LOGGER.info("Could not save haushalt definition.");
 				e.printStackTrace();
 			}
