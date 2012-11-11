@@ -56,7 +56,6 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Point;
-import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.print.PrinterException;
@@ -193,7 +192,7 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 
 	private void setLocaleAndFrameLocale() {
 		// Das Neusetzen der Locale geht leider nicht an einer zentralen Stelle
-		RES.setLocale(haushaltDefinition.getProperty("jhh.opt.sprache", "" + Locale.getDefault()));
+		RES.setLocale(haushaltDefinition.getUserOrSystemLocale());
 		Locale.setDefault(RES.getLocale());
 		mainWindow.getFrame().setLocale(RES.getLocale());
 	}
@@ -223,63 +222,37 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 	 * 
 	 */
 	private void oberflaecheAnpassen() {
-		Euro.setWaehrungssymbol(haushaltDefinition.getProperty("jhh.opt.waehrung", "€"));
-		setTabPlacement(haushaltDefinition.getProperty("jhh.opt.reiter", "BOTTOM"));
+		setTabPlacement(haushaltDefinition.getTabPlacement());
 		for (int i = 0; i < tabbedPane.getTabCount(); i++) {
 			final JScrollPane scrollPane = (JScrollPane) tabbedPane.getComponent(i);
 			final JTable table = (JTable) scrollPane.getViewport().getView();
 			table.setSelectionBackground(getFarbeSelektion());
 			table.setGridColor(getFarbeGitter());
 		}
-		db.setStartDatum(new Datum(haushaltDefinition.getProperty("jhh.opt.startdatum", "01.01.00")));
-		int idx;
-		try {
-			idx = Integer.parseInt(haushaltDefinition.getProperty("jhh.opt.deltaste", "0"));
-		} catch (final NumberFormatException e) {
-			// Kann Auftreten, da Version < 2.5 noch kein Index, sondern
-			// Klartext gespeichert hat
-			idx = 0;
-			haushaltDefinition.setProperty("jhh.opt.deltaste", "0");
-		}
-		int deltaste;
-		switch (idx) {
-			case 1:
-				deltaste = InputEvent.SHIFT_MASK;
-				break;
-			case 2:
-				deltaste = InputEvent.CTRL_MASK;
-				break;
-			case 3:
-				deltaste = InputEvent.ALT_MASK;
-				break;
-			default:
-				deltaste = 0;
-		}
-		DeleteableTextField.setDeltaste(deltaste);
-		FarbPaletten.setCustomColor(haushaltDefinition.getProperty("jhh.opt.custom", "16776960"));
+		db.setStartDatum(haushaltDefinition.getTransactionStartDate());
+
+		DeleteableTextField.setDeltaste(haushaltDefinition.setDeleteKeyCode());
+		FarbPaletten.setCustomColor(haushaltDefinition.getCustomColorCodes());
 	}
 
 	public Color getFarbeSelektion() {
-		final int farbe = new Integer(haushaltDefinition.getProperty("jhh.opt.selektion", "12632256")).intValue(); // #c0c0c0
-		return new Color(farbe);
+		return haushaltDefinition.getSelectionColor();
 	}
 
 	public Color getFarbeGitter() {
-		final int farbe = new Integer(haushaltDefinition.getProperty("jhh.opt.gitter", "10066329")).intValue(); // #999999
-		return new Color(farbe);
+		return haushaltDefinition.getGridColor();
 	}
 
 	public Color getFarbeZukunft() {
-		final int farbe = new Integer(haushaltDefinition.getProperty("jhh.opt.zukunft", "16777088")).intValue(); // #ffff80
-		return new Color(farbe);
+		return haushaltDefinition.getFarbeZukunft();
 	}
 
 	public String getFontname() {
-		return haushaltDefinition.getProperty("jhh.opt.font", "SansSerif");
+		return haushaltDefinition.getFontName();
 	}
 
 	public int getFontgroesse() {
-		return new Integer(haushaltDefinition.getProperty("jhh.opt.punkt", "12")).intValue();
+		return haushaltDefinition.getFontSize();
 	}
 
 	/**
@@ -553,7 +526,7 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 	}
 
 	public boolean gemerkteBuchungen() {
-		return Boolean.valueOf(haushaltDefinition.getProperty("jhh.opt.gemerkte", "true")).booleanValue();
+		return haushaltDefinition.haveExistingTransactions();
 	}
 
 	/**
@@ -634,9 +607,7 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 			entferneAlleRegisterTabs();
 			db = new Datenbasis();
 			containerAuswertung = new DlgContainerAuswertung(this, db);
-			final int auswertungBreite = new Integer(haushaltDefinition.getProperty("jhh.auswertung.breite", "600")).intValue();
-			final int auswertungHoehe = new Integer(haushaltDefinition.getProperty("jhh.auswertung.hoehe", "400")).intValue();
-			containerAuswertung.setPreferredSize(new Dimension(auswertungBreite, auswertungHoehe));
+			containerAuswertung.setPreferredSize(getPreferredEvaluationDimension());
 			mainWindow.setCopyrightText();
 			final String name = db.erzeugeRegister(RES.getString("default_register_name"));
 			zeigeRegisterTab(name);
@@ -644,6 +615,14 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 		}
 	}
 
+	private Dimension getPreferredEvaluationDimension() {
+		final int auswertungBreite = haushaltDefinition.getEvaluationWidth();
+		final int auswertungHoehe = haushaltDefinition.getEvaluationHeight();
+		return new Dimension(auswertungBreite, auswertungHoehe);
+	}
+
+	
+	
 	public void laden() {
 		if (abfrageGeaendert()) {
 			final JFileChooser dateidialog = new JFileChooser();
@@ -658,7 +637,7 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 	private void laden(final File datei) {
 		entferneAlleRegisterTabs();
 		db = new Datenbasis();
-		db.setStartDatum(new Datum(haushaltDefinition.getProperty("jhh.opt.startdatum", "01.01.00")));
+		db.setStartDatum(haushaltDefinition.getTransactionStartDate());
 		try {
 			final FileInputStream fis = new FileInputStream(datei);
 			final ProgressMonitorInputStream pmis = new ProgressMonitorInputStream(mainWindow.getFrame(), RES.getString("reading")
@@ -704,9 +683,7 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 		containerAuswertung = new DlgContainerAuswertung(this, db);
 		final String dateiname = datei.getPath() + ".jha";
 		containerAuswertung.laden(dateiname);
-		final int auswertungBreite = new Integer(haushaltDefinition.getProperty("jhh.auswertung.breite", "600")).intValue();
-		final int auswertungHoehe = new Integer(haushaltDefinition.getProperty("jhh.auswertung.hoehe", "400")).intValue();
-		containerAuswertung.setPreferredSize(new Dimension(auswertungBreite, auswertungHoehe));
+		containerAuswertung.setPreferredSize(getPreferredEvaluationDimension());
 
 	}
 
@@ -768,7 +745,7 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 			}
 			if (columnModel != null) {
 				for (int i = 0; i < columnModel.getColumnCount(); i++) {
-					haushaltDefinition.getProperty("jhh.register.spalte" + i, "" + columnModel.getColumn(i).getWidth());
+					haushaltDefinition.setProperty("jhh.register.spalte" + i, "" + columnModel.getColumn(i).getWidth());
 				}
 			}
 
@@ -1119,8 +1096,9 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 				final File datei = dateidialog.getSelectedFile();
 				try {
 					final FileInputStream in = new FileInputStream(datei);
-					final boolean euroImport = Boolean.valueOf(haushaltDefinition.getProperty("jhh.opt.euroimport", "true")).booleanValue();
-					db.importQuickenRegister(in, (String) pane.getRefreshedWert(), euroImport);
+					db.importQuickenRegister(
+							in, (String) pane.getRefreshedWert(), 
+							haushaltDefinition.isDataImportInEuroCurrency());
 					in.close();
 					zeigeAlleRegisterTabs();
 				} catch (final FileNotFoundException e1) {
