@@ -26,6 +26,7 @@ public class HaushaltDefinition {
 	public HaushaltDefinition(Properties properties) {
 		this.properties = properties;
 		mainWindowProperties = new MainWindowProperties(getProperties());
+		columnModelProperties = new ColumnModelProperties(getProperties());
 	}
 	
 	public String getJhhFileName() {
