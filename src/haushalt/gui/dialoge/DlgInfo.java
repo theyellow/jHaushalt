@@ -18,8 +18,6 @@ package haushalt.gui.dialoge;
 import haushalt.auswertung.DlgContainerAuswertung;
 import haushalt.auswertung.domain.HaushaltProperties;
 import haushalt.daten.Datenbasis;
-import haushalt.gui.Haushalt;
-import haushalt.gui.MainWindow;
 import haushalt.gui.TextResource;
 
 import java.awt.BorderLayout;
