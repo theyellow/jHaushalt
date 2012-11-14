@@ -55,7 +55,7 @@ public final class MacAdapter {
 		// about dialog
 		application.setAboutHandler(new AboutHandler() {
 
-			@Override
+			//@ Override
 			public void handleAbout(final AboutEvent e) {
 				final DlgInfo dlg = new DlgInfo(null);
 				dlg.pack();
@@ -67,7 +67,7 @@ public final class MacAdapter {
 		// preferences
 		application.setPreferencesHandler(new PreferencesHandler() {
 
-			@Override
+			//@ Override
 			public void handlePreferences(final PreferencesEvent arg0) {
 				haushalt.optionen();
 			}

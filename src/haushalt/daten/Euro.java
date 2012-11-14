@@ -106,10 +106,6 @@ public class Euro implements Cloneable, Comparable<Euro> {
 		}
 	}
 
-	public static void setWaehrungssymbol(final String waehrungssymbol) {
-		symbol = waehrungssymbol;
-	}
-
 	public void umrechnenVonDM() { // Wenn der Wert in DM vorliegt -> umrechnen
 									// in EURO
 		if (this.wert < 0) {
