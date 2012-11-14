@@ -10,6 +10,6 @@ public interface DatabaseService {
 
 	ExtendedDatabase loadDatabase(File dbFile) throws FileNotFoundException, DatabaseServiceException;
 
-	void saveDbFile(File datei, Datenbasis db) throws FileNotFoundException, DatabaseServiceException;
+	void saveDbFile(Datenbasis db) throws FileNotFoundException, DatabaseServiceException;
 
 }

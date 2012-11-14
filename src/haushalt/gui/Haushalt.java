@@ -718,7 +718,7 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 			datei = new File(name);
 		}
 		try {
-			databaseService.saveDbFile(datei, db);
+			databaseService.saveDbFile(db);
 			haushaltDefinition.setJhhFileName(datei.getPath());
 			mainWindow.setStatus(datei.getPath() + " " + RES.getString("status_saved") + ".");
 		} catch (final FileNotFoundException e1) {

@@ -102,6 +102,8 @@ public class Datenbasis {
 	private final ArrayList<UmbuchungKategorie> autoUmbuchungRegister = new ArrayList<UmbuchungKategorie>();
 	private final ArrayList<Integer> autoUmbuchungIntervalle = new ArrayList<Integer>();
 
+	private String filename;
+
 	public Datenbasis() {
 		this.kategorieListe = new ArrayList<EinzelKategorie>();
 		this.kategorieListe.add(EinzelKategorie.SONSTIGES);
@@ -1674,4 +1676,11 @@ public class Datenbasis {
 		this.geaendert = false;
 	}
 
+	public void setFileName(String absolutePathAndFileName) {
+		this.filename = absolutePathAndFileName;
+	}
+
+	public String getFilename() {
+		return filename;
+	}
 }
