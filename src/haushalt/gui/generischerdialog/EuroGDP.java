@@ -1,23 +1,17 @@
 /*
-
-This file is part of jHaushalt.
-
-jHaushalt is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 3 of the License, or
-(at your option) any later version.
-
-jHaushalt is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with jHaushalt; if not, see <http://www.gnu.org/licenses/>.
-
-(C)opyright 2002-2010 Dr. Lars H. Hahn
-
-*/
+ * This file is part of jHaushalt.
+ * jHaushalt is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ * jHaushalt is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License
+ * along with jHaushalt; if not, see <http://www.gnu.org/licenses/>.
+ * (C)opyright 2002-2010 Dr. Lars H. Hahn
+ */
 
 package haushalt.gui.generischerdialog;
 
@@ -37,42 +31,51 @@ import javax.swing.JComponent;
 
 public class EuroGDP extends AbstractGDPane {
 
-  private static final long serialVersionUID = 1L;
-  private final EuroField euroField;
+	private static final long serialVersionUID = 1L;
+	private final EuroField euroField;
 
-  public EuroGDP(String text, Euro euro) {
-    super(text);
-    euroField = new EuroField(euro);
-    add(euroField);
-    refreshWert();
-  }
+	public EuroGDP(final String text, final Euro euro) {
+		super(text);
+		this.euroField = new EuroField(euro);
+		add(this.euroField);
+		refreshWert();
+	}
 
-  protected void refreshWert() {
-    Euro euro = euroField.getValue();
-    wert = euro;
-    if(euro.equals(Euro.NULL_EURO))
-      euroField.setText("");
-    else
-      euroField.setText(""+euro); // neusetzen, da ggf. Fehler beim Parsen
-  }
+	@Override
+	protected void refreshWert() {
+		final Euro euro = this.euroField.getValue();
+		setWert(euro);
+		if (euro.equals(Euro.NULL_EURO)) {
+			this.euroField.setText("");
+		}
+		else {
+			this.euroField.setText("" + euro); // neusetzen, da ggf. Fehler beim
+												// Parsen
+		}
+	}
 
-  public JComponent getZentraleKomponente() {
-    return euroField;
-  }
+	@Override
+	public JComponent getZentraleKomponente() {
+		return this.euroField;
+	}
 
-  public void laden(DataInputStream in) throws IOException {
-    Euro euro = (Euro)getWert();
-    euro.laden(in);
-    if(euro.equals(Euro.NULL_EURO))
-      euroField.setText("");
-    else
-      euroField.setText(""+euro);
-  }
+	@Override
+	public void laden(final DataInputStream in) throws IOException {
+		final Euro euro = (Euro) getRefreshedWert();
+		euro.laden(in);
+		if (euro.equals(Euro.NULL_EURO)) {
+			this.euroField.setText("");
+		}
+		else {
+			this.euroField.setText("" + euro);
+		}
+	}
 
-  public void speichern(DataOutputStream out) throws IOException {
-    refreshWert();
-    Euro euro = (Euro)getWert();
-    euro.speichern(out);
-  }
+	@Override
+	public void speichern(final DataOutputStream out) throws IOException {
+		refreshWert();
+		final Euro euro = (Euro) getRefreshedWert();
+		euro.speichern(out);
+	}
 
 }

@@ -1,1 +1,9 @@
 .DS_Store
+/target
+/.settings
+.classpath
+.project
+/jar
+/bin
+de.jhaushalt.jar
+*.exe
