@@ -50,7 +50,9 @@ import haushalt.gui.generischerdialog.GenerischerDialog;
 import haushalt.gui.generischerdialog.RegisterGDP;
 import haushalt.gui.generischerdialog.TextGDP;
 import haushalt.gui.mac.MacAdapter;
+import haushalt.service.data.DatabaseFileLoaderImpl;
 import haushalt.service.data.DatabaseService;
+import haushalt.service.data.DatabaseServiceImpl;
 import haushalt.service.data.DatabaseServiceException;
 
 import java.awt.BorderLayout;
@@ -120,10 +122,14 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 	private final FileFilter fileFilter = new JHaushaltFileFilter();
 
 	// FIXME Dependency Injection
-	private DatabaseService databaseService = new DatabaseService();
+	private DatabaseService databaseService;
 	
 	public Haushalt(final String dateiname) {
 		this.actionHandler = new ActionHandler(this);
+		
+		DatabaseServiceImpl internalDbService = new DatabaseServiceImpl();
+		internalDbService.setDatabaseFileLoader(new DatabaseFileLoaderImpl());
+		databaseService = internalDbService;
 		
 		// Properties laden		
 		try {
@@ -145,7 +151,7 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 		
 		defineMenuBar();
 		
-		loadOrCreateJHHFile(dateiname);
+		loadOrCreateDatabaseFile(dateiname);
 		
 		defineOptionsDialog();
 		oberflaecheAnpassen(); // hier werden auch andere Optionen gesetzt
@@ -164,14 +170,14 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 		this.dlgOptionen = new DlgOptionen(this, haushaltDefinition.getDlgOptionProperties());
 	}
 
-	private void loadOrCreateJHHFile(final String dateiname) {
+	private void loadOrCreateDatabaseFile(final String dateiname) {
 		// Letzte Datei laden oder neu initialisieren
 		// In jedem Fall wird die Datenbasis erzeugt.
 		String fileToLoad = (dateiname != null)? 
 				dateiname:
 				(haushaltDefinition.getJhhFileName() != null)? 
 						haushaltDefinition.getJhhFileName() :
-						"";
+						null;
 		if (fileToLoad != null) {
 			loadDatabase(new File(fileToLoad));
 		} else {
