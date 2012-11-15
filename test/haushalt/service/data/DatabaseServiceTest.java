@@ -1,4 +1,4 @@
-package haushalt.service.daten;
+package haushalt.service.data;
 
 import static org.mockito.Mockito.*;
 import static org.fest.assertions.Assertions.*;
