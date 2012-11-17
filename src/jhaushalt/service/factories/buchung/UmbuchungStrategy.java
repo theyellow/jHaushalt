@@ -1,12 +1,7 @@
 package jhaushalt.service.factories.buchung;
 
-import haushalt.daten.Datenbasis;
-import haushalt.daten.Register;
-import haushalt.daten.UmbuchungKategorie;
 
 import java.io.DataInputStream;
-import java.io.IOException;
-
 import jhaushalt.domain.buchung.Buchung;
 
 public class UmbuchungStrategy implements BuchungStrategy {
