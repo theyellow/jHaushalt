@@ -717,6 +717,7 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 			final String name = datei.getAbsolutePath() + ".jhh";
 			datei = new File(name);
 		}
+		
 		try {
 			databaseService.saveDbFile(db);
 			haushaltDefinition.setJhhFileName(datei.getPath());
@@ -736,7 +737,9 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 		dateidialog.setFileFilter(fileFilter);
 		dateidialog.setCurrentDirectory(new File(haushaltDefinition.getJhhFolder()));
 		if (dateidialog.showSaveDialog(mainWindow.getFrame()) == JFileChooser.APPROVE_OPTION) {
-			speichern(dateidialog.getSelectedFile());
+			File selectedFile = dateidialog.getSelectedFile();
+			db.setFileName(selectedFile.getAbsolutePath());
+			speichern(selectedFile);
 		}
 	}
 
