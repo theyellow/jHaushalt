@@ -41,12 +41,10 @@ public class StandardBuchung extends Buchung {
 
 	private static final Logger LOGGER = Logger.getLogger(StandardBuchung.class.getName());
 
-	private EinzelKategorie kategorie = null;
-	private Geldbetrag betrag;
+	private EinzelKategorie kategorie = EinzelKategorie.SONSTIGES;
+	private Geldbetrag betrag = new Geldbetrag();
 
 	public StandardBuchung() {
-		setKategorie(EinzelKategorie.SONSTIGES);
-		this.betrag = new Geldbetrag();
 	}
 
 	public StandardBuchung(final Datum datum, final String text, final EinzelKategorie kategorie, final Geldbetrag betrag) {

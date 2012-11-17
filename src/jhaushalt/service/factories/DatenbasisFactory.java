@@ -2,31 +2,32 @@ package jhaushalt.service.factories;
 
 import java.io.DataInputStream;
 import java.io.IOException;
-import java.text.DateFormat;
+
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
-import java.util.logging.Logger;
 import jhaushalt.domain.Datenbasis;
 import jhaushalt.domain.Register;
 
 public class DatenbasisFactory {
-	private static final Logger LOGGER = Logger.getLogger(DatenbasisFactory.class.getName());
-	private static final DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT, Locale.GERMAN);
+//	private static final Logger LOGGER = Logger.getLogger(DatenbasisFactory.class.getName());
+//	private static final DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT, Locale.GERMAN);
 
 	private DataInputStream in;
 	private Datenbasis datenbasis;
 	
-	DatenbasisFactory(DataInputStream input) throws IOException, UnknownBuchungTypeException {
+	DatenbasisFactory(DataInputStream input) throws IOException, UnknownBuchungTypeException, ParseException {
 		in = input;
 		datenbasis = new Datenbasis();
 		
 		loadVersionInfo();
 		loadRegisters();
+		
+		// aggregate category tree
 	}
 	
 	
-	private void loadRegisters() throws IOException, UnknownBuchungTypeException {
+	private void loadRegisters() throws IOException, UnknownBuchungTypeException, ParseException {
 		int numberOfRegisters = in.readInt();
 		List<Register> registerList = new ArrayList<Register>();
 		for (int i = 0; i < numberOfRegisters; i++) {

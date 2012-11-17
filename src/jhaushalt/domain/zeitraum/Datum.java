@@ -41,6 +41,10 @@ public class Datum implements Comparable<Datum>, Cloneable {
 		return df.format(this.wert.getTime());
 	}
 
+	public void setTime(Date time) {
+		wert.setTime(time);
+	}
+
 	public Date getTime() {
 		return wert.getTime();	
 	}
