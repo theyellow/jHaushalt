@@ -143,7 +143,7 @@ public class ActionHandler {
 			RES.getString("split") + "...",
 			"Splitten",
 			RES.getString("split_legend"),
-			new Integer(KeyEvent.VK_P)));
+			KeyEvent.VK_P));
 		standardActions.add(new StandardAction(
 			haushalt,
 			"umwandeln",
