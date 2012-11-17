@@ -57,7 +57,7 @@ public class BAEinnahmenAusgaben extends AbstractBlockAuswertung {
 		super(haushalt, db, name);
 		final AbstractGDPane[] panes = new AbstractGDPane[3];
 		panes[0] = new ZeitraumGDP(RES.getString("first_period") + ":", new Jahr(2007));
-		panes[1] = new ZahlGDP(RES.getString("number_of_periods") + ":", new Integer(4));
+		panes[1] = new ZahlGDP(RES.getString("number_of_periods") + ":", 4);
 		panes[2] = new EinOderAlleRegisterGDP(RES.getString("register") + ":", db, null);
 		erzeugeEigenschaften(haushalt.getFrame(), UEBERSCHRIFT, panes);
 	}

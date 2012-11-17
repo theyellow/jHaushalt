@@ -50,17 +50,17 @@ public class HaushaltProperties {
 	}
 	
 	public Color getSelectionColor() {
-		final int farbe = new Integer(getProperty("jhh.opt.selektion", "12632256")).intValue(); // #c0c0c0
+		final int farbe = Integer.valueOf(getProperty("jhh.opt.selektion", "12632256")).intValue(); // #c0c0c0
 		return new Color(farbe);
 	}
 
 	public Color getGridColor() {
-		final int farbe = new Integer(getProperty("jhh.opt.gitter", "10066329")).intValue(); // #999999
+		final int farbe = Integer.valueOf(getProperty("jhh.opt.gitter", "10066329")).intValue(); // #999999
 		return new Color(farbe);
 	}
 
 	public Color getFarbeZukunft() {
-		final int farbe = new Integer(getProperty("jhh.opt.zukunft", "16777088")).intValue(); // #ffff80
+		final int farbe = Integer.valueOf(getProperty("jhh.opt.zukunft", "16777088")).intValue(); // #ffff80
 		return new Color(farbe);
 	}
 
@@ -69,7 +69,7 @@ public class HaushaltProperties {
 	}
 
 	public int getFontSize() {
-		return new Integer(getProperty("jhh.opt.punkt", "12")).intValue();
+		return Integer.valueOf(getProperty("jhh.opt.punkt", "12")).intValue();
 	}
 
 	
@@ -173,11 +173,11 @@ public class HaushaltProperties {
 	}
 	
 	public int getEvaluationWidth() {
-		return new Integer(getProperty("jhh.auswertung.breite", "600")).intValue();
+		return Integer.valueOf(getProperty("jhh.auswertung.breite", "600")).intValue();
 	}
 
 	public int getEvaluationHeight() {
-		return new Integer(getProperty("jhh.auswertung.hoehe", "400")).intValue();
+		return Integer.valueOf(getProperty("jhh.auswertung.hoehe", "400")).intValue();
 	}
 	
 	public boolean isDataImportInEuroCurrency() {

@@ -355,12 +355,10 @@ public class DlgContainerAuswertung extends JDialog implements ListSelectionList
 			final PrinterResolution pr = new PrinterResolution(300, 300, ResolutionSyntax.DPI);
 			set.add(pr);
 			if (job.printDialog(set)) {
-				if (DEBUG) {
-					System.out.println("Auswertung drucken: Format "
+				LOGGER.info("Auswertung drucken: Format "
 						+ this.seitenFormat.getImageableWidth()
 						+ " x "
 						+ this.seitenFormat.getImageableHeight());
-				}
 			}
 			try {
 				job.print();

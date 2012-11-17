@@ -286,7 +286,7 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 		final Class<?> c = SwingConstants.class;
 		try {
 			final Field field = c.getField(tabPlacement);
-			tp = field.getInt(new Integer(0));
+			tp = field.getInt(Integer.valueOf(0));
 		} catch (final NoSuchFieldException e) {
 			LOGGER.warning(e.getMessage());
 		} catch (final IllegalAccessException e) {

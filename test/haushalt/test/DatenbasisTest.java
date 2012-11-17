@@ -192,14 +192,14 @@ public class DatenbasisTest {
 	@Test
 	public void testAusfuehrenAutoBuchungen() {
 		db.addAutoStandardBuchung();
-		db.setAutoStandardBuchungIntervall(0, new Integer(1));
+		db.setAutoStandardBuchungIntervall(0, 1);
 		db.setAutoStandardBuchungRegister(0, "Konto1");
 		final StandardBuchung buchung = db.getAutoStandardBuchung(0);
 		buchung.setDatum(new Datum(15, 1, 2008));
 		buchung.setKategorie(db.findeOderErzeugeKategorie("MeineKategorie1:Unterkategorie"));
 		buchung.setWert(new Euro(1.0D));
 		db.addAutoUmbuchung();
-		db.setAutoUmbuchungIntervall(0, new Integer(1));
+		db.setAutoUmbuchungIntervall(0, 1);
 		db.setAutoUmbuchungRegister(0, new UmbuchungKategorie(
 				db.findeOderErzeugeRegister("Konto1"),
 				db.findeOderErzeugeRegister("Konto2")

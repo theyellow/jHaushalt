@@ -316,13 +316,13 @@ public class DlgOptionen extends JDialog {
 		this.deltaste.setSelectedIndex(idx);
 		this.reiter.setSelectedItem(this.properties.getProperty("jhh.opt.reiter", "BOTTOM"));
 		this.euroImport.setSelected(Boolean.valueOf(this.properties.getProperty("jhh.opt.euroimport", "true")).booleanValue());
-		int farbe = new Integer(this.properties.getProperty("jhh.opt.selektion", "12632256")).intValue(); // #c0c0c0
+		int farbe = Integer.valueOf(this.properties.getProperty("jhh.opt.selektion", "12632256")).intValue(); // #c0c0c0
 		this.farbeSelektion.setText(Integer.toHexString(farbe).toUpperCase());
 		this.farbeSelektion.setBackground(new Color(farbe));
-		farbe = new Integer(this.properties.getProperty("jhh.opt.gitter", "10066329")).intValue(); // #999999
+		farbe = Integer.valueOf(this.properties.getProperty("jhh.opt.gitter", "10066329")).intValue(); // #999999
 		this.farbeGitter.setText(Integer.toHexString(farbe).toUpperCase());
 		this.farbeGitter.setBackground(new Color(farbe));
-		farbe = new Integer(this.properties.getProperty("jhh.opt.zukunft", "16777088")).intValue(); // #ffff80
+		farbe = Integer.valueOf(this.properties.getProperty("jhh.opt.zukunft", "16777088")).intValue(); // #ffff80
 		this.farbeZukunft.setText(Integer.toHexString(farbe).toUpperCase());
 		this.farbeZukunft.setBackground(new Color(farbe));
 		final int anz = FarbPaletten.setCustomColor(this.properties.getProperty("jhh.opt.custom", "16776960"));

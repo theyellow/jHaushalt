@@ -33,7 +33,7 @@ public class StandardAction extends AbstractAction {
 	private static final long serialVersionUID = -7046231489315578362L;
 	private static final boolean DEBUG = false;
 
-	private final Logger logger = Logger.getLogger(StandardAction.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(StandardAction.class.getName());
 
 	private final String name;
 	private final ImageIcon bigIcon;
@@ -69,7 +69,7 @@ public class StandardAction extends AbstractAction {
 		final URLClassLoader urlLoader = (URLClassLoader) getClass().getClassLoader();
 		final URL imageURL = urlLoader.findResource("res/" + iconname + "16.png");
 		if (DEBUG) {
-			logger.info("ActionHandler: Erzeuge Image " + iconname + "@" + imageURL);
+			LOGGER.info("ActionHandler: Erzeuge Image " + iconname + "@" + imageURL);
 		}
 		return new ImageIcon(imageURL);
 	}
@@ -81,7 +81,7 @@ public class StandardAction extends AbstractAction {
 		final URLClassLoader urlLoader = (URLClassLoader) getClass().getClassLoader();
 		final URL imageURL = urlLoader.findResource("res/" + iconname + "24.png");
 		if (DEBUG) {
-			logger.info("ActionHandler: Erzeuge Image " + iconname + "@" + imageURL);
+			LOGGER.info("ActionHandler: Erzeuge Image " + iconname + "@" + imageURL);
 		}
 		return new ImageIcon(imageURL);
 	}
@@ -95,25 +95,25 @@ public class StandardAction extends AbstractAction {
 		Method call;
 
 		try {
-			logger.warning("Doing a reflection call on method " + name + " of 'Haushalt'");
+			LOGGER.warning("Doing a reflection call on method " + name + " of 'Haushalt'");
 			call = Haushalt.class.getMethod(name, (Class[]) null);
 			call.invoke(haushalt, (Object[]) null);
 		} catch (final SecurityException e) {
-			logger.warning("SecurityException wenn calling actionPerformed of " + name);
-			logger.warning(e.getMessage());
+			LOGGER.warning("SecurityException wenn calling actionPerformed of " + name);
+			LOGGER.warning(e.getMessage());
 		} catch (final NoSuchMethodException e) {
-			logger.warning("NoSuchMethodException wenn calling actionPerformed of " + name);
-			logger.warning(e.getMessage());
+			LOGGER.warning("NoSuchMethodException wenn calling actionPerformed of " + name);
+			LOGGER.warning(e.getMessage());
 		} catch (final IllegalArgumentException e) {
-			logger.warning("IllegalArgumentException wenn calling actionPerformed of " + name);
-			logger.warning(e.getMessage());
+			LOGGER.warning("IllegalArgumentException wenn calling actionPerformed of " + name);
+			LOGGER.warning(e.getMessage());
 		} catch (final IllegalAccessException e) {
-			logger.warning("IllegalAccessException wenn calling actionPerformed of " + name);
-			logger.warning(e.getMessage());
+			LOGGER.warning("IllegalAccessException wenn calling actionPerformed of " + name);
+			LOGGER.warning(e.getMessage());
 		} catch (final InvocationTargetException e) {
-			logger.warning("InvocationTargetException wenn calling actionPerformed of " + name);
-			logger.warning(e.getMessage());
-			logger.warning(e.getTargetException().getMessage());
+			LOGGER.warning("InvocationTargetException wenn calling actionPerformed of " + name);
+			LOGGER.warning(e.getMessage());
+			LOGGER.warning(e.getTargetException().getMessage());
 		}
 
 	}

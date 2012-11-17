@@ -1010,10 +1010,10 @@ public class Datenbasis {
 	private Integer getLegacyIntervallIndex(final String name) {
 		for (int i = 0; i < LEGACY_INTERVALL_NAMEN.length; i++) {
 			if (name.equals(LEGACY_INTERVALL_NAMEN[i])) {
-				return new Integer(i);
+				return i;
 			}
 		}
-		return new Integer(0);
+		return 0;
 	}
 
 	/**
@@ -1164,7 +1164,7 @@ public class Datenbasis {
 	public void addAutoStandardBuchung() {
 		this.autoStandardBuchungen.add(new StandardBuchung());
 		this.autoStandardBuchungRegister.add(this.registerListe.get(0));
-		this.autoStandardBuchungIntervalle.add(new Integer(0));
+		this.autoStandardBuchungIntervalle.add(0);
 		this.geaendert = true;
 	}
 
@@ -1180,7 +1180,7 @@ public class Datenbasis {
 		// Speicherung des Register-Paars
 		this.autoUmbuchungen.add(new Umbuchung());
 		this.autoUmbuchungRegister.add(new UmbuchungKategorie(this.registerListe.get(0), this.registerListe.get(0)));
-		this.autoUmbuchungIntervalle.add(new Integer(0));
+		this.autoUmbuchungIntervalle.add(0);
 		this.geaendert = true;
 	}
 

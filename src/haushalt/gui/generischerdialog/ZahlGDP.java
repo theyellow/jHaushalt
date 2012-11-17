@@ -66,7 +66,7 @@ public class ZahlGDP extends AbstractGDPane {
 		if (text.equals("")) {
 			text = "1";
 		}
-		setWert(new Integer(text));
+		setWert(Integer.valueOf(text));
 		if (getWert().equals(0)) {
 			setWert(1);
 		}

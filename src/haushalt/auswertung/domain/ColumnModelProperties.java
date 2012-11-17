@@ -15,6 +15,6 @@ public class ColumnModelProperties {
 	}
 	
 	public int getRegisterWidthForColumnNumber(final int columnNumber) {
-		return new Integer(properties.getProperty(PROPERTY_PREFIX + columnNumber)).intValue();
+		return Integer.valueOf(properties.getProperty(PROPERTY_PREFIX + columnNumber)).intValue();
 	}
 }

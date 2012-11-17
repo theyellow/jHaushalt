@@ -11,11 +11,11 @@ public class MainWindowProperties {
 	}
 
 	public int getWidth() {
-		return new Integer(properties.getProperty("jhh.register.breite", "600")).intValue();	
+		return Integer.valueOf(properties.getProperty("jhh.register.breite", "600")).intValue();	
 	}
 	
 	public int getHeight() {
-		return new Integer(properties.getProperty("jhh.register.hoehe", "400")).intValue();
+		return Integer.valueOf(properties.getProperty("jhh.register.hoehe", "400")).intValue();
 	}
 	
 }
