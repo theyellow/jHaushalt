@@ -25,7 +25,7 @@ public class MainWindow {
 	private JTextField status = new JTextField(HaushaltProperties.COPYRIGHT);
 	private GemerkteBuchungenGlassPane glassPane;
 	
-	public MainWindow(MainWindowProperties properties, JTabbedPane tabbedPane, ActionHandler actionHandler,GemerkteBuchungenGlassPane gemerkteBuchungen) {
+	public MainWindow(final MainWindowProperties properties, final JTabbedPane tabbedPane, final ActionHandler actionHandler,final GemerkteBuchungenGlassPane gemerkteBuchungen) {
 		this.properties = properties;
 		this.tabbedPane = tabbedPane;
 		this.actionHandler = actionHandler;
@@ -43,7 +43,7 @@ public class MainWindow {
 		contentPane.add(this.status, BorderLayout.PAGE_END);
 	}
 	
-	public void setStatus(String text) {
+	public void setStatus(final String text) {
 		status.setText(text);
 	}
 	

@@ -4,7 +4,7 @@ public class ExtendedDatabase {
 	private Datenbasis dataBase;
 	private String versionId;
 	
-	public ExtendedDatabase(Datenbasis database, String versionId) {
+	public ExtendedDatabase(final Datenbasis database, final String versionId) {
 		this.dataBase = database;
 		this.versionId = versionId;
 	}

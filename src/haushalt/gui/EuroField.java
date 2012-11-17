@@ -78,8 +78,12 @@ public class EuroField extends DeleteableTextField {
 			int j = 0;
 
 			for (int i = 0; i < anzChar; i++) {
-				if (Character.isDigit(source[i]) || ("€".equals(source[i])) || (source[i] == '-') ||
-						(source[i] == '+') || (source[i] == ' ') || (source[i] == '.') || (source[i] == ',')) {
+				final boolean isEuroSign = "€".equals(String.valueOf(source[i]));
+				final boolean isDigit = Character.isDigit(source[i]);
+				final boolean isOperator = (source[i] == '-') || (source[i] == '+');
+				final boolean isDecimalPoint = (source[i] == '.') || (source[i] == ',');
+				final boolean isSpace = source[i] == ' ';
+				if (isDigit || isEuroSign || isOperator || isSpace || isDecimalPoint) {
 					result[j++] = source[i];
 				}
 			}

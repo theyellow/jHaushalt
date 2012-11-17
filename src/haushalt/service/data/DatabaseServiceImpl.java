@@ -9,16 +9,16 @@ public class DatabaseServiceImpl implements DatabaseService {
 
 	private DatabaseFileLoader databaseFileLoader;
 	
-	public void setDatabaseFileLoader(DatabaseFileLoader databaseFileLoad) {
+	public void setDatabaseFileLoader(final DatabaseFileLoader databaseFileLoad) {
 		this.databaseFileLoader = databaseFileLoad;
 	}
 	
-	public ExtendedDatabase loadDatabase(File dbFile) throws FileNotFoundException, DatabaseServiceException {
-		ExtendedDatabase db = databaseFileLoader.loadDbFile(dbFile);
+	public ExtendedDatabase loadDatabase(final File dbFile) throws FileNotFoundException, DatabaseServiceException {
+		final ExtendedDatabase db = databaseFileLoader.loadDbFile(dbFile);
 		return db;
 	}
 		
-	public void saveDbFile(Datenbasis db) throws FileNotFoundException, DatabaseServiceException {
+	public void saveDbFile(final Datenbasis db) throws FileNotFoundException, DatabaseServiceException {
 		databaseFileLoader.saveDbFile(db);
 	}
 	

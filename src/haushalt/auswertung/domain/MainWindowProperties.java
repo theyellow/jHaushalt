@@ -6,7 +6,7 @@ public class MainWindowProperties {
 
 	private Properties properties;
 	
-	public MainWindowProperties(Properties properties) {
+	public MainWindowProperties(final Properties properties) {
 		this.properties = properties;
 	}
 
