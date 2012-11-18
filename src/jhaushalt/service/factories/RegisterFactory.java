@@ -4,30 +4,27 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.List;
+
 import jhaushalt.domain.Register;
 import jhaushalt.domain.buchung.Buchung;
 
 public class RegisterFactory {
 	
-	private Register register;
-	private ArrayList<Buchung> buchungen = new ArrayList<Buchung> (); 
-	
-	public RegisterFactory(DataInputStream in, String registerName) throws IOException, UnknownBuchungTypeException, ParseException {
-		register = new Register(registerName);
+	public static Register getInstance (DataInputStream in, String registerName) throws IOException, UnknownBuchungTypeException, ParseException {
+		Register register = new Register(registerName);
 		loadBuchungen(in);
-	}
-	
-	public Register getRegister() {
+		// FIXME how to handle these buchungen(entries)?
 		return register;
 	}
 
-	private void loadBuchungen(final DataInputStream in) throws IOException, UnknownBuchungTypeException, ParseException {
+	private static List<Buchung> loadBuchungen(final DataInputStream in) throws IOException, UnknownBuchungTypeException, ParseException {
 		final int numberOfBuchungen = in.readInt();
-		this.buchungen.ensureCapacity(numberOfBuchungen);
+		List<Buchung> buchungen = new ArrayList<Buchung>();
 		for (int i = 0; i < numberOfBuchungen; i++) {
-			BuchungFactory buchungFactory = new BuchungFactory(in);
-			buchungFactory.getBuchung(); // FIXME what to do with returned buchung
+			buchungen.add(BuchungFactory.getInstance(in));
 		}
+		return buchungen;
 	}
 
 }

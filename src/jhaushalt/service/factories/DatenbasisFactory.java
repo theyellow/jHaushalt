@@ -12,33 +12,29 @@ import jhaushalt.domain.Register;
 public class DatenbasisFactory {
 //	private static final Logger LOGGER = Logger.getLogger(DatenbasisFactory.class.getName());
 //	private static final DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT, Locale.GERMAN);
-
-	private DataInputStream in;
-	private Datenbasis datenbasis;
 	
-	DatenbasisFactory(DataInputStream input) throws IOException, UnknownBuchungTypeException, ParseException {
-		in = input;
-		datenbasis = new Datenbasis();
+	public static Datenbasis getInstance(DataInputStream input) throws IOException, UnknownBuchungTypeException, ParseException {
+		DataInputStream in = input;
+		Datenbasis datenbasis = new Datenbasis();
 		
-		loadVersionInfo();
-		loadRegisters();
+		datenbasis.setVersionInfo(getStringDataFromFile(in));
+		datenbasis.setRegisterList(loadRegisters(in));
 		
-		// aggregate category tree
+		// FIXME aggregate category tree
+		return datenbasis;
 	}
-	
-	
-	private void loadRegisters() throws IOException, UnknownBuchungTypeException, ParseException {
+		
+	private static List<Register> loadRegisters(DataInputStream in) throws IOException, UnknownBuchungTypeException, ParseException {
 		int numberOfRegisters = in.readInt();
 		List<Register> registerList = new ArrayList<Register>();
 		for (int i = 0; i < numberOfRegisters; i++) {
-			String registerName = createUniqueRegisterName(registerList, getStringDataFromFile());
-			RegisterFactory registerFactory = new RegisterFactory(in, registerName);
-			registerList.add(registerFactory.getRegister());
+			String registerName = createUniqueRegisterName(registerList, getStringDataFromFile(in));
+			registerList.add(RegisterFactory.getInstance(in, registerName));
 		}
-		datenbasis.setRegisterList(registerList);
+		return registerList;
 	}
 
-	private String createUniqueRegisterName(List<Register> registerList, final String regname) {
+	private static String createUniqueRegisterName(List<Register> registerList, final String regname) {
 		String generierterName = regname;
 		boolean nameVorhanden;
 		int count = 0;
@@ -55,12 +51,8 @@ public class DatenbasisFactory {
 		} while (nameVorhanden);
 		return generierterName;
 	}
-
-	private void loadVersionInfo() throws IOException {
-		datenbasis.setVersionInfo(getStringDataFromFile());
-	}
 	
-	private String getStringDataFromFile() throws IOException {
+	private static String getStringDataFromFile(DataInputStream in) throws IOException {
 		return in.readUTF();
 	}
 	

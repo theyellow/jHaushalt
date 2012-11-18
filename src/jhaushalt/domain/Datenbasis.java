@@ -62,16 +62,16 @@ public class Datenbasis {
 
 	// -- gemerkte Buchungen ------------------------------------
 	private Datum startDatumGemerkteBuchungen = new Datum();
-	private final ArrayList<Buchung> gemerkteBuchungen = new ArrayList<Buchung>();
-	private final ArrayList<String> gemerkteBuchungenText = new ArrayList<String>();
+	private final List<Buchung> gemerkteBuchungen = new ArrayList<Buchung>();
+	private final List<String> gemerkteBuchungenText = new ArrayList<String>();
 
 	// -- Auto-Buchung ------------------------------------------
-	private final ArrayList<StandardBuchung> autoStandardBuchungen = new ArrayList<StandardBuchung>();
-	private final ArrayList<Register> autoStandardBuchungRegister = new ArrayList<Register>();
-	private final ArrayList<Integer> autoStandardBuchungIntervalle = new ArrayList<Integer>();
-	private final ArrayList<Umbuchung> autoUmbuchungen = new ArrayList<Umbuchung>();
-	private final ArrayList<UmbuchungKategorie> autoUmbuchungRegister = new ArrayList<UmbuchungKategorie>();
-	private final ArrayList<Integer> autoUmbuchungIntervalle = new ArrayList<Integer>();
+	private List<Buchung> autoStandardBuchungen = new ArrayList<Buchung>();
+	private final List<Register> autoStandardBuchungRegister = new ArrayList<Register>();
+	private final List<Integer> autoStandardBuchungIntervalle = new ArrayList<Integer>();
+	private final List<Umbuchung> autoUmbuchungen = new ArrayList<Umbuchung>();
+	private final List<UmbuchungKategorie> autoUmbuchungRegister = new ArrayList<UmbuchungKategorie>();
+	private final List<Integer> autoUmbuchungIntervalle = new ArrayList<Integer>();
 
 	private String filename;
 	private String versionInfo;
@@ -153,7 +153,8 @@ public class Datenbasis {
 	 * @return Buchung
 	 */
 	public StandardBuchung getAutoStandardBuchung(final int index) {
-		return this.autoStandardBuchungen.get(index);
+		// FIXME und was jetzt??? das können auch andere Buchungstypen sein
+		return (StandardBuchung) this.autoStandardBuchungen.get(index);
 	}
 
 	/**
@@ -314,10 +315,19 @@ public class Datenbasis {
 		this.versionInfo = versionInfo;		
 	}
 
+	public String getVersionInfo() {
+		return this.versionInfo;
+	}
+
 	/// REGISTER LIST
 
 	public void setRegisterList(List<Register> registerList) {
 		this.registerListe = registerList;
+		
+	}
+
+	public void setAutomatedEntries(List<Buchung> automatedEntries) {
+		this.autoStandardBuchungen = automatedEntries;
 		
 	}
 }

@@ -14,4 +14,14 @@ public class SplitBuchungStrategy implements BuchungStrategy {
 		return null;
 	}
 
+	
+//	final SplitBuchung buchung = new SplitBuchung(datum, text);
+//	for (int j = 0; j < anz; j++) {
+//		final String kategorie = in.readUTF();
+//		final Euro betrag = new Euro();
+//		betrag.laden(in);
+//		buchung.add(db.findeOderErzeugeKategorie(kategorie), betrag);
+//	}
+//	einsortierenBuchung(buchung);
+//	db.buchungMerken(buchung);
 }
