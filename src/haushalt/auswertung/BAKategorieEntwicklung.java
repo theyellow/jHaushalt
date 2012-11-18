@@ -59,11 +59,11 @@ public class BAKategorieEntwicklung extends AbstractBlockAuswertung {
 		super(haushalt, db, name);
 		final AbstractGDPane[] panes = new AbstractGDPane[6];
 		panes[0] = new ZeitraumGDP(RES.getString("first_period") + ":", new Jahr(2007));
-		panes[1] = new ZahlGDP(RES.getString("number_of_periods") + ":", new Integer(4));
+		panes[1] = new ZahlGDP(RES.getString("number_of_periods") + ":", 4);
 		panes[2] = new EinOderAlleRegisterGDP(RES.getString("register") + ":", db, null);
 		panes[3] = new MehrereKategorienGDP(RES.getString("categories") + ":", db);
 		panes[4] = new TextArrayGDP(RES.getString("color_scheme") + ":", FarbPaletten.getPalettenNamen(), "Slow");
-		panes[5] = new BooleanGDP(RES.getString("expenditure"), new Boolean(true), RES.getString("show_as_negative_values"));
+		panes[5] = new BooleanGDP(RES.getString("expenditure"), Boolean.TRUE, RES.getString("show_as_negative_values"));
 		erzeugeEigenschaften(haushalt.getFrame(), UEBERSCHRIFT, panes);
 	}
 

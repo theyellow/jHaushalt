@@ -109,7 +109,7 @@ public class DlgSplitBuchung extends JDialog {
 		action.putValue(Action.SHORT_DESCRIPTION, RES.getString("delete_split_booking"));
 		final KeyStroke key = KeyStroke.getKeyStroke(KeyEvent.VK_D, ActionEvent.CTRL_MASK);
 		action.putValue(Action.ACCELERATOR_KEY, key);
-		action.putValue(Action.MNEMONIC_KEY, new Integer(KeyEvent.VK_D));
+		action.putValue(Action.MNEMONIC_KEY, KeyEvent.VK_D);
 
 		// Cell-Editoren erzeugen
 		this.table.setDefaultEditor(EinzelKategorie.class, new DefaultCellEditor(new JComboBox(db.getKategorien(true))));

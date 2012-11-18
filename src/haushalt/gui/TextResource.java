@@ -110,21 +110,21 @@ public final class TextResource {
 
 	public Integer getAutoBuchungIntervallIndex(final String name) {
 		if (name.equals(RESOURCE.getString("automatic_posting_week"))) {
-			return new Integer(0);
+			return 0;
 		}
 		if (name.equals(RESOURCE.getString("automatic_posting_month"))) {
-			return new Integer(1);
+			return 1;
 		}
 		if (name.equals(RESOURCE.getString("automatic_posting_quarter"))) {
-			return new Integer(2);
+			return 2;
 		}
 		if (name.equals(RESOURCE.getString("automatic_posting_halfyear"))) {
-			return new Integer(3);
+			return 3;
 		}
 		if (name.equals(RESOURCE.getString("automatic_posting_year"))) {
-			return new Integer(4);
+			return 4;
 		}
-		return new Integer(0);
+		return 0;
 	}
 
 }

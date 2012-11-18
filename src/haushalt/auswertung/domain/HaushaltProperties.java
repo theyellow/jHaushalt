@@ -23,7 +23,7 @@ public class HaushaltProperties {
 	private ColumnModelProperties columnModelProperties;
 	
 	
-	public HaushaltProperties(Properties properties) {
+	public HaushaltProperties(final Properties properties) {
 		this.properties = properties;
 		mainWindowProperties = new MainWindowProperties(getProperties());
 		columnModelProperties = new ColumnModelProperties(getProperties());
@@ -33,7 +33,7 @@ public class HaushaltProperties {
 		return properties.getProperty(KEY_JHH_FILENAME);
 	}
 
-	public void setJhhFileName(String jhhFileName) {
+	public void setJhhFileName(final String jhhFileName) {
 		this.properties.setProperty(KEY_JHH_FILENAME, jhhFileName);
 	}
 	
@@ -41,7 +41,7 @@ public class HaushaltProperties {
 		return this.properties.getProperty(KEY_JHH_FOLDER_NAME);
 	}
 	
-	public void setJhhFolder(String jhhFolderName) {
+	public void setJhhFolder(final String jhhFolderName) {
 		this.properties.setProperty(KEY_JHH_FOLDER_NAME, jhhFolderName);
 	}
 	
@@ -50,17 +50,17 @@ public class HaushaltProperties {
 	}
 	
 	public Color getSelectionColor() {
-		final int farbe = new Integer(getProperty("jhh.opt.selektion", "12632256")).intValue(); // #c0c0c0
+		final int farbe = Integer.valueOf(getProperty("jhh.opt.selektion", "12632256")).intValue(); // #c0c0c0
 		return new Color(farbe);
 	}
 
 	public Color getGridColor() {
-		final int farbe = new Integer(getProperty("jhh.opt.gitter", "10066329")).intValue(); // #999999
+		final int farbe = Integer.valueOf(getProperty("jhh.opt.gitter", "10066329")).intValue(); // #999999
 		return new Color(farbe);
 	}
 
 	public Color getFarbeZukunft() {
-		final int farbe = new Integer(getProperty("jhh.opt.zukunft", "16777088")).intValue(); // #ffff80
+		final int farbe = Integer.valueOf(getProperty("jhh.opt.zukunft", "16777088")).intValue(); // #ffff80
 		return new Color(farbe);
 	}
 
@@ -69,19 +69,19 @@ public class HaushaltProperties {
 	}
 
 	public int getFontSize() {
-		return new Integer(getProperty("jhh.opt.punkt", "12")).intValue();
+		return Integer.valueOf(getProperty("jhh.opt.punkt", "12")).intValue();
 	}
 
 	
 	
 	@Deprecated
-	private String getProperty(String key) {
+	private String getProperty(final String key) {
 		return this.properties.getProperty(key);
 	}
 
 	@Deprecated
-	public String getProperty(String key, String defaultValue) {
-		String value = getProperty(key);
+	public String getProperty(final String key, final String defaultValue) {
+		final String value = getProperty(key);
 		return (value != null && "".equals(value))? value : defaultValue;
 	}
 
@@ -106,7 +106,7 @@ public class HaushaltProperties {
 		return this.properties;
 	}
 
-	public void setProperty(String key, String value) {
+	public void setProperty(final String key, final String value) {
 		this.properties.setProperty(key, value);
 	}
 	
@@ -119,9 +119,9 @@ public class HaushaltProperties {
 			final FileOutputStream fos = new FileOutputStream(datei);
 			properties.store(fos, "Properties: " + HaushaltProperties.VERSION);
 			fos.close();
-		} catch (FileNotFoundException e1) {
+		} catch (final FileNotFoundException e1) {
 			throw new HaushaltPropertiesException();
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			throw new HaushaltPropertiesException();
 		}
 	}
@@ -173,11 +173,11 @@ public class HaushaltProperties {
 	}
 	
 	public int getEvaluationWidth() {
-		return new Integer(getProperty("jhh.auswertung.breite", "600")).intValue();
+		return Integer.valueOf(getProperty("jhh.auswertung.breite", "600")).intValue();
 	}
 
 	public int getEvaluationHeight() {
-		return new Integer(getProperty("jhh.auswertung.hoehe", "400")).intValue();
+		return Integer.valueOf(getProperty("jhh.auswertung.hoehe", "400")).intValue();
 	}
 	
 	public boolean isDataImportInEuroCurrency() {

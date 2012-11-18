@@ -53,7 +53,7 @@ public class DatumRenderer extends DefaultTableCellRenderer {
 			final int row,
 			final int col) {
 		final JLabel comp = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, col);
-		final Color farbeZukunft = new Color(new Integer(this.properties.getProperty("jhh.opt.zukunft", "16777088"))); // #ffff80
+		final Color farbeZukunft = new Color(Integer.valueOf(this.properties.getProperty("jhh.opt.zukunft", "16777088"))); // #ffff80
 		final Datum heute = new Datum();
 		if (!isSelected) {
 			if (heute.compareTo((Datum) value) < 0) {

@@ -52,7 +52,7 @@ public class Datum implements Comparable<Datum>, Cloneable {
 	private static final boolean DEBUG = false;
 	private static final TextResource RES = TextResource.get();
 
-	private final Logger logger = Logger.getLogger(Datum.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(Datum.class.getName());
 
 	private GregorianCalendar wert;
 
@@ -93,7 +93,7 @@ public class Datum implements Comparable<Datum>, Cloneable {
 	public void addiereTage(final int tage) {
 		this.wert.add(Calendar.DAY_OF_MONTH, tage);
 		if (DEBUG) {
-			logger.info("Tage plus: " + tage + " / Tage alt: " + this.wert.getTimeInMillis() + "=" + toString());
+			LOGGER.info("Tage plus: " + tage + " / Tage alt: " + this.wert.getTimeInMillis() + "=" + toString());
 		}
 	}
 
@@ -140,7 +140,7 @@ public class Datum implements Comparable<Datum>, Cloneable {
 		try {
 			datum = (Datum) super.clone();
 		} catch (final CloneNotSupportedException e) {
-			logger.warning("Clone not works. This should never happen!");
+			LOGGER.warning("Clone not works. This should never happen!");
 		}
 		datum.wert = (GregorianCalendar) this.wert.clone();
 		return datum;

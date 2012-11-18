@@ -6,9 +6,12 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Properties;
 
-public class HaushaltDefinitionLoader {
+public final class HaushaltDefinitionLoader {
 
 	private static HaushaltProperties haushaltDefinition;
+
+	private HaushaltDefinitionLoader(){};
+	
 	
 	public static synchronized HaushaltProperties getHaushaltDefinition() throws HaushaltPropertiesException {
 		if (haushaltDefinition == null) {
@@ -23,26 +26,26 @@ public class HaushaltDefinitionLoader {
 		FileInputStream fis;
 		try {
 			fis = new FileInputStream(datei);			
-		} catch (FileNotFoundException e) {
+		} catch (final FileNotFoundException e) {
 			throw new HaushaltPropertiesException();
 		}
-		Properties properties = new Properties(); 
+		final Properties properties = new Properties(); 
 		try {
 			properties.load(fis);
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			throw new HaushaltPropertiesException();
 		} finally {
 			try {
 				fis.close();
-			} catch (IOException e) {
+			} catch (final IOException e) {
 				throw new HaushaltPropertiesException();
 			}			
 		}		
 		return createHaushaltDomain(properties);
 	}
 	
-	private static HaushaltProperties createHaushaltDomain(Properties properties) {
-		HaushaltProperties haushalt = new HaushaltProperties(properties);
+	private static HaushaltProperties createHaushaltDomain(final Properties properties) {
+		final HaushaltProperties haushalt = new HaushaltProperties(properties);
 		return haushalt;
 	}
 

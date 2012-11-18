@@ -1,7 +1,10 @@
 package haushalt.service.data;
 
-import static org.mockito.Mockito.*;
-import static org.fest.assertions.Assertions.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.when;
+import static org.fest.assertions.Assertions.assertThat;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -24,17 +27,17 @@ public class DatabaseServiceTest {
 	@Before
 	public void setUp() {
 		dbFileLoader = mock(DatabaseFileLoader.class);
-		DatabaseServiceImpl databaseService = new DatabaseServiceImpl();
-		databaseService.setDatabaseFileLoader(dbFileLoader);
-		this.databaseService = databaseService;
+		final DatabaseServiceImpl databaseServiceImpl = new DatabaseServiceImpl();
+		databaseServiceImpl.setDatabaseFileLoader(dbFileLoader);
+		this.databaseService = databaseServiceImpl;
 	}
 	
 	@Test
 	public void loadDatabaseUsesDatabaseFileLoader() throws FileNotFoundException, DatabaseServiceException {
-		ExtendedDatabase extendedDatabase = createExtendedDatabase();
+		final ExtendedDatabase extendedDatabase = createExtendedDatabase();
 		when(dbFileLoader.loadDbFile(any(File.class))).thenReturn(extendedDatabase);
-		File dbFile = new File("foobar.txt");
-		ExtendedDatabase actualExtendedDatabase = databaseService.loadDatabase(dbFile);
+		final File dbFile = new File("foobar.txt");
+		final ExtendedDatabase actualExtendedDatabase = databaseService.loadDatabase(dbFile);
 		
 		assertThat(actualExtendedDatabase).isEqualTo(extendedDatabase);
 		verify(dbFileLoader).loadDbFile(dbFile);
@@ -42,7 +45,7 @@ public class DatabaseServiceTest {
 
 	@Test
 	public void saveDatabaseUsesDatabaseFileLoader() throws FileNotFoundException, DatabaseServiceException {
-		Datenbasis database = new Datenbasis();
+		final Datenbasis database = new Datenbasis();
 
 		databaseService.saveDbFile(database);
 		
@@ -50,7 +53,7 @@ public class DatabaseServiceTest {
 	}
 
 	private ExtendedDatabase createExtendedDatabase() {
-		ExtendedDatabase extendedDatabase = new ExtendedDatabase(new Datenbasis(), "Any version Id");
+		final ExtendedDatabase extendedDatabase = new ExtendedDatabase(new Datenbasis(), "Any version Id");
 		return extendedDatabase;
 	}
 	

@@ -61,7 +61,7 @@ public class BAKategorieSummen extends AbstractBlockAuswertung {
 		super(haushalt, db, name);
 		final AbstractGDPane[] panes = new AbstractGDPane[5];
 		panes[0] = new ZeitraumGDP(RES.getString("first_period") + ":", new Jahr(2007));
-		panes[1] = new ZahlGDP(RES.getString("number_of_periods") + ":", new Integer(4));
+		panes[1] = new ZahlGDP(RES.getString("number_of_periods") + ":", 4);
 		panes[2] = new EinOderAlleRegisterGDP(RES.getString("register") + ":", db, null);
 		panes[3] = new MehrereKategorienGDP(RES.getString("categories") + ":", db);
 		panes[4] = new ProzentGDP(RES.getString("width_first_column") + ":");

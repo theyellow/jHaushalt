@@ -127,14 +127,14 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 	public Haushalt(final String dateiname) {
 		this.actionHandler = new ActionHandler(this);
 		
-		DatabaseServiceImpl internalDbService = new DatabaseServiceImpl();
+		final DatabaseServiceImpl internalDbService = new DatabaseServiceImpl();
 		internalDbService.setDatabaseFileLoader(new DatabaseFileLoaderImpl());
 		databaseService = internalDbService;
 		
 		// Properties laden		
 		try {
 			haushaltDefinition = HaushaltDefinitionLoader.getHaushaltDefinition();
-		} catch (HaushaltPropertiesException e) {
+		} catch (final HaushaltPropertiesException e) {
 			showDialogToCreateJHHFile();
 		}
 
@@ -173,7 +173,7 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 	private void loadOrCreateDatabaseFile(final String dateiname) {
 		// Letzte Datei laden oder neu initialisieren
 		// In jedem Fall wird die Datenbasis erzeugt.
-		String fileToLoad = (dateiname != null)? 
+		final String fileToLoad = (dateiname != null)? 
 				dateiname:
 				(haushaltDefinition.getJhhFileName() != null)? 
 						haushaltDefinition.getJhhFileName() :
@@ -286,7 +286,7 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 		final Class<?> c = SwingConstants.class;
 		try {
 			final Field field = c.getField(tabPlacement);
-			tp = field.getInt(new Integer(0));
+			tp = field.getInt(Integer.valueOf(0));
 		} catch (final NoSuchFieldException e) {
 			LOGGER.warning(e.getMessage());
 		} catch (final IllegalAccessException e) {
@@ -318,7 +318,7 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 	public int zeigeRegisterTab(final String regname) {
 		final int tabNr = tabbedPane.indexOfTab(regname);
 		
-		ColumnModelProperties columnModelProperties = haushaltDefinition.getColumnModelProperties();
+		final ColumnModelProperties columnModelProperties = haushaltDefinition.getColumnModelProperties();
 		// int tabNr = getRegisterTabNr(""+tableModel);
 		if (tabNr > -1) {
 			// Register wird schon angezeigt, wahrscheinlich wurde es verändert:
@@ -633,7 +633,7 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 		containerAuswertung.laden(dateiname);
 	}
 
-	private void showDialogEvaluation(Datenbasis db) {
+	private void showDialogEvaluation(final Datenbasis db) {
 		containerAuswertung = new DlgContainerAuswertung(this, db);
 		containerAuswertung.setPreferredSize(getPreferredEvaluationDimension());
 	}
@@ -654,9 +654,9 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 		
 		try {
 			loadedDatabase = databaseService.loadDatabase(datei);
-		} catch (FileNotFoundException e) {
+		} catch (final FileNotFoundException e) {
 			handleJhhFileException("-E- " + datei.getPath() + " " + RES.getString("status_not_found"));
-		} catch (DatabaseServiceException e) {
+		} catch (final DatabaseServiceException e) {
 			handleJhhFileException("-E- " + RES.getString("status_load_error") + ": " + datei.getPath());
 		}
 
@@ -666,10 +666,10 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 		}
 	}
 
-	private boolean hasUserConfirmedWarningMessage(String versionInfo) {
+	private boolean hasUserConfirmedWarningMessage(final String versionInfo) {
 		final String warningTitle = RES.getString("warning");
 		final String warningMessage = getWarningMessage(versionInfo);
-		int confirmationAnswer = JOptionPane.showConfirmDialog(null, warningMessage, warningTitle, JOptionPane.YES_NO_OPTION);
+		final int confirmationAnswer = JOptionPane.showConfirmDialog(null, warningMessage, warningTitle, JOptionPane.YES_NO_OPTION);
 		return confirmationAnswer == JOptionPane.YES_OPTION;
 	}
 	
@@ -698,7 +698,7 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 		}
 	}
 
-	private void handleJhhFileException(String message) {
+	private void handleJhhFileException(final String message) {
 		mainWindow.setStatus(message);
 		haushaltDefinition.setJhhFileName(null);
 	}
@@ -724,7 +724,7 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 			mainWindow.setStatus(datei.getPath() + " " + RES.getString("status_saved") + ".");
 		} catch (final FileNotFoundException e1) {
 			mainWindow.setStatus("-E- " + datei.getPath() + " " + RES.getString("status_not_found"));
-		} catch (DatabaseServiceException e) {
+		} catch (final DatabaseServiceException e) {
 			mainWindow.setStatus("-E- " + RES.getString("status_write_error") + ": " + datei.getPath());
 		}
 
@@ -737,7 +737,7 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 		dateidialog.setFileFilter(fileFilter);
 		dateidialog.setCurrentDirectory(new File(haushaltDefinition.getJhhFolder()));
 		if (dateidialog.showSaveDialog(mainWindow.getFrame()) == JFileChooser.APPROVE_OPTION) {
-			File selectedFile = dateidialog.getSelectedFile();
+			final File selectedFile = dateidialog.getSelectedFile();
 			db.setFileName(selectedFile.getAbsolutePath());
 			speichern(selectedFile);
 		}
@@ -760,9 +760,9 @@ public class Haushalt implements KeyListener, ListSelectionListener {
 
 			try {
 				haushaltDefinition.save();
-			} catch (HaushaltPropertiesException e) {
+			} catch (final HaushaltPropertiesException e) {
 				LOGGER.info("Could not save haushalt definition.");
-				e.printStackTrace();
+				LOGGER.warning(e.getMessage());
 			}
 			
 			System.exit(0);

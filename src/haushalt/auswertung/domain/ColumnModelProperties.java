@@ -6,15 +6,15 @@ public class ColumnModelProperties {
 	private static final String PROPERTY_PREFIX = "jhh.register.spalte";
 	private Properties properties;
 	
-	public ColumnModelProperties(Properties properties) {
+	public ColumnModelProperties(final Properties properties) {
 		this.properties = properties;
 	}
 	
-	public boolean doesWidthExistForColumnNumber(int ordinalNumber) {
+	public boolean doesWidthExistForColumnNumber(final int ordinalNumber) {
 		return properties.containsKey(PROPERTY_PREFIX+ordinalNumber);
 	}
 	
-	public int getRegisterWidthForColumnNumber(int columnNumber) {
-		return new Integer(properties.getProperty(PROPERTY_PREFIX + columnNumber)).intValue();
+	public int getRegisterWidthForColumnNumber(final int columnNumber) {
+		return Integer.valueOf(properties.getProperty(PROPERTY_PREFIX + columnNumber)).intValue();
 	}
 }

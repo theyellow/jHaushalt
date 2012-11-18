@@ -60,7 +60,7 @@ public class BATortenDiagramm extends AbstractBlockAuswertung {
 		super(haushalt, db, name);
 		final AbstractGDPane[] panes = new AbstractGDPane[6];
 		panes[0] = new ZeitraumGDP(RES.getString("first_period") + ":", new Jahr(2007));
-		panes[1] = new ZahlGDP(RES.getString("number_of_categories") + ":", new Integer(10));
+		panes[1] = new ZahlGDP(RES.getString("number_of_categories") + ":", 10);
 		panes[2] = new EinOderAlleRegisterGDP(RES.getString("register") + ":", db, null);
 		panes[3] = new MehrereKategorienGDP(RES.getString("categories") + ":", db);
 		panes[4] = new TextArrayGDP(RES.getString("color_scheme") + ":", FarbPaletten.getPalettenNamen(), "Standard");

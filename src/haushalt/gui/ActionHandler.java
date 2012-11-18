@@ -79,21 +79,21 @@ public class ActionHandler {
 			RES.getString("new"),
 			"New",
 			RES.getString("new_legend"),
-			new Integer(KeyEvent.VK_N)));
+			KeyEvent.VK_N));
 		standardActions.add(new StandardAction(
 			haushalt,
 			"laden",
 			RES.getString("open") + "...",
 			"Open",
 			RES.getString("open_legend"),
-			new Integer(KeyEvent.VK_L)));
+			KeyEvent.VK_L));
 		standardActions.add(new StandardAction(
 			haushalt,
 			"speichern",
 			RES.getString("save"),
 			"Save",
 			RES.getString("save_legend"),
-			new Integer(KeyEvent.VK_S)));
+			KeyEvent.VK_S));
 		standardActions.add(new StandardAction(
 			haushalt,
 			"speichernUnter",
@@ -107,7 +107,7 @@ public class ActionHandler {
 			RES.getString("exit"),
 			null,
 			RES.getString("exit_legend"),
-			new Integer(KeyEvent.VK_X)));
+			KeyEvent.VK_X));
 
 		return standardActions;
 	}
@@ -122,49 +122,49 @@ public class ActionHandler {
 			RES.getString("new_booking") + "...",
 			"AddBuchung",
 			RES.getString("new_booking_legend"),
-			new Integer(KeyEvent.VK_C)));
+			KeyEvent.VK_C));
 		standardActions.add(new StandardAction(
 			haushalt,
 			"loeschen",
 			RES.getString("delete"),
 			"Delete",
 			RES.getString("delete_legend"),
-			new Integer(KeyEvent.VK_D)));
+			KeyEvent.VK_D));
 		standardActions.add(new StandardAction(
 			haushalt,
 			"umbuchen",
 			RES.getString("rebook") + "...",
 			"Umbuchung",
 			RES.getString("rebook_legend"),
-			new Integer(KeyEvent.VK_U)));
+			KeyEvent.VK_U));
 		standardActions.add(new StandardAction(
 			haushalt,
 			"splitten",
 			RES.getString("split") + "...",
 			"Splitten",
 			RES.getString("split_legend"),
-			new Integer(KeyEvent.VK_P)));
+			KeyEvent.VK_P));
 		standardActions.add(new StandardAction(
 			haushalt,
 			"umwandeln",
 			RES.getString("convert") + "...",
 			"Umwandeln",
 			RES.getString("convert_legend"),
-			new Integer(KeyEvent.VK_W)));
+			KeyEvent.VK_W));
 		standardActions.add(new StandardAction(
 			haushalt,
 			"registerBearbeiten",
 			RES.getString("edit_registers") + "...",
 			"Register",
 			RES.getString("edit_registers_legend"),
-			new Integer(KeyEvent.VK_R)));
+			KeyEvent.VK_R));
 		standardActions.add(new StandardAction(
 			haushalt,
 			"kategorienBearbeiten",
 			RES.getString("edit_category") + "...",
 			"Auto",
 			RES.getString("edit_category_legend"),
-			new Integer(KeyEvent.VK_K)));
+			KeyEvent.VK_K));
 		standardActions.add(new StandardAction(
 			haushalt,
 			"suchen",
@@ -178,7 +178,7 @@ public class ActionHandler {
 			RES.getString("delete_old_bookings") + "...",
 			null,
 			RES.getString("delete_old_bookings_legend"),
-			new Integer(KeyEvent.VK_E)));
+			KeyEvent.VK_E));
 		standardActions.add(new StandardAction(
 			haushalt,
 			"kategorieErsetzen",
@@ -192,14 +192,14 @@ public class ActionHandler {
 			RES.getString("clean_categories") + "...",
 			null,
 			RES.getString("clean_categories_legend"),
-			new Integer(KeyEvent.VK_B)));
+			KeyEvent.VK_B));
 		standardActions.add(new StandardAction(
 			haushalt,
 			"registerVereinigen",
 			RES.getString("join_register") + "...",
 			null,
 			RES.getString("join_register_legend"),
-			new Integer(KeyEvent.VK_V)));
+			KeyEvent.VK_V));
 
 		return standardActions;
 	}
@@ -214,7 +214,7 @@ public class ActionHandler {
 			RES.getString("show_report") + "...",
 			"Auswertung",
 			RES.getString("show_report_legend"),
-			new Integer(KeyEvent.VK_A)));
+			KeyEvent.VK_A));
 		standardActions.add(new StandardAction(
 			haushalt,
 			"exportCSV",
@@ -228,7 +228,7 @@ public class ActionHandler {
 			RES.getString("print") + "...",
 			"Print",
 			RES.getString("print_legend"),
-			new Integer(KeyEvent.VK_P)));
+			KeyEvent.VK_P));
 
 		return standardActions;
 	}
@@ -244,7 +244,7 @@ public class ActionHandler {
 			RES.getString("preferences") + "...",
 			"Preferences",
 			RES.getString("preferences_legend"),
-			new Integer(KeyEvent.VK_O));
+			KeyEvent.VK_O);
 		final StandardAction autoBuchungen = new StandardAction(haushalt, "autoBuchung", RES.getString("automatic_booking")
 			+ "...", "Robot", RES.getString("automatic_booking_legend"), null);
 		final StandardAction importCSV = new StandardAction(
@@ -253,9 +253,9 @@ public class ActionHandler {
 			RES.getString("import_csv") + "...",
 			"Import",
 			RES.getString("import_csv_legend"),
-			new Integer(KeyEvent.VK_I));
+			KeyEvent.VK_I);
 		final StandardAction importQuicken = new StandardAction(haushalt, "importQuicken", RES.getString("import_quicken")
-			+ "...", null, RES.getString("import_quicken_legend"), new Integer(KeyEvent.VK_Q));
+			+ "...", null, RES.getString("import_quicken_legend"), KeyEvent.VK_Q);
 
 		if (!Haushalt.isMacOSX()) {
 			standardActions.add(preferences);
@@ -277,7 +277,7 @@ public class ActionHandler {
 			RES.getString("help_content") + "...",
 			"Help",
 			RES.getString("help_content_legend"),
-			new Integer(KeyEvent.VK_F1));
+			KeyEvent.VK_F1);
 		final StandardAction programmInfo = new StandardAction(
 			haushalt,
 			"programmInfo",

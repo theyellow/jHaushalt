@@ -173,7 +173,7 @@ public class DlgAutoBuchung extends JDialog {
 		action.putValue(Action.SHORT_DESCRIPTION, RES.getString("legend_delete_automatic_booking"));
 		final KeyStroke key = KeyStroke.getKeyStroke(KeyEvent.VK_D, ActionEvent.CTRL_MASK);
 		action.putValue(Action.ACCELERATOR_KEY, key);
-		action.putValue(Action.MNEMONIC_KEY, new Integer(KeyEvent.VK_D));
+		action.putValue(Action.MNEMONIC_KEY, KeyEvent.VK_D);
 
 		// Cell-Editoren für Standard-Buchungen erzeugen
 		TableColumnModel columnModel = this.standardTable.getColumnModel();
