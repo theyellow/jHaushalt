@@ -17,6 +17,7 @@ public enum BuchungType {
 
 	private BuchungType(String filePattern, BuchungStrategy buchungStrategy) {
 		this.fileRepresentation = filePattern;
+		this.buchungStrategy = buchungStrategy;
 	}
 	
 	public String getFileRepresentation() {
