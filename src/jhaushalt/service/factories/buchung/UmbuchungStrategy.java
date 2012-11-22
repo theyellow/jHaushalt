@@ -6,22 +6,23 @@ import java.text.ParseException;
 
 import jhaushalt.domain.buchung.Buchung;
 import jhaushalt.domain.buchung.Umbuchung;
+import jhaushalt.service.factories.DataSourceHolder;
 import jhaushalt.service.factories.DatumFactory;
 import jhaushalt.service.factories.GeldbetragFactory;
 
 public class UmbuchungStrategy implements BuchungStrategy {
 
-	public Buchung loadData(DataInputStream in) throws IOException, ParseException {
+	public Buchung loadData(DataSourceHolder in) throws IOException, ParseException {
 		final Umbuchung umbuchung = new Umbuchung();
 		laden(in, umbuchung);
 		return umbuchung;
 	}
 	
-	private static void laden(final DataInputStream in, final Umbuchung umbuchung) throws IOException, ParseException {
+	private static void laden(final DataSourceHolder in, final Umbuchung umbuchung) throws IOException, ParseException {
 		umbuchung.setDatum(DatumFactory.getInstance(in));
-		umbuchung.setText(in.readUTF());
-		in.readUTF(); // first time final String quellRegister = 
-		umbuchung.setWert(GeldbetragFactory.getInstance(in));
+		umbuchung.setText(in.getDataString());
+		in.getDataString(); // first time final String quellRegister = 
+		umbuchung.setWert(GeldbetragFactory.getInstance(in)); // FIXME
 
 		// DAS klappte alles überhaupt nicht... kommentiere das mal aus...
 //		// FIXME this re-accounting mst be done later, but I have to read this information now... uuuah		

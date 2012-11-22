@@ -1,7 +1,6 @@
 package jhaushalt.service.factories;
 
 
-import java.io.DataInputStream;
 import java.io.IOException;
 
 import jhaushalt.domain.kategorie.EinzelKategorie;
@@ -9,8 +8,8 @@ import jhaushalt.domain.kategorie.Kategorie;
 
 public class CategoryFactory {
 
-	public static Kategorie getInstance(DataInputStream in) throws IOException {
-		return createCategoryTree(in.readUTF());
+	public static Kategorie getInstance(DataSourceHolder in) throws IOException {
+		return createCategoryTree(in.getDataString());
 	}
 	
 	

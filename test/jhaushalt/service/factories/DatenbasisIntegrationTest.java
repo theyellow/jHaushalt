@@ -17,7 +17,9 @@ public class DatenbasisIntegrationTest {
 	public void doSomeRawChecksOnDatenbasisFactory() throws IOException, UnknownBuchungTypeException, ParseException {
 		DataInputStream dis = createDataInputStream("testdatenbank.jhh");
 		
-		Datenbasis datenbasis = DatenbasisFactory.getInstance(dis);
+		DataSourceInputStreamHolder holder = new DataSourceInputStreamHolder(dis);
+		
+		Datenbasis datenbasis = DatenbasisFactory.getInstance(holder);
 		
 		assertThat(datenbasis).isNotNull();
 	}

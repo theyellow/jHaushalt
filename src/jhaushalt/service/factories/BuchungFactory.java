@@ -1,6 +1,5 @@
 package jhaushalt.service.factories;
 
-import java.io.DataInputStream;
 import java.io.IOException;
 import java.text.ParseException;
 
@@ -9,8 +8,8 @@ import jhaushalt.service.factories.buchung.BuchungStrategy;
 
 public class BuchungFactory {
 	
-	public static Buchung getInstance(DataInputStream in) throws IOException, UnknownBuchungTypeException, ParseException {
-		final String typ = in.readUTF();
+	public static Buchung getInstance(DataSourceHolder in) throws IOException, UnknownBuchungTypeException, ParseException {
+		final String typ = in.getDataString();
 		BuchungType buchungType = BuchungType.getBuchungTpeByFileRepresentation(typ);
 		BuchungStrategy strategy = buchungType.getBuchungStrategy();
 		return strategy.loadData(in);

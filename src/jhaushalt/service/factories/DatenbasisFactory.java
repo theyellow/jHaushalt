@@ -1,11 +1,10 @@
 package jhaushalt.service.factories;
 
-import java.io.DataInputStream;
 import java.io.IOException;
-
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
+
 import jhaushalt.domain.Datenbasis;
 import jhaushalt.domain.Register;
 
@@ -13,19 +12,18 @@ public class DatenbasisFactory {
 //	private static final Logger LOGGER = Logger.getLogger(DatenbasisFactory.class.getName());
 //	private static final DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT, Locale.GERMAN);
 	
-	public static Datenbasis getInstance(DataInputStream input) throws IOException, UnknownBuchungTypeException, ParseException {
-		DataInputStream in = input;
+	public static Datenbasis getInstance(DataSourceHolder input) throws IOException, UnknownBuchungTypeException, ParseException {
 		Datenbasis datenbasis = new Datenbasis();
 		
-		datenbasis.setVersionInfo(getStringDataFromFile(in));
-		datenbasis.setRegisterList(loadRegisters(in));
+		datenbasis.setVersionInfo(getStringDataFromFile(input));
+		datenbasis.setRegisterList(loadRegisters(input));
 		
 		// FIXME aggregate category tree
 		return datenbasis;
 	}
 		
-	private static List<Register> loadRegisters(DataInputStream in) throws IOException, UnknownBuchungTypeException, ParseException {
-		int numberOfRegisters = in.readInt();
+	private static List<Register> loadRegisters(DataSourceHolder in) throws IOException, UnknownBuchungTypeException, ParseException {
+		int numberOfRegisters = in.getInt();
 		List<Register> registerList = new ArrayList<Register>();
 		for (int i = 0; i < numberOfRegisters; i++) {
 			String registerName = createUniqueRegisterName(registerList, getStringDataFromFile(in));
@@ -52,8 +50,8 @@ public class DatenbasisFactory {
 		return generierterName;
 	}
 	
-	private static String getStringDataFromFile(DataInputStream in) throws IOException {
-		return in.readUTF();
+	private static String getStringDataFromFile(DataSourceHolder in) throws IOException {
+		return in.getDataString();
 	}
 	
 }

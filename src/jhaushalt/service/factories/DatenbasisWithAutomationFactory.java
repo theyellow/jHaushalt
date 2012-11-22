@@ -12,17 +12,17 @@ import jhaushalt.domain.buchung.StandardBuchung;
 
 public class DatenbasisWithAutomationFactory {
 
-	public static Datenbasis getInstance(DataInputStream inputStream) throws IOException, UnknownBuchungTypeException, ParseException {
-		Datenbasis datenbasis = DatenbasisFactory.getInstance(inputStream);
+	public static Datenbasis getInstance(DataSourceHolder input) throws IOException, UnknownBuchungTypeException, ParseException {
+		Datenbasis datenbasis = DatenbasisFactory.getInstance(input);
 		if (! "jHaushalt1.0".equals(datenbasis.getVersionInfo())) {
 			// automatische Buchungen laden und ausführen (in v1.0 noch unbekannt!)
-			datenbasis.setAutomatedEntries(loadAutomatedEntries(inputStream));
+			datenbasis.setAutomatedEntries(loadAutomatedEntries(input));
 		}
 		return datenbasis;
 	}
 
-	private static List<Buchung> loadAutomatedEntries (DataInputStream in) throws IOException, UnknownBuchungTypeException, ParseException {
-		final int numberOfAutomatedEntries = in.readInt();
+	private static List<Buchung> loadAutomatedEntries (DataSourceHolder in) throws IOException, UnknownBuchungTypeException, ParseException {
+		final int numberOfAutomatedEntries = in.getInt();
 		List<Buchung> automatedEntries = new ArrayList<Buchung>();
 		
 		for (int i = 0; i < numberOfAutomatedEntries; i++) {
