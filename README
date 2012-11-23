@@ -1,9 +1,21 @@
-/**
- * @author Dr. Lars H. Hahn
- * @version 2.6/2010.08.14
- */
+Current Version 2.6.1-SNAPSHOT
+------------------------------
 
-/*
+Dear user
+
+This product was orignally implemented by Dr. Lars H. Hahn who has produced and managed
+a great tool for over 3 years. 
+
+Now, in year 2012, we decided to support this product. We have started to read
+and to refactor the code in order to be able to improve this product. This means that in
+the current state this version might have bugs that can also damage your data.
+
+So, don't forget to back up your data before using one of these snapshot version!
+
+In any case, you are also invited to support our work. Contact us!
+
+
+
  * 2010.08.14 Name der Datei für die Properties jetzt variabel
  * (PROPERTIES_FILENAME)
  * 2009.07.27 Erhöhen der Versionsnummer auf 2.6
@@ -39,5 +51,5 @@
  * 2005.02.18 BugFix: Nachdem Splitten einer Buchung wurde
  * nicht "mitgesprungen".
  * 2004.08.25 BugFix: Abbruch beim CSV-Import berücksichtigt.
- */
+ 
  
