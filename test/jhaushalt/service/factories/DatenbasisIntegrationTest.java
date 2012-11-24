@@ -22,6 +22,7 @@ public class DatenbasisIntegrationTest {
 		Datenbasis datenbasis = DatenbasisFactory.getInstance(holder);
 		
 		assertThat(datenbasis).isNotNull();
+		assertThat(datenbasis.getVersionInfo()).isEqualTo("jHaushalt2.1.2");
 	}
 	
 	private DataInputStream createDataInputStream(String resourceName) {

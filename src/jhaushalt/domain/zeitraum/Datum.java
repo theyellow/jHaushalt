@@ -90,10 +90,10 @@ public class Datum implements Comparable<Datum>, Cloneable {
 		return this.wert.compareTo(datum.wert);
 	}
 
-	public boolean istImZeitraum(
-			jhaushalt.domain.zeitraum.Zeitraum zeitraum) {
-		// TODO check for circular dependency
-		return false;
+	public boolean istImZeitraum(Zeitraum zeitraum) {
+		boolean endCheck = zeitraum.getEndDatum().compareTo(this) > 0;
+		boolean startCheck = zeitraum.getStartDatum().compareTo(this) <= 0;
+		return  startCheck && endCheck;
 	}
 
 }

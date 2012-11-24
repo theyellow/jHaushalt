@@ -198,49 +198,9 @@ public class Datenbasis {
 	public String getFilename() {
 		return filename;
 	}
-	/**
-	 * Liefert alle Buchungen einer IKategorie in einem Zeitraum.
-	 * 
-	 * @param zeitraum
-	 *            Zeitraum
-	 * @param regname
-	 *            Name des Registers
-	 * @param kategorien
-	 *            Liste mit Kategorien
-	 * @return Liste der Buchungen
-	 */
 
-	public ArrayList<String[]> getBuchungen(
-		final Zeitraum zeitraum,
-		final String regname,
-		final EinzelKategorie[] kategorien,
-		final boolean unterkategorienVerwenden) {
-		final ArrayList<String[]> liste = new ArrayList<String[]>();
-		if (regname == null) {
-			for (int i = 0; i < this.registerListe.size(); i++) {
-				getBuchungen(liste, zeitraum, this.registerListe.get(i), kategorien, unterkategorienVerwenden);
-			}
-		} else {
-			getBuchungen(liste, zeitraum, findeRegister(regname), kategorien, unterkategorienVerwenden);
-		}
-		return liste;
-	}
 
-	/**
-	 * Liefert das passende Register zum angegebenen Namen.
-	 * 
-	 * @param regname
-	 *            Name des gesuchen Registers
-	 * @return gesuchtes Register
-	 */
-	public Register findeRegister(final String regname) {
-		for (int i = 0; i < this.registerListe.size(); i++) {
-			if (regname.equals("" + this.registerListe.get(i))) {
-				return this.registerListe.get(i);
-			}
-		}
-		return null;
-	}
+
 
 	/**
 	 * Verschiebt ein Register innerhalb der Register-Liste.
@@ -275,39 +235,6 @@ public class Datenbasis {
 		}
 	}
 
-		
-	private void getBuchungen(
-		final ArrayList<String[]> liste,
-		final Zeitraum zeitraum,
-		final Register register,
-		final EinzelKategorie[] kategorien,
-		final boolean unterkategorienVerwenden) {
-		for (int i = 0; i < register.getAnzahlBuchungen(); i++) {
-			final Buchung buchung = register.getBuchung(i);
-			final Datum datum = buchung.getDatum();
-			if (datum.istImZeitraum(zeitraum)) {
-				for (int j = 0; j < kategorien.length; j++) {
-					final Geldbetrag wert = buchung.getKategorieWert(kategorien[j], unterkategorienVerwenden);
-					if (!wert.equals(Geldbetrag.NULL_EURO)) {
-						final int anzahl = liste.size();
-						int pos = -1;
-						for (int k = 0; k < anzahl; k++) {
-							if (datum.compareTo(new Datum(liste.get(k)[0])) >= 0) {
-								pos = k;
-							}
-						}
-						final String[] zeile = {"" + datum, buchung.getText(), "" + kategorien[j], "" + wert};
-						if (pos == anzahl - 1) {
-							liste.add(zeile);
-						} else {
-							// neue Buchung einfuegen
-							liste.add(pos + 1, zeile);
-						}
-					}
-				}
-			}
-		}
-	}
 
 	/// VERSION INFO
 	
@@ -321,6 +248,10 @@ public class Datenbasis {
 
 	/// REGISTER LIST
 
+	public List<Register> getRegisterList() {
+		return this.registerListe;
+	}
+	
 	public void setRegisterList(List<Register> registerList) {
 		this.registerListe = registerList;
 		
