@@ -16,6 +16,7 @@
 package jhaushalt.domain;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 
 import jhaushalt.domain.buchung.Buchung;
@@ -24,28 +25,6 @@ import jhaushalt.domain.buchung.Umbuchung;
 import jhaushalt.domain.kategorie.UmbuchungKategorie;
 import jhaushalt.domain.zeitraum.Datum;
 
-/**
- * Die Register dienen als Container für die Buchung. Beispiele
- * für Register sind "Girokonto" oder "Bargeld".
- * 
- * @author Dr. Lars H. Hahn
- * @version 2.1.3/2006.06.21
- */
-
-/*
- * 2006.06.21 Verbesserung der Performanz beim Einsortieren
- * durch die Annahme, dass meistens an das Ende des
- * Registers eingefügt werden muss
- * 2006.06.21 BugFix: Einsortieren war doch notwendig, da die
- * Umbuchungen tw. schon vorzeitig ins Register
- * geladen werden
- * 2006.06.19 Verbesserung der Performanz durch Verzichten des
- * "Einsortierens" der Buchungen beim Laden
- * 2006.02.14 BugFix: Abfangen des Löschens der "letzten Zeile"
- * 2006.02.10 Implementierung des Interface 'Comparable'
- * 2006.01.31 Neusortieren einer Buchung jetzt unter Angabe
- * der Buchung selbst
- */
 
 public class Register implements Comparable<Register> {
 
@@ -60,11 +39,6 @@ public class Register implements Comparable<Register> {
 		this.buchungen = new ArrayList<Buchung>();
 	}
 
-	@Override
-	public String toString() {
-		return this.name;
-	}
-
 	public void setName(final String neuerName) {
 		this.name = neuerName;
 	}
@@ -76,6 +50,10 @@ public class Register implements Comparable<Register> {
 	 */
 	public int getAnzahlBuchungen() {
 		return this.buchungen.size();
+	}
+
+	public List<Buchung> getBookings() {
+		return this.buchungen;
 	}
 
 	/**
@@ -188,52 +166,6 @@ public class Register implements Comparable<Register> {
 		return einsortierenBuchung(buchung);
 	}
 
-	/**
-	 * Fügt die Buchungen aus einem anderen Register diesem
-	 * Register hinzu und löscht sie dann.
-	 * 
-	 * @param registerZumLoeschen
-	 *            Register aus dem die Buchungen übernommen werden
-	 */
-	public void registerVereinigen(final Register registerZumLoeschen) {
-		while (registerZumLoeschen.getAnzahlBuchungen() > 0) {
-			if (registerZumLoeschen.buchungen.get(0).getClass() == Umbuchung.class) {
-				final Umbuchung umbuchung = (Umbuchung) registerZumLoeschen.buchungen.get(0);
-				final UmbuchungKategorie alteKategorie = (UmbuchungKategorie) umbuchung.getKategorie();
-
-				if (alteKategorie.isSelbstbuchung()) {
-					// Umbuchung: alte Selbstbuchung
-					umbuchung.setKategorie(new UmbuchungKategorie(this, this));
-					// -> automatisch löschen und neu einfügen
-				} else {
-					// normale Umbuchung
-					Register neueQuelle;
-					Register neuesZiel;
-					if (alteKategorie.getQuelle() == registerZumLoeschen) {
-						neueQuelle = this;
-					} else {
-						neueQuelle = alteKategorie.getQuelle();
-					}
-					if (alteKategorie.getZiel() == registerZumLoeschen) {
-						neuesZiel = this;
-					} else {
-						neuesZiel = alteKategorie.getZiel();
-					}
-					if (neueQuelle != neuesZiel) {
-						umbuchung.setKategorie(new UmbuchungKategorie(neueQuelle, neuesZiel));
-					} else {
-						// sonst loeschen:
-						neueQuelle.loescheUmbuchung(umbuchung);
-						registerZumLoeschen.buchungen.remove(0);
-					}
-				}
-			} else {
-				// StandardBuchung + SplitBuchung
-				einsortierenBuchung(registerZumLoeschen.buchungen.get(0));
-				registerZumLoeschen.buchungen.remove(0);
-			}
-		}
-	}
 
 	/**
 	 * Liefert den Saldo des Registers bis zum angegebenen Datum (exklusiv).
@@ -289,21 +221,15 @@ public class Register implements Comparable<Register> {
 		return saldo;
 	}
 	
-	public String[][] csvExport() {
-		final int anzahl = getAnzahlBuchungen();
-		final String[][] text = new String[anzahl][3];
-		for (int i = 0; i < anzahl; i++) {
-			final Buchung buchung = getBuchung(i);
-			text[i][0] = "" + buchung.getDatum();
-			text[i][1] = buchung.getText();
-			text[i][2] = "" + buchung.getKategorie();
-			text[i][3] = "" + buchung.getWert();
-		}
-		return text;
-	}
 
 	public int compareTo(final Register register) {
 		return this.name.compareTo(register.name);
 	}
+
+	@Override
+	public String toString() {
+		return this.name;
+	}
+
 
 }

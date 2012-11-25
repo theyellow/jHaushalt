@@ -65,6 +65,18 @@ public class StandardBuchung extends Buchung {
 	}
 
 	@Override
+	public Geldbetrag getWert() {
+		return this.betrag;
+	}
+
+	@Override
+	public void setWert(final Geldbetrag wert) {
+		this.betrag = wert;
+	}
+
+	
+	
+	@Override
 	public int ersetzeKategorie(final EinzelKategorie alteKategorie, final EinzelKategorie neueKategorie) {
 		if ((this.kategorie == alteKategorie) || (alteKategorie == null)) {
 			this.kategorie = neueKategorie;
@@ -77,20 +89,8 @@ public class StandardBuchung extends Buchung {
 	public boolean istInKategorie(final EinzelKategorie kategorie, final boolean unterkategorienVerwenden) {
 		return this.kategorie.istInKategorie(kategorie, unterkategorienVerwenden);
 	}
-
-	// -- Buchungswert
-	// -----------------------------------------------------------
-
-	@Override
-	public Geldbetrag getWert() {
-		return this.betrag;
-	}
-
-	@Override
-	public void setWert(final Geldbetrag wert) {
-		this.betrag = wert;
-	}
-
+	
+	
 	// -- Auswertung
 	// -------------------------------------------------------------
 
@@ -110,6 +110,8 @@ public class StandardBuchung extends Buchung {
 	}
 
 
+	
+	
 	// -- Methode des Interface 'Cloneable'
 	// --------------------------------------
 

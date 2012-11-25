@@ -37,12 +37,8 @@ import jhaushalt.domain.zeitraum.Datum;
 
 public abstract class Buchung implements Cloneable, Comparable<Object> {
 
-	private Datum datum = new Datum();
-
-	// -- Buchungstext
-	// -----------------------------------------------------------
-
-	private String text = "";
+	private Datum buchungsDatum = new Datum();
+	private String buchungsText = "";
 
 	/**
 	 * Setzt das Buchungsdatum
@@ -51,7 +47,7 @@ public abstract class Buchung implements Cloneable, Comparable<Object> {
 	 *            Buchungsdatum
 	 */
 	public void setDatum(final Datum datum) {
-		this.datum = datum;
+		this.buchungsDatum = datum;
 	}
 
 	/**
@@ -60,7 +56,7 @@ public abstract class Buchung implements Cloneable, Comparable<Object> {
 	 * @return Buchungsdatum
 	 */
 	public Datum getDatum() {
-		return this.datum;
+		return this.buchungsDatum;
 	}
 
 	/**
@@ -70,7 +66,7 @@ public abstract class Buchung implements Cloneable, Comparable<Object> {
 	 *            Buchungstext
 	 */
 	public void setText(final String text) {
-		this.text = text;
+		this.buchungsText = text;
 	}
 
 	/**
@@ -79,7 +75,7 @@ public abstract class Buchung implements Cloneable, Comparable<Object> {
 	 * @return Buchungstext
 	 */
 	public String getText() {
-		return this.text;
+		return this.buchungsText;
 	}
 
 	/**
@@ -91,9 +87,9 @@ public abstract class Buchung implements Cloneable, Comparable<Object> {
 	 */
 	public boolean sucheText(final String suchText, final boolean grossUndKlein) {
 		if (grossUndKlein) {
-			return (this.text.indexOf(suchText) > -1);
+			return (this.buchungsText.indexOf(suchText) > -1);
 		}
-		return (this.text.toLowerCase().indexOf(suchText.toLowerCase()) > -1);
+		return (this.buchungsText.toLowerCase().indexOf(suchText.toLowerCase()) > -1);
 	}
 
 	/**
@@ -106,9 +102,9 @@ public abstract class Buchung implements Cloneable, Comparable<Object> {
 	 * @return <code>true</code> falls das Ersetzten erfolgreich war
 	 */
 	public boolean ersetzeText(final String alt, final String neu) {
-		final int idx = this.text.indexOf(alt);
+		final int idx = this.buchungsText.indexOf(alt);
 		if (idx != -1) {
-			setText(this.text.substring(0, idx) + neu + this.text.substring(idx + alt.length()));
+			setText(this.buchungsText.substring(0, idx) + neu + this.buchungsText.substring(idx + alt.length()));
 			return true;
 		}
 		return false;
@@ -229,10 +225,10 @@ public abstract class Buchung implements Cloneable, Comparable<Object> {
 
 	public int compareTo(final Object obj) {
 		if (obj.getClass() == Datum.class) {
-			return this.datum.compareTo((Datum) obj);
+			return this.buchungsDatum.compareTo((Datum) obj);
 		}
 		final Buchung buchung = (Buchung) obj;
-		int vergleich = this.datum.compareTo(buchung.datum);
+		int vergleich = this.buchungsDatum.compareTo(buchung.buchungsDatum);
 		if (vergleich == 0) {
 			vergleich = buchung.getWert().compareTo(getWert()); // absteigend!
 		}

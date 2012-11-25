@@ -52,6 +52,15 @@ public class EinzelKategorie implements Kategorie {
 		this.name = name;
 	}
 
+	public Geldbetrag getSumme() {
+		return this.summe;
+	}
+
+	public void loescheSumme() {
+		this.summe = new Geldbetrag();
+	}
+
+	
 	@Override
 	public String toString() {
 		if (this.hauptkategorie != null) {
@@ -92,14 +101,6 @@ public class EinzelKategorie implements Kategorie {
 		} else {
 			getHauptkategorie().summe.sum(wert);
 		}
-	}
-
-	public Geldbetrag getSumme() {
-		return this.summe;
-	}
-
-	public void loescheSumme() {
-		this.summe = new Geldbetrag();
 	}
 
 	// -- Methoden fuer Interface: Comparable

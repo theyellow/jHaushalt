@@ -20,65 +20,23 @@ public class DatenbasisServiceImpl implements DatenbasisService {
 		this.datenbasis = datenbasis;
 	}
 
-
-	
-	
 	public ArrayList<BookEntry> getBuchungen(
 			final Zeitraum zeitraum, final String registerName, final EinzelKategorie[] kategorien,
 			final boolean unterkategorienVerwenden) {
-		final ArrayList<BookEntry> buchungList = new ArrayList<BookEntry>();
+		ArrayList<BookEntry> buchungList = null;
 		if (registerName == null) {
-			List<Register> registerList = datenbasis.getRegisterList();
-			for (int i = 0; i < registerList.size(); i++) {
-				getBuchungen(buchungList, zeitraum, registerList.get(i), kategorien, unterkategorienVerwenden);
-			}
-		} else {
-			getBuchungen(buchungList, zeitraum, findeRegister(registerName), kategorien, unterkategorienVerwenden);
+			buchungList = getBookingsForAllRegisters(zeitraum, kategorien, unterkategorienVerwenden);
 		}
+		else {
+			buchungList = getBookingsForGivenRegister(registerName, zeitraum, kategorien, unterkategorienVerwenden);
+		}
+
+		// sort buchungen
+
 		return buchungList;
 	}
 
-	private void getBuchungen(
-			final ArrayList<BookEntry> buchungList,
-			final Zeitraum zeitraum,
-			final Register register,
-			final EinzelKategorie[] kategorien,
-			final boolean unterkategorienVerwenden) {
-		for (int registerIndex = 0; registerIndex < register.getAnzahlBuchungen(); registerIndex++) {
-			final Buchung buchung = register.getBuchung(registerIndex);
-			final Datum datum = buchung.getDatum();
-			
-			if (datum.istImZeitraum(zeitraum)) {
-				for (int kategorienIndex = 0; kategorienIndex < kategorien.length; kategorienIndex++) {
-					final EinzelKategorie kategorie = kategorien[kategorienIndex];
-					final Geldbetrag wert = buchung.getKategorieWert(kategorie, unterkategorienVerwenden);
-					if (!wert.equals(Geldbetrag.NULL_EURO)) {
-						// create new element
-						BookEntry entry = new BookEntry(datum, buchung.getText(), kategorie, wert);
-						// ad insert it at the right position in buchungList
-						final int anzahl = buchungList.size();
-						int pos = -1;
-						for (int k = 0; k < anzahl; k++) {
-							if (datum.compareTo(buchungList.get(k).getDate()) >= 0) {
-								pos = k;
-							}
-						}
-						if (pos == anzahl - 1) {
-							buchungList.add(entry);
-						} else {
-							// neue Buchung einfuegen
-							buchungList.add(pos + 1, entry);
-						}
-					}
-				}
-			}
-		}
-	}
 
-	
-	
-	
-	
 	/**
 	 * Liefert das passende Register zum angegebenen Namen.
 	 * 
@@ -95,5 +53,60 @@ public class DatenbasisServiceImpl implements DatenbasisService {
 		}
 		return null;
 	}
+	
+	private ArrayList<BookEntry> getBookingsForAllRegisters(final Zeitraum zeitraum,
+			final EinzelKategorie[] kategorien, final boolean unterkategorienVerwenden) {
+		ArrayList<BookEntry> bookingList = new ArrayList<BookEntry>();
+		
+		List<Register> registerList = datenbasis.getRegisterList();		
+		for (Register register : registerList) {
+			addSuitableBuchungToList(zeitraum, kategorien, unterkategorienVerwenden, register, bookingList);
+		}
+		return bookingList;
+	}
+
+	
+	private ArrayList<BookEntry> getBookingsForGivenRegister(String registerName, final Zeitraum zeitraum,
+			final EinzelKategorie[] kategorien, final boolean unterkategorienVerwenden) {
+		
+		ArrayList<BookEntry> bookingList = new ArrayList<BookEntry>();
+				
+		Register register = findeRegister(registerName);
+		addSuitableBuchungToList(zeitraum, kategorien, unterkategorienVerwenden, register, bookingList);
+		return bookingList;
+	}
+
+	
+	private void addSuitableBuchungToList(final Zeitraum zeitraum, final EinzelKategorie[] kategorien,
+			final boolean unterkategorienVerwenden, Register register, ArrayList<BookEntry> bookingList) {
+		for (Buchung buchung : register.getBookings()) {
+			BookEntry bookEntry = returnAdaptedBookEntryWhenBuchungSuitsIntoTimeRange(buchung, zeitraum, kategorien, unterkategorienVerwenden);
+			if (bookEntry != null) {
+				bookingList.add(bookEntry);
+			}
+		}
+	}
+
+	
+	private BookEntry returnAdaptedBookEntryWhenBuchungSuitsIntoTimeRange(
+			Buchung buchung,
+			final Zeitraum zeitraum,
+			final EinzelKategorie[] kategorien,
+			final boolean unterkategorienVerwenden) {
+		final Datum datum = buchung.getDatum();
+		if (datum.istImZeitraum(zeitraum)) {
+			for (int kategorienIndex = 0; kategorienIndex < kategorien.length; kategorienIndex++) {
+				final EinzelKategorie kategorie = kategorien[kategorienIndex];
+				final Geldbetrag wert = buchung.getKategorieWert(kategorie, unterkategorienVerwenden);
+				if (! wert.equals(Geldbetrag.NULL_EURO)) {
+					System.out.println("Buchung: "+datum+", Text: "+buchung.getText()+", Kategorie: "+kategorie+", Wert: "+buchung.getWert());
+					System.out.println("Booking: "+datum+", Text: "+buchung.getText()+", Kategorie: "+kategorie+", Wert: "+wert);
+					return new BookEntry(datum, buchung.getText(), kategorie, wert);
+				}
+			}
+		}
+		return null;
+	}
+
 
 }

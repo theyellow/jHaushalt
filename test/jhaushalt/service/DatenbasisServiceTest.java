@@ -10,23 +10,21 @@ import java.util.List;
 import jhaushalt.domain.Datenbasis;
 import jhaushalt.domain.Geldbetrag;
 import jhaushalt.domain.Register;
-import jhaushalt.domain.buchung.StandardBuchung;
 import jhaushalt.domain.gui.BookEntry;
 import jhaushalt.domain.kategorie.EinzelKategorie;
-import jhaushalt.domain.zeitraum.Datum;
 import jhaushalt.domain.zeitraum.Jahr;
 import jhaushalt.domain.zeitraum.Zeitraum;
 
 import org.junit.Before;
 import org.junit.Test;
 
-
 public class DatenbasisServiceTest {
+
 	private DatenbasisServiceImpl service = new DatenbasisServiceImpl();
 
 	private Datenbasis datenbasis;
 	private EinzelKategorie kategorie;
-	
+
 	@Before
 	public void setup() {
 		datenbasis = mock(Datenbasis.class);
@@ -34,23 +32,38 @@ public class DatenbasisServiceTest {
 		kategorie = new EinzelKategorie("Einzahlung", null);
 		kategorie.addiereWert(new Geldbetrag(500D), true);
 	}
-	
+
 	@Test
 	public void getBuchungenDeliversListOfBookEntries() {
 		createRegisterAndBuchung();
-		
-		EinzelKategorie[] kategorien = { kategorie }; 
+
+		EinzelKategorie[] kategorien = { kategorie };
 		Zeitraum zeitraum = new Jahr(2005);
-		String regname = null;
 		boolean unterkategorienVerwenden = true;
-		List<BookEntry> actualList = service.getBuchungen(zeitraum, regname, kategorien, unterkategorienVerwenden);
-		
+		List<BookEntry> actualList = service.getBuchungen(zeitraum, null, kategorien, unterkategorienVerwenden);
+
 		assertThat(actualList).isNotNull();
-		assertThat(actualList).hasSize(1);
-		assertThatBookEntryISFilledOutCorrectly(actualList);
+		assertThat(actualList).hasSize(2);
+		assertThatBookEntryIsFilledOutCorrectly(actualList);
 	}
 
-	private void assertThatBookEntryISFilledOutCorrectly(List<BookEntry> actualList) {
+	@Test
+	public void getBuchungenDeliversListOfBookEntriesForGivenRegisterName() {
+		createRegisterAndBuchung();
+
+		EinzelKategorie[] kategorien = { kategorie };
+		Zeitraum zeitraum = new Jahr(2005);
+		String regname = "foo";
+		boolean unterkategorienVerwenden = true;
+		List<BookEntry> actualList = service.getBuchungen(zeitraum, regname, kategorien, unterkategorienVerwenden);
+
+		assertThat(actualList).isNotNull();
+		assertThat(actualList).hasSize(1);
+		assertThatBookEntryIsFilledOutCorrectly(actualList);
+
+	}
+
+	private void assertThatBookEntryIsFilledOutCorrectly(List<BookEntry> actualList) {
 		BookEntry firstActualEntry = actualList.get(0);
 		assertThat(firstActualEntry.getValue().getBetrag()).isEqualTo(200000L);
 		assertThat(firstActualEntry.getDate().getMonat()).isEqualTo(7);
@@ -61,15 +74,20 @@ public class DatenbasisServiceTest {
 
 	private void createRegisterAndBuchung() {
 		List<Register> registerList = new ArrayList<Register>();
-		Register register = new Register("foo");
-		register.einsortierenBuchung(createBuchung());
-		registerList.add(register);
+		registerList.add(
+			new RegisterBuilder("foo", kategorie)
+			.addBooking(1, 7, 2005, "Testeintrag", 2000D)
+			.addBooking(23, 12, 2004, "Old Entry", 4000D)
+			.addBooking(23, 1, 2006, "Entry in 2006", 3000D)
+			.addBooking(2,7, 2005, "Null amount entry", 0D)
+			.getRegister()
+		);
+		registerList.add(
+				new RegisterBuilder("bar", kategorie)
+				.addBooking(2,7, 2005, "Another amount entry", 150D)
+				.getRegister()
+			);
 		when(datenbasis.getRegisterList()).thenReturn(registerList);
-	}
-
-	private StandardBuchung createBuchung() {
-		String beschreibung = "Testeintrag";		
-		return new StandardBuchung(new Datum(1, 7, 2005), beschreibung, kategorie, new Geldbetrag(2000));
 	}
 
 }
