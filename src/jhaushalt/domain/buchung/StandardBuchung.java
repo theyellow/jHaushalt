@@ -30,13 +30,6 @@ import jhaushalt.domain.zeitraum.Datum;
  * @author Dr. Lars H. Hahn
  * @version 2.6/2010.02.03
  */
-
-/*
- * 2010.02.03 Funktion clone() korrigiert: new String() verwendet
- * 2006.02.10 Ergänzung der Methode isInKategorie
- * 2004.08.22 Erste Version
- */
-
 public class StandardBuchung extends Buchung {
 
 	private static final Logger LOGGER = Logger.getLogger(StandardBuchung.class.getName());

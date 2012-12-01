@@ -80,24 +80,25 @@ public class Umbuchung extends Buchung {
 			LOGGER.info("Umbuchung.setKategorie: NEU " + neueKategorie + "; ALT " + this.kategorie);
 		}
 
-		// Schritt 1: Alte Umbuchung entfernen
-		if (this.kategorie.getQuelle() != null) {
-			this.kategorie.getQuelle().loescheUmbuchung(this);
-		}
-		if (!this.kategorie.isSelbstbuchung() && (this.kategorie.getZiel() != null)) {
-			this.kategorie.getZiel().loescheUmbuchung(this);
-			// Wenn die alte Umbuchung eine Selbstbuchung war, darf nur 1x
-			// gelöscht
-			// werden.
-		}
-
-		// Schritt 2: Neue Umbuchung einsortieren
-		((UmbuchungKategorie) neueKategorie).getQuelle().einsortierenBuchung(this);
-		if (!((UmbuchungKategorie) neueKategorie).isSelbstbuchung()) {
-			((UmbuchungKategorie) neueKategorie).getZiel().einsortierenBuchung(this);
-		}
-		// Wenn eine Buchung eine Selbstbuchung wird, muss sie einmal nur
-		// einsortiert werden.
+		// FIXME some crap reisdes here..
+//		// Schritt 1: Alte Umbuchung entfernen
+//		if (this.kategorie.getQuelle() != null) {
+//			this.kategorie.getQuelle().loescheUmbuchung(this);
+//		}
+//		if (!this.kategorie.isSelbstbuchung() && (this.kategorie.getZiel() != null)) {
+//			this.kategorie.getZiel().loescheUmbuchung(this);
+//			// Wenn die alte Umbuchung eine Selbstbuchung war, darf nur 1x
+//			// gelöscht
+//			// werden.
+//		}
+//
+//		// Schritt 2: Neue Umbuchung einsortieren
+//		((UmbuchungKategorie) neueKategorie).getQuelle().einsortierenBuchung(this);
+//		if (!((UmbuchungKategorie) neueKategorie).isSelbstbuchung()) {
+//			((UmbuchungKategorie) neueKategorie).getZiel().einsortierenBuchung(this);
+//		}
+//		// Wenn eine Buchung eine Selbstbuchung wird, muss sie einmal nur
+//		// einsortiert werden.
 		this.kategorie = (UmbuchungKategorie) neueKategorie;
 	}
 

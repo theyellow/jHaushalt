@@ -12,8 +12,8 @@ public class RegisterFactory {
 	
 	public static Register getInstance (DataSourceHolder in, String registerName) throws IOException, UnknownBuchungTypeException, ParseException {
 		Register register = new Register(registerName);
-		loadBuchungen(in);
-		// FIXME how to handle these buchungen(entries)?
+		List<Buchung> bookingList = loadBuchungen(in);
+		register.insertBookingList(bookingList);
 		return register;
 	}
 

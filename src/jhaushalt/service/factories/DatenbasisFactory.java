@@ -9,9 +9,6 @@ import jhaushalt.domain.Datenbasis;
 import jhaushalt.domain.Register;
 
 public class DatenbasisFactory {
-//	private static final Logger LOGGER = Logger.getLogger(DatenbasisFactory.class.getName());
-//	private static final DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT, Locale.GERMAN);
-	
 	public static Datenbasis getInstance(DataSourceHolder input) throws IOException, UnknownBuchungTypeException, ParseException {
 		Datenbasis datenbasis = new Datenbasis();
 		

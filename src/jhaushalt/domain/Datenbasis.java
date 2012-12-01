@@ -8,8 +8,6 @@ import jhaushalt.domain.buchung.StandardBuchung;
 import jhaushalt.domain.buchung.Umbuchung;
 import jhaushalt.domain.kategorie.EinzelKategorie;
 import jhaushalt.domain.kategorie.UmbuchungKategorie;
-import jhaushalt.domain.zeitraum.Zeitraum;
-import jhaushalt.domain.zeitraum.Datum;
 
 /**
  * Die Datenbasis beinhaltet alle Buchungen und dient zum
@@ -23,7 +21,7 @@ import jhaushalt.domain.zeitraum.Datum;
 public class Datenbasis {
 
 	public static final String VERSION_DATENBASIS = "2.1.2";
-	private static final String[] LEGACY_INTERVALL_NAMEN = {"Woche", "Monat", "Quartal", "Halbjahr", "Jahr"};
+	// private static final String[] LEGACY_INTERVALL_NAMEN = {"Woche", "Monat", "Quartal", "Halbjahr", "Jahr"};
 
 	private static int cacheHit = 0;
 	private static int cacheMiss = 0;
@@ -37,26 +35,26 @@ public class Datenbasis {
 	private List<Register> registerListe;
 
 	// -- Suchen und Ersetzen -----------------------------------
-	private int registerSuchIdx = 0;
-	private int buchungSuchIdx = 0;
-
-	private Zeitraum zeitraumImCache;
-	private String registerImCache;
-	private boolean cacheAktuell = false;
-	private boolean cacheMitUnterkategorien = true;
+//	private int registerSuchIdx = 0;
+//	private int buchungSuchIdx = 0;
+//
+//	private Zeitraum zeitraumImCache;
+//	private String registerImCache;
+//	private boolean cacheAktuell = false;
+//	private boolean cacheMitUnterkategorien = true;
 
 	// -- gemerkte Buchungen ------------------------------------
-	private Datum startDatumGemerkteBuchungen = new Datum();
-	private final List<Buchung> gemerkteBuchungen = new ArrayList<Buchung>();
-	private final List<String> gemerkteBuchungenText = new ArrayList<String>();
+//	private Datum startDatumGemerkteBuchungen = new Datum();
+//	private final List<Buchung> gemerkteBuchungen = new ArrayList<Buchung>();
+//	private final List<String> gemerkteBuchungenText = new ArrayList<String>();
 
 	// -- Auto-Buchung ------------------------------------------
 	private List<Buchung> autoStandardBuchungen = new ArrayList<Buchung>();
 	private final List<Register> autoStandardBuchungRegister = new ArrayList<Register>();
-	private final List<Integer> autoStandardBuchungIntervalle = new ArrayList<Integer>();
+//	private final List<Integer> autoStandardBuchungIntervalle = new ArrayList<Integer>();
 	private final List<Umbuchung> autoUmbuchungen = new ArrayList<Umbuchung>();
 	private final List<UmbuchungKategorie> autoUmbuchungRegister = new ArrayList<UmbuchungKategorie>();
-	private final List<Integer> autoUmbuchungIntervalle = new ArrayList<Integer>();
+//	private final List<Integer> autoUmbuchungIntervalle = new ArrayList<Integer>();
 
 	private String filename;
 	private String versionInfo;
@@ -103,14 +101,14 @@ public class Datenbasis {
 		cacheMiss = miss;
 	}
 
-	private Integer getLegacyIntervallIndex(final String name) {
-		for (int i = 0; i < LEGACY_INTERVALL_NAMEN.length; i++) {
-			if (name.equals(LEGACY_INTERVALL_NAMEN[i])) {
-				return new Integer(i);
-			}
-		}
-		return new Integer(0);
-	}
+//	private Integer getLegacyIntervallIndex(final String name) {
+//		for (int i = 0; i < LEGACY_INTERVALL_NAMEN.length; i++) {
+//			if (name.equals(LEGACY_INTERVALL_NAMEN[i])) {
+//				return new Integer(i);
+//			}
+//		}
+//		return new Integer(0);
+//	}
 
 	/**
 	 * Liefert die Anzahl der vorhandenen wiederkehrenden Standard-Buchungen.

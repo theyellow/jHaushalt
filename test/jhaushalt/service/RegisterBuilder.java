@@ -17,9 +17,7 @@ public class RegisterBuilder {
 	}
 
 	public RegisterBuilder addBooking(int day, int month, int year, String beschreibung, double betrag) {
-		register.einsortierenBuchung(
-				createBuchung(day, month, year, beschreibung, betrag)
-				);
+		register.addBooking(createBuchung(day, month, year, beschreibung, betrag));
 		return this;
 	}
 
