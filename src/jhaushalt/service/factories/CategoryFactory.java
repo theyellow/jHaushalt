@@ -1,19 +1,17 @@
 package jhaushalt.service.factories;
 
-
 import java.io.IOException;
 
 import jhaushalt.domain.kategorie.EinzelKategorie;
-import jhaushalt.domain.kategorie.Kategorie;
+
 
 public class CategoryFactory {
 
-	public static Kategorie getInstance(DataSourceHolder in) throws IOException {
+	public static EinzelKategorie getInstance(DataSourceHolder in) throws IOException {
 		return createCategoryTree(in.getDataString());
 	}
 	
-	
-	private static Kategorie createCategoryTree(final String vollerName) {
+	private static EinzelKategorie createCategoryTree(final String vollerName) {
 		final int n = vollerName.indexOf(":");
 		if (n == -1) {
 			return createOneTreeNodeOrLeave(vollerName, null);

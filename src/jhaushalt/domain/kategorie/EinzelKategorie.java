@@ -60,15 +60,6 @@ public class EinzelKategorie implements Kategorie {
 		this.summe = new Geldbetrag();
 	}
 
-	
-	@Override
-	public String toString() {
-		if (this.hauptkategorie != null) {
-			return "" + this.hauptkategorie + ":" + this.name;
-		}
-		return this.name;
-	}
-
 	public boolean isHauptkategorie() {
 		return this.hauptkategorie == null;
 	}
@@ -108,6 +99,20 @@ public class EinzelKategorie implements Kategorie {
 
 	public int compareTo(final Kategorie kategorie) {
 		return toString().compareToIgnoreCase(kategorie.toString());
+	}
+
+	public String toString() {
+		StringBuilder result = new StringBuilder("[ SingleCategory: ");
+		if (this.hauptkategorie != null) {
+			result.append(hauptkategorie).append(" -> ");
+		}
+		result.append(name);
+		result.append(" ]");
+		return this.name;
+	}
+
+	public void setWert(Geldbetrag betrag) {
+		summe = betrag;
 	}
 
 }

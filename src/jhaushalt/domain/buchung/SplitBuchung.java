@@ -20,7 +20,6 @@
 
 package jhaushalt.domain.buchung;
 
-import java.util.ArrayList;
 import java.util.logging.Logger;
 
 import jhaushalt.domain.Geldbetrag;
@@ -30,27 +29,11 @@ import jhaushalt.domain.kategorie.MehrfachKategorie;
 import jhaushalt.domain.zeitraum.Zeitraum;
 import jhaushalt.domain.zeitraum.Datum;
 
-/**
- * Die SplitBuchung ist ähnlich der StandardBuchung. Der Buchungsbetrag wurde
- * lediglich auf mehrere Kategorien aufgeteilt.
- * 
- * @author Dr. Lars H. Hahn
- * @version 2.6/2010.02.03
- */
-
-/*
- * 2010.02.03 Funktion clone() korrigiert: new String() verwendet
- * 2009.07.28 BugFix: Nach Löschung aller Kategorien/Beträge, liefert
- * reduziere() jetzt "SONSTIGES"/0€ zurück
- * 2006.02.10 Ergänzung der Methode isInKategorie
- */
-
 public class SplitBuchung extends Buchung {
 
 	private static final Logger LOGGER = Logger.getLogger(SplitBuchung.class.getName());
 
 	private MehrfachKategorie splitKategorie = new MehrfachKategorie();
-	private ArrayList<Geldbetrag> splitBetrag = new ArrayList<Geldbetrag>();
 
 	public SplitBuchung() {
 		// wird zum Laden benötigt
@@ -61,11 +44,11 @@ public class SplitBuchung extends Buchung {
 		setText(text);
 	}
 
-	public SplitBuchung(final StandardBuchung buchung) {
-		setDatum(buchung.getDatum());
-		setText(buchung.getText());
-		add((EinzelKategorie) buchung.getKategorie(), buchung.getWert());
-	}
+//	public SplitBuchung(final StandardBuchung buchung) {
+//		setDatum(buchung.getDatum());
+//		setText(buchung.getText());
+//		add((EinzelKategorie) buchung.getKategorie(), buchung.getWert());
+//	}
 
 	public int getAnzahl() {
 		return this.splitKategorie.size();
@@ -77,22 +60,10 @@ public class SplitBuchung extends Buchung {
 
 	public void add(final EinzelKategorie kategorie, final Geldbetrag betrag) {
 		this.splitKategorie.add(kategorie);
-		this.splitBetrag.add(betrag);
 	}
 
 	public void loesche(final int nr) {
 		this.splitKategorie.remove(nr);
-		this.splitBetrag.remove(nr);
-	}
-
-	public Buchung reduziere() {
-		if (this.splitKategorie.size() > 1) {
-			return this;
-		}
-		if (this.splitKategorie.size() < 1) {
-			return new StandardBuchung(getDatum(), getText(), EinzelKategorie.SONSTIGES, new Geldbetrag());
-		}
-		return new StandardBuchung(getDatum(), getText(), this.splitKategorie.get(0), this.splitBetrag.get(0));
 	}
 
 	// -- IKategorie
@@ -107,13 +78,8 @@ public class SplitBuchung extends Buchung {
 		this.splitKategorie.set(nr, kategorie);
 	}
 
-	@Override
-	public Kategorie getKategorie() {
-		return this.splitKategorie;
-	}
-
-	public EinzelKategorie getKategorie(final int nr) {
-		return this.splitKategorie.get(nr);
+	public EinzelKategorie getSingleCategory(final int nr) {
+		return getCategoryEntry(nr);
 	}
 
 	@Override
@@ -152,39 +118,40 @@ public class SplitBuchung extends Buchung {
 	}
 
 	public void setWert(final int nr, final Geldbetrag wert) {
-		this.splitBetrag.set(nr, wert);
+		//this.splitBetrag.set(nr, wert);
 	}
 
 	@Override
 	public Geldbetrag getWert() {
 		final Geldbetrag summe = new Geldbetrag();
 		for (int i = 0; i < getAnzahl(); i++) {
-			summe.sum(this.splitBetrag.get(i));
+			summe.sum(this.splitKategorie.get(i).getSumme());
 		}
 		return summe;
 	}
 
 	public Geldbetrag getWert(final int nr) {
-		return this.splitBetrag.get(nr);
+		return this.splitKategorie.get(nr).getSumme();
 	}
-
-	// -- Auswertung
-	// -------------------------------------------------------------
 
 	@Override
 	public void bildeKategorieSumme(final Zeitraum zeitraum, final boolean unterkat) {
 		for (int i = 0; i < getAnzahl(); i++) {
 			if (getDatum().istImZeitraum(zeitraum)) {
-				getKategorie(i).addiereWert(getWert(i), unterkat);
+				getCategoryEntry(i).addiereWert(getWert(i), unterkat);
 			}
 		}
+	}
+
+	private EinzelKategorie getCategoryEntry(int i) {
+		return splitKategorie.get(i);
 	}
 
 	@Override
 	public Geldbetrag getKategorieWert(final EinzelKategorie namekat, final boolean unterkat) {
 		final Geldbetrag summe = new Geldbetrag();
 		for (int i = 0; i < getAnzahl(); i++) {
-			if (getKategorie(i).istInKategorie(namekat, unterkat)) {
+			if (getCategoryEntry(i).istInKategorie(namekat, unterkat)) {
 				summe.sum(getWert(i));
 			}
 		}
@@ -206,11 +173,22 @@ public class SplitBuchung extends Buchung {
 		}
 		for (int i = 0; i < getAnzahl(); i++) {
 			// Kategorien NICHT clonen, da dann nicht in der Kategorie-Liste
-			kopie.add(this.splitKategorie.get(i), (Geldbetrag) this.splitBetrag.get(i).clone());
+//			kopie.add(
+//					this.splitKategorie.get(i));
 		}
 		setDatum(clonedDatum);
 		setText(text);
 		return kopie;
+	}
+
+	@Override
+	public Kategorie getKategorie() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public void setSplitCategories(MehrfachKategorie kategorien) {
+		splitKategorie = kategorien;
 	}
 
 }

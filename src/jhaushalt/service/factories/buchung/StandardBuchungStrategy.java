@@ -18,6 +18,7 @@ public class StandardBuchungStrategy implements BuchungStrategy {
 		standardBuchung.setText(in.getDataString());
 		standardBuchung.setKategorie(CategoryFactory.getInstance(in));
 		standardBuchung.setWert(GeldbetragFactory.getInstance(in));
+		// for EinzelKategorie: do I have to set the summary as well?
 		return standardBuchung;
 	}
 }

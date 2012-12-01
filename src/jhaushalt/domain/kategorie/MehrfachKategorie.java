@@ -39,17 +39,17 @@ public class MehrfachKategorie extends ArrayList<EinzelKategorie> implements Kat
 
 	@Override
 	public String toString() {
-		String text = "{";
+		StringBuilder text = new StringBuilder("[ MehrfachKategorie:");
 		for (int i = 0; i < size(); i++) {
-			text += get(i);
+			text.append(get(i));
 			if (i < size() - 1) {
-				text += ", ";
+				text.append(", ");
 			}
 			else {
-				text += "}";
+				text.append(" ]");
 			}
 		}
-		return text;
+		return text.toString();
 	}
 
 	public int compareTo(final Kategorie kategorie) {

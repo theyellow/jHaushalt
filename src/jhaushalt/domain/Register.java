@@ -53,10 +53,12 @@ public class Register implements Comparable<Register> {
 		this.buchungen.add(buchung);
 	}
 
+
+	
 	public int compareTo(final Register register) {
 		return this.name.compareTo(register.name);
 	}
-
+	
 	public String toString() {
 		return "Register: "+this.name;
 	}
