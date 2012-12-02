@@ -32,8 +32,7 @@ public class Geldbetrag implements Cloneable, Comparable<Geldbetrag> {
 
 	public static final Geldbetrag NULL_EURO = new Geldbetrag();
 	private static final Logger LOGGER = Logger.getLogger(Geldbetrag.class.getName());
-
-	private Locale locale = Locale.GERMANY;
+	final NumberFormat nf = setNumberFormat(Locale.GERMANY);
 
 	private static String symbol = "€";
 	private long wert = 0L;
@@ -45,34 +44,11 @@ public class Geldbetrag implements Cloneable, Comparable<Geldbetrag> {
 	}
 
 	public Geldbetrag(String wert) {
-		final NumberFormat nf = setNumberFormat(locale);
-		if (!"".equals(wert)) {
-			try {
-				if (wert.trim().startsWith("+")) {
-					wert = wert.trim().substring(1).trim();
-				}
-				setWert(nf.parse(wert).doubleValue());
-			}
-			catch (final ParseException e) {
-				LOGGER.warning("Error while parsing string: " + wert);
-			}
-		}
-		else {
-			this.wert = 0L;
-		}
+		convertStringIntoLongValue(wert);
 	}
 
-	@Override
-	public String toString() {
-		final NumberFormat nf = setNumberFormat(locale);
-		return nf.format(this.wert / 100.0D) + " " + symbol;
-	}
-
-	private NumberFormat setNumberFormat(final Locale locale) {
-		final NumberFormat nf = NumberFormat.getInstance(locale);
-		nf.setMinimumFractionDigits(2);
-		nf.setMaximumFractionDigits(2);
-		return nf;
+	public long getBetrag() {
+		return wert;
 	}
 
 	public double toDouble() {
@@ -177,9 +153,34 @@ public class Geldbetrag implements Cloneable, Comparable<Geldbetrag> {
 		}
 		return 0;
 	}
+	
+	@Override
+	public String toString() {
+		return nf.format(this.wert / 100.0D) + " " + symbol;
+	}
 
-	public long getBetrag() {
-		return wert;
+	private void convertStringIntoLongValue(String wert) {
+		if (!"".equals(wert)) {
+			try {
+				if (wert.trim().startsWith("+")) {
+					wert = wert.trim().substring(1).trim();
+				}
+				setWert(nf.parse(wert).doubleValue());
+			}
+			catch (final ParseException e) {
+				LOGGER.warning("Error while parsing string: " + wert);
+			}
+		}
+		else {
+			this.wert = 0L;
+		}
+	}
+
+	private NumberFormat setNumberFormat(final Locale locale) {
+		final NumberFormat nf = NumberFormat.getInstance(locale);
+		nf.setMinimumFractionDigits(2);
+		nf.setMaximumFractionDigits(2);
+		return nf;
 	}
 
 }
