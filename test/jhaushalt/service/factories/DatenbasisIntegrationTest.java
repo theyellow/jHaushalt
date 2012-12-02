@@ -8,8 +8,16 @@ import java.text.ParseException;
 import java.util.List;
 
 import jhaushalt.domain.Datenbasis;
+import jhaushalt.domain.Geldbetrag;
 import jhaushalt.domain.Register;
 import jhaushalt.domain.buchung.Buchung;
+import jhaushalt.domain.buchung.SplitBuchung;
+import jhaushalt.domain.buchung.StandardBuchung;
+import jhaushalt.domain.buchung.Umbuchung;
+import jhaushalt.domain.kategorie.EinzelKategorie;
+import jhaushalt.domain.kategorie.MehrfachKategorie;
+import jhaushalt.domain.kategorie.UmbuchungKategorie;
+import jhaushalt.domain.zeitraum.Datum;
 
 import org.junit.Test;
 
@@ -31,10 +39,24 @@ public class DatenbasisIntegrationTest {
 		assertThat(registers.size()).isEqualTo(1);
 
 		Register neuRegister = registers.get(0); 
-		assertThat(neuRegister.getAnzahlBuchungen()).isEqualTo(3);
+		assertThat(neuRegister.getAnzahlBuchungen()).isEqualTo(4);
 		assertThat(neuRegister.getName()).isEqualTo("[NEU]");
 		List<Buchung> registerBookings = neuRegister.getBookings();
-		assertThat(registerBookings).hasSize(3);
+		assertThat(registerBookings).hasSize(4);
+		
+		assertThatBookingEntryIsCorrect(registerBookings.get(0), Umbuchung.class, new Datum("16.11.12"), "Eröffnungssaldo", UmbuchungKategorie.class, new Geldbetrag("200000"));
+		assertThatBookingEntryIsCorrect(registerBookings.get(1), StandardBuchung.class, new Datum("17.11.12"), "Einzahlung", EinzelKategorie.class, new Geldbetrag("430000"));
+		assertThatBookingEntryIsCorrect(registerBookings.get(2), StandardBuchung.class, new Datum("18.11.12"), "Stromrechnung", EinzelKategorie.class, new Geldbetrag("-3467"));
+		assertThatBookingEntryIsCorrect(registerBookings.get(3), SplitBuchung.class, new Datum("02.12.12"), "Barauszahlung", MehrfachKategorie.class, new Geldbetrag("-30000"));
+
+	}
+
+	private void assertThatBookingEntryIsCorrect(Buchung bookingEntry, Class<?> expectedBookingType, Datum expectedDate, String entryText, Class<?> expectedClassType, Geldbetrag expectedAmount) {
+		assertThat(bookingEntry).isInstanceOf(expectedBookingType);
+		assertThat(bookingEntry.getDatum()).isEqualTo(expectedDate);
+		assertThat(bookingEntry.getText()).isEqualTo(entryText);
+		assertThat(bookingEntry.getKategorie()).isInstanceOf(expectedClassType);
+		assertThat(bookingEntry.getWert()).isEqualTo(expectedAmount); 
 	}
 	
 	

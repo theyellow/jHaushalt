@@ -8,7 +8,7 @@ import java.util.Locale;
 import java.util.logging.Logger;
 
 public class Datum implements Comparable<Datum>, Cloneable {
-	final DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT, Locale.GERMANY);
+	private static final DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT, Locale.GERMANY);
 
 	private final Logger logger = Logger.getLogger(Datum.class.getName());
 
@@ -37,7 +37,6 @@ public class Datum implements Comparable<Datum>, Cloneable {
 
 	@Override
 	public String toString() {
-		final DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT, locale);
 		return df.format(this.wert.getTime());
 	}
 
@@ -86,10 +85,16 @@ public class Datum implements Comparable<Datum>, Cloneable {
 
 	// -- Methoden fuer Interface: Comparable -------------------
 
-	public int compareTo(final Datum datum) { 
-		return this.wert.compareTo(datum.wert);
+	public int compareTo(final Datum datum) {
+		return this.getTime().compareTo(datum.getTime());
 	}
 
+	@Override
+	public boolean equals(final Object anotherDatum) {
+		Datum date = (Datum) anotherDatum;
+		return compareTo(date) == 0;
+	}
+	
 	public boolean istImZeitraum(Zeitraum zeitraum) {
 		boolean endCheck = zeitraum.getEndDatum().compareTo(this) > 0;
 		boolean startCheck = zeitraum.getStartDatum().compareTo(this) <= 0;

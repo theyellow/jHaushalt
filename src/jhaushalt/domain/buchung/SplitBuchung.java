@@ -183,8 +183,7 @@ public class SplitBuchung extends Buchung {
 
 	@Override
 	public Kategorie getKategorie() {
-		// TODO Auto-generated method stub
-		return null;
+		return splitKategorie;
 	}
 
 	public void setSplitCategories(MehrfachKategorie kategorien) {
