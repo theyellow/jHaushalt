@@ -20,6 +20,10 @@ import org.junit.Test;
 
 public class DatenbasisServiceTest {
 
+	private static final String SECOND_REGISTER_NAME = "bar";
+
+	private static final String FIRST_REGISTER_NAME = "foo";
+
 	private DatenbasisServiceImpl service = new DatenbasisServiceImpl();
 
 	private Datenbasis datenbasis;
@@ -53,16 +57,33 @@ public class DatenbasisServiceTest {
 
 		EinzelKategorie[] kategorien = { kategorie };
 		Zeitraum zeitraum = new Jahr(2005);
-		String regname = "foo";
+		String regname = FIRST_REGISTER_NAME;
 		boolean unterkategorienVerwenden = true;
 		List<BookEntry> actualList = service.getBuchungen(zeitraum, regname, kategorien, unterkategorienVerwenden);
 
 		assertThat(actualList).isNotNull();
 		assertThat(actualList).hasSize(1);
 		assertThatBookEntryIsFilledOutCorrectly(actualList);
-
 	}
 
+	@Test
+	public void findeRegisterGetsCorrectRegister() {
+		createRegisterAndBuchung();
+		
+		Register register = service.findeRegister(FIRST_REGISTER_NAME);
+		
+		assertThat(register.getName()).isEqualTo(FIRST_REGISTER_NAME);
+	}
+	
+	@Test
+	public void findeRegisterReactsCaseSensitive() {
+		createRegisterAndBuchung();
+		
+		Register register = service.findeRegister(FIRST_REGISTER_NAME.toUpperCase());
+		
+		assertThat(register).isNull();
+	}
+		
 	private void assertThatBookEntryIsFilledOutCorrectly(List<BookEntry> actualList) {
 		BookEntry firstActualEntry = actualList.get(0);
 		assertThat(firstActualEntry.getValue().getBetrag()).isEqualTo(200000L);
@@ -75,7 +96,7 @@ public class DatenbasisServiceTest {
 	private void createRegisterAndBuchung() {
 		List<Register> registerList = new ArrayList<Register>();
 		registerList.add(
-			new RegisterBuilder("foo", kategorie)
+			new RegisterBuilder(FIRST_REGISTER_NAME, kategorie)
 			.addBooking(1, 7, 2005, "Testeintrag", 2000D)
 			.addBooking(23, 12, 2004, "Old Entry", 4000D)
 			.addBooking(23, 1, 2006, "Entry in 2006", 3000D)
@@ -83,7 +104,7 @@ public class DatenbasisServiceTest {
 			.getRegister()
 		);
 		registerList.add(
-				new RegisterBuilder("bar", kategorie)
+				new RegisterBuilder(SECOND_REGISTER_NAME, kategorie)
 				.addBooking(2,7, 2005, "Another amount entry", 150D)
 				.getRegister()
 			);

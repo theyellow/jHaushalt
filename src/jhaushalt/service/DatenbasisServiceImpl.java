@@ -46,9 +46,9 @@ public class DatenbasisServiceImpl implements DatenbasisService {
 	 */
 	public Register findeRegister(final String regname) {
 		List<Register> registerList = datenbasis.getRegisterList();
-		for (int i = 0; i < registerList.size(); i++) {
-			if (regname.equals("" + registerList.get(i))) {
-				return registerList.get(i);
+		for (Register register: registerList) {
+			if (register.getName().equals(regname)) {
+				return register;
 			}
 		}
 		return null;
