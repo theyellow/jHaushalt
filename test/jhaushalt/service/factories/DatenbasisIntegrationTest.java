@@ -63,7 +63,6 @@ public class DatenbasisIntegrationTest {
 		assertThatBookingEntryIsCorrect(registerBookings.get(0), Umbuchung.class, new Datum("02.12.12"), "Eröffnungssaldo", UmbuchungKategorie.class, new Geldbetrag("30014"));
 		assertThatBookingEntryIsCorrect(registerBookings.get(1), StandardBuchung.class, new Datum("02.12.12"), "Auszahlung", EinzelKategorie.class, new Geldbetrag("-5000"));
 	}
-
 	
 	private void assertThatBookingEntryIsCorrect(Buchung bookingEntry, Class<?> expectedBookingType, Datum expectedDate, String entryText, Class<?> expectedClassType, Geldbetrag expectedAmount) {
 		assertThat(bookingEntry).isInstanceOf(expectedBookingType);
@@ -72,11 +71,7 @@ public class DatenbasisIntegrationTest {
 		assertThat(bookingEntry.getKategorie()).isInstanceOf(expectedClassType);
 		assertThat(bookingEntry.getWert()).isEqualTo(expectedAmount); 
 	}
-	
-	
-	
-	
-	
+
 	private DataSourceInputStreamHolder createDataInputStream(String resourceName) {
 		DataInputStream dis = new DataInputStream(DatenbasisFactory.class.getResourceAsStream(resourceName));
 		return new DataSourceInputStreamHolder(dis);
