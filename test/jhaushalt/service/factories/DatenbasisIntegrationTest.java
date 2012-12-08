@@ -23,12 +23,14 @@ import org.junit.Test;
 
 
 public class DatenbasisIntegrationTest {
+
+	DatenbasisFactory datenbasisFactory = new DatenbasisFactory();
+	
 	
 	@Test
 	public void doSomeRawChecksOnDatenbasisFactory() throws IOException, UnknownBuchungTypeException, ParseException {
 		DataSourceInputStreamHolder holder = createDataInputStream("testdatenbank.jhh");
-		
-		Datenbasis datenbasis = DatenbasisFactory.getInstance(holder);
+		Datenbasis datenbasis = datenbasisFactory.getInstance(holder);
 		
 		assertThat(datenbasis).isNotNull();
 		assertThat(datenbasis.getVersionInfo()).isEqualTo("jHaushalt2.1.2");

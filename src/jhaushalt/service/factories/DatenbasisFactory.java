@@ -9,7 +9,7 @@ import jhaushalt.domain.Datenbasis;
 import jhaushalt.domain.Register;
 
 public class DatenbasisFactory {
-	public static Datenbasis getInstance(DataSourceHolder input) throws IOException, UnknownBuchungTypeException, ParseException {
+	public Datenbasis getInstance(DataSourceHolder input) throws IOException, UnknownBuchungTypeException, ParseException {
 		Datenbasis datenbasis = new Datenbasis();
 		
 		datenbasis.setVersionInfo(getStringDataFromFile(input));

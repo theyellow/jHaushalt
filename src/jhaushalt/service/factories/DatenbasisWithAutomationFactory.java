@@ -12,8 +12,14 @@ import jhaushalt.domain.buchung.StandardBuchung;
 
 public class DatenbasisWithAutomationFactory {
 
-	public static Datenbasis getInstance(DataSourceHolder input) throws IOException, UnknownBuchungTypeException, ParseException {
-		Datenbasis datenbasis = DatenbasisFactory.getInstance(input);
+	private DatenbasisFactory datenbasisFactory;
+	
+	public void setDatenbasisFactory(DatenbasisFactory datenbasisFactory) {
+		this.datenbasisFactory = datenbasisFactory;
+	}
+	
+	public Datenbasis getInstance(DataSourceHolder input) throws IOException, UnknownBuchungTypeException, ParseException {
+		Datenbasis datenbasis = datenbasisFactory.getInstance(input);
 		if (! "jHaushalt1.0".equals(datenbasis.getVersionInfo())) {
 			// automatische Buchungen laden und ausführen (in v1.0 noch unbekannt!)
 			datenbasis.setAutomatedEntries(loadAutomatedEntries(input));
