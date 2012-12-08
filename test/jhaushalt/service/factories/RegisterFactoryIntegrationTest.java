@@ -9,6 +9,7 @@ import java.util.List;
 
 import jhaushalt.domain.Register;
 import jhaushalt.domain.buchung.Buchung;
+import jhaushalt.service.factories.io.DataInputFacade;
 
 import org.junit.Test;
 
@@ -20,7 +21,7 @@ public class RegisterFactoryIntegrationTest {
 
 	@Test
 	public void getInstanceLoadsOneRegister() throws IOException, UnknownBuchungTypeException, ParseException {
-		DataSourceHolder in = new DataSourceArrayHolder(createInputDataArray());
+		DataInputFacade in = new DataSourceArrayHolder(createInputDataArray());
 		Register actualRegister = RegisterFactory.getInstance(in, ANY_REGISTER_NAME);
 		
 		assertThat(actualRegister.getName()).isEqualTo(ANY_REGISTER_NAME);

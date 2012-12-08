@@ -3,8 +3,10 @@ package jhaushalt.service.factories;
 import java.io.IOException;
 import java.util.List;
 
+import jhaushalt.service.factories.io.DataInputFacade;
 
-public class DataSourceArrayHolder implements DataSourceHolder {
+
+public class DataSourceArrayHolder implements DataInputFacade {
 
 	private List<String> entries;
 	private int counter = 0;;

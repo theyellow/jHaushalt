@@ -9,17 +9,17 @@ import jhaushalt.domain.buchung.SplitBuchung;
 import jhaushalt.domain.kategorie.EinzelKategorie;
 import jhaushalt.domain.kategorie.MehrfachKategorie;
 import jhaushalt.service.factories.CategoryFactory;
-import jhaushalt.service.factories.DataSourceHolder;
 import jhaushalt.service.factories.DatumFactory;
 import jhaushalt.service.factories.GeldbetragFactory;
+import jhaushalt.service.factories.io.DataInputFacade;
 
 public class SplitBuchungStrategy implements BuchungStrategy {
 
-	public Buchung loadData(DataSourceHolder in) throws IOException, ParseException {
+	public Buchung loadData(DataInputFacade in) throws IOException, ParseException {
 		return laden(in);
 	}
 	
-	private SplitBuchung laden(final DataSourceHolder in) throws IOException, ParseException {
+	private SplitBuchung laden(final DataInputFacade in) throws IOException, ParseException {
 		final SplitBuchung splitBuchung = new SplitBuchung();
 		splitBuchung.setDatum(DatumFactory.getInstance(in));
 		splitBuchung.setText(in.getDataString());

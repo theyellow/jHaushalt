@@ -6,19 +6,19 @@ import java.text.ParseException;
 
 import jhaushalt.domain.buchung.Buchung;
 import jhaushalt.domain.buchung.Umbuchung;
-import jhaushalt.service.factories.DataSourceHolder;
 import jhaushalt.service.factories.DatumFactory;
 import jhaushalt.service.factories.GeldbetragFactory;
+import jhaushalt.service.factories.io.DataInputFacade;
 
 public class UmbuchungStrategy implements BuchungStrategy {
 
-	public Buchung loadData(DataSourceHolder in) throws IOException, ParseException {
+	public Buchung loadData(DataInputFacade in) throws IOException, ParseException {
 		final Umbuchung umbuchung = new Umbuchung();
 		laden(in, umbuchung);
 		return umbuchung;
 	}
 	
-	private static void laden(final DataSourceHolder in, final Umbuchung umbuchung) throws IOException, ParseException {
+	private static void laden(final DataInputFacade in, final Umbuchung umbuchung) throws IOException, ParseException {
 		umbuchung.setDatum(DatumFactory.getInstance(in));
 		umbuchung.setText(in.getDataString());
 		in.getDataString(); // first time final String quellRegister = 

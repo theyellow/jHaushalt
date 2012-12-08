@@ -7,9 +7,10 @@ import java.util.List;
 
 import jhaushalt.domain.Datenbasis;
 import jhaushalt.domain.Register;
+import jhaushalt.service.factories.io.DataInputFacade;
 
 public class DatenbasisFactory {
-	public Datenbasis getInstance(DataSourceHolder input) throws IOException, UnknownBuchungTypeException, ParseException {
+	public Datenbasis getInstance(DataInputFacade input) throws IOException, UnknownBuchungTypeException, ParseException {
 		Datenbasis datenbasis = new Datenbasis();
 		
 		datenbasis.setVersionInfo(getStringDataFromFile(input));
@@ -19,7 +20,7 @@ public class DatenbasisFactory {
 		return datenbasis;
 	}
 		
-	private static List<Register> loadRegisters(DataSourceHolder in) throws IOException, UnknownBuchungTypeException, ParseException {
+	private static List<Register> loadRegisters(DataInputFacade in) throws IOException, UnknownBuchungTypeException, ParseException {
 		int numberOfRegisters = in.getInt();
 		List<Register> registerList = new ArrayList<Register>();
 		for (int i = 0; i < numberOfRegisters; i++) {
@@ -47,7 +48,7 @@ public class DatenbasisFactory {
 		return generierterName;
 	}
 	
-	private static String getStringDataFromFile(DataSourceHolder in) throws IOException {
+	private static String getStringDataFromFile(DataInputFacade in) throws IOException {
 		return in.getDataString();
 	}
 	

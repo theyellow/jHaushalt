@@ -9,6 +9,7 @@ import java.util.List;
 import jhaushalt.domain.Datenbasis;
 import jhaushalt.domain.buchung.Buchung;
 import jhaushalt.domain.buchung.StandardBuchung;
+import jhaushalt.service.factories.io.DataInputFacade;
 
 public class DatenbasisWithAutomationFactory {
 
@@ -18,7 +19,7 @@ public class DatenbasisWithAutomationFactory {
 		this.datenbasisFactory = datenbasisFactory;
 	}
 	
-	public Datenbasis getInstance(DataSourceHolder input) throws IOException, UnknownBuchungTypeException, ParseException {
+	public Datenbasis getInstance(DataInputFacade input) throws IOException, UnknownBuchungTypeException, ParseException {
 		Datenbasis datenbasis = datenbasisFactory.getInstance(input);
 		if (! "jHaushalt1.0".equals(datenbasis.getVersionInfo())) {
 			// automatische Buchungen laden und ausführen (in v1.0 noch unbekannt!)
@@ -27,7 +28,7 @@ public class DatenbasisWithAutomationFactory {
 		return datenbasis;
 	}
 
-	private static List<Buchung> loadAutomatedEntries (DataSourceHolder in) throws IOException, UnknownBuchungTypeException, ParseException {
+	private static List<Buchung> loadAutomatedEntries (DataInputFacade in) throws IOException, UnknownBuchungTypeException, ParseException {
 		final int numberOfAutomatedEntries = in.getInt();
 		List<Buchung> automatedEntries = new ArrayList<Buchung>();
 		

@@ -10,13 +10,13 @@ import jhaushalt.domain.buchung.StandardBuchung;
 import jhaushalt.domain.kategorie.EinzelKategorie;
 import jhaushalt.domain.zeitraum.Datum;
 import jhaushalt.service.factories.CategoryFactory;
-import jhaushalt.service.factories.DataSourceHolder;
 import jhaushalt.service.factories.DatumFactory;
 import jhaushalt.service.factories.GeldbetragFactory;
+import jhaushalt.service.factories.io.DataInputFacade;
 
 public class StandardOrSplitBuchungStrategy implements BuchungStrategy {
 
-	public Buchung loadData(DataSourceHolder in) throws IOException, ParseException {
+	public Buchung loadData(DataInputFacade in) throws IOException, ParseException {
 		Buchung buchung = null;
 		Datum datum  = DatumFactory.getInstance(in);
 		String text = in.getDataString();

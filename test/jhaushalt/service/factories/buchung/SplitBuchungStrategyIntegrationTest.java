@@ -11,7 +11,7 @@ import jhaushalt.domain.Geldbetrag;
 import jhaushalt.domain.buchung.Buchung;
 import jhaushalt.domain.buchung.SplitBuchung;
 import jhaushalt.service.factories.DataSourceArrayHolder;
-import jhaushalt.service.factories.DataSourceHolder;
+import jhaushalt.service.factories.io.DataInputFacade;
 
 import org.junit.Test;
 
@@ -26,7 +26,7 @@ public class SplitBuchungStrategyIntegrationTest {
 		inputArray.add("2");
 		addSingleBookingEntry(inputArray, "Category #1", 20000);
 		addSingleBookingEntry(inputArray, "Category #2", 30000);
-		DataSourceHolder in = new DataSourceArrayHolder(inputArray);
+		DataInputFacade in = new DataSourceArrayHolder(inputArray);
 		Buchung actualBooking = strategy.loadData(in);
 		assertThat(actualBooking).isInstanceOf(SplitBuchung.class);
 		assertThat(actualBooking.getText()).isEqualTo(ANY_SPLIT_BOOKING_TEXT);

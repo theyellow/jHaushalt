@@ -18,6 +18,7 @@ import jhaushalt.domain.kategorie.EinzelKategorie;
 import jhaushalt.domain.kategorie.MehrfachKategorie;
 import jhaushalt.domain.kategorie.UmbuchungKategorie;
 import jhaushalt.domain.zeitraum.Datum;
+import jhaushalt.service.factories.io.DataInputStreamFacade;
 
 import org.junit.Test;
 
@@ -29,7 +30,7 @@ public class DatenbasisIntegrationTest {
 	
 	@Test
 	public void doSomeRawChecksOnDatenbasisFactory() throws IOException, UnknownBuchungTypeException, ParseException {
-		DataSourceInputStreamHolder holder = createDataInputStream("testdatenbank.jhh");
+		DataInputStreamFacade holder = createDataInputStream("testdatenbank.jhh");
 		Datenbasis datenbasis = datenbasisFactory.getInstance(holder);
 		
 		assertThat(datenbasis).isNotNull();
@@ -74,9 +75,9 @@ public class DatenbasisIntegrationTest {
 		assertThat(bookingEntry.getWert()).isEqualTo(expectedAmount); 
 	}
 
-	private DataSourceInputStreamHolder createDataInputStream(String resourceName) {
+	private DataInputStreamFacade createDataInputStream(String resourceName) {
 		DataInputStream dis = new DataInputStream(DatenbasisFactory.class.getResourceAsStream(resourceName));
-		return new DataSourceInputStreamHolder(dis);
+		return new DataInputStreamFacade(dis);
 	}
 	
 }

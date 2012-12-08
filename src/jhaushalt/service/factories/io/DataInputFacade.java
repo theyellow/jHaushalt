@@ -1,9 +1,9 @@
-package jhaushalt.service.factories;
+package jhaushalt.service.factories.io;
 
 import java.io.IOException;
 
 
-public interface DataSourceHolder {
+public interface DataInputFacade {
 
 	String getDataString() throws IOException;
 	

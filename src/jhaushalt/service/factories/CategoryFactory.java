@@ -3,11 +3,12 @@ package jhaushalt.service.factories;
 import java.io.IOException;
 
 import jhaushalt.domain.kategorie.EinzelKategorie;
+import jhaushalt.service.factories.io.DataInputFacade;
 
 
 public class CategoryFactory {
 
-	public static EinzelKategorie getInstance(DataSourceHolder in) throws IOException {
+	public static EinzelKategorie getInstance(DataInputFacade in) throws IOException {
 		return createCategoryTree(in.getDataString());
 	}
 	

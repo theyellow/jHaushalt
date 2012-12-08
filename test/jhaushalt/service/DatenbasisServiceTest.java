@@ -11,9 +11,9 @@ import java.util.ArrayList;
 
 import jhaushalt.domain.Datenbasis;
 import jhaushalt.service.factories.DataSourceArrayHolder;
-import jhaushalt.service.factories.DataSourceHolder;
 import jhaushalt.service.factories.DatenbasisFactory;
 import jhaushalt.service.factories.UnknownBuchungTypeException;
+import jhaushalt.service.factories.io.DataInputFacade;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -40,8 +40,8 @@ public class DatenbasisServiceTest {
 	@Test
 	public void testThatMinimalInputFileReturnsMinimalDatenbasis() throws CouldNotLoadDatabaseException, IOException, UnknownBuchungTypeException, ParseException {
 		Datenbasis expectedDatenbasis = new Datenbasis();
-		when(datenbasisFactory.getInstance(any(DataSourceHolder.class))).thenReturn(expectedDatenbasis);
-		DataSourceHolder holder = new DataSourceArrayHolder(new ArrayList<String>());
+		when(datenbasisFactory.getInstance(any(DataInputFacade.class))).thenReturn(expectedDatenbasis);
+		DataInputFacade holder = new DataSourceArrayHolder(new ArrayList<String>());
 		
 		datenbasisService.loadDatabase(holder);
 		Datenbasis actualDatenbasis = datenbasisService.getDatenbasis();
@@ -51,19 +51,19 @@ public class DatenbasisServiceTest {
 
 	@Test(expected=CouldNotLoadDatabaseException.class)
 	public void corruptFileShowCauseCouldNotLoadDatabaseException() throws CouldNotLoadDatabaseException, IOException, UnknownBuchungTypeException, ParseException {
-		when(datenbasisFactory.getInstance(any(DataSourceHolder.class))).thenThrow(new IOException());
+		when(datenbasisFactory.getInstance(any(DataInputFacade.class))).thenThrow(new IOException());
 		datenbasisService.loadDatabase(new DataSourceArrayHolder(new ArrayList<String>()));
 	}
 	
 	@Test(expected=CouldNotLoadDatabaseException.class)
 	public void invalidBookingTypeCausesCouldNotLoadDatabaseException() throws CouldNotLoadDatabaseException, IOException, UnknownBuchungTypeException, ParseException {
-		when(datenbasisFactory.getInstance(any(DataSourceHolder.class))).thenThrow(new UnknownBuchungTypeException("foo"));
+		when(datenbasisFactory.getInstance(any(DataInputFacade.class))).thenThrow(new UnknownBuchungTypeException("foo"));
 		datenbasisService.loadDatabase(new DataSourceArrayHolder(new ArrayList<String>()));
 	}
 	
 	@Test(expected=CouldNotLoadDatabaseException.class)
 	public void invalidNumberCausesCouldNotLoadDatabaseException() throws CouldNotLoadDatabaseException, IOException, UnknownBuchungTypeException, ParseException {
-		when(datenbasisFactory.getInstance(any(DataSourceHolder.class))).thenThrow(new ParseException(null, 0));
+		when(datenbasisFactory.getInstance(any(DataInputFacade.class))).thenThrow(new ParseException(null, 0));
 		datenbasisService.loadDatabase(new DataSourceArrayHolder(new ArrayList<String>()));
 	}
 

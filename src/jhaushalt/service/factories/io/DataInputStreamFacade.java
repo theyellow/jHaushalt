@@ -1,15 +1,16 @@
-package jhaushalt.service.factories;
+package jhaushalt.service.factories.io;
 
 import java.io.DataInputStream;
 import java.io.IOException;
 
 
-public class DataSourceInputStreamHolder implements DataSourceHolder {
+
+public class DataInputStreamFacade implements DataInputFacade {
 
 	
 	private DataInputStream input;
 	
-	public DataSourceInputStreamHolder(DataInputStream input) {
+	public DataInputStreamFacade(DataInputStream input) {
 		this.input = input;
 	}
 	
