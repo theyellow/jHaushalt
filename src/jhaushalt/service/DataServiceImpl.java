@@ -108,4 +108,23 @@ public class DataServiceImpl implements DataService {
 		return null;
 	}
 
+	
+	private static String createUniqueRegisterName(List<Register> registerList, final String regname) {
+		String generierterName = regname;
+		boolean nameVorhanden;
+		int count = 0;
+		do {
+			nameVorhanden = false;
+			for (int i = 0; i < registerList.size(); i++) {
+				if (generierterName.equalsIgnoreCase("" + registerList.get(i))) {
+					nameVorhanden = true;
+				}
+			}
+			if (nameVorhanden) {
+				generierterName = regname + " (" + ++count + ")";
+			}
+		} while (nameVorhanden);
+		return generierterName;
+	}
+
 }

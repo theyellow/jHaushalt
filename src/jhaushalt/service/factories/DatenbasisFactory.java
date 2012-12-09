@@ -8,48 +8,45 @@ import java.util.List;
 import jhaushalt.domain.Datenbasis;
 import jhaushalt.domain.Register;
 import jhaushalt.service.factories.io.DataInputFacade;
+import jhaushalt.service.factories.io.DataOutputFacade;
 
 public class DatenbasisFactory {
+	
+	private RegisterFactory registerFactory;
+	
+	public void setRegisterFactory(RegisterFactory registerFactory) {
+		this.registerFactory = registerFactory;
+	}
+	
 	public Datenbasis getInstance(DataInputFacade input) throws IOException, UnknownBuchungTypeException, ParseException {
 		Datenbasis datenbasis = new Datenbasis();
 		
-		datenbasis.setVersionInfo(getStringDataFromFile(input));
+		datenbasis.setVersionInfo(input.getDataString());
 		datenbasis.setRegisterList(loadRegisters(input));
 		
 		// FIXME aggregate category tree
 		return datenbasis;
 	}
-		
-	private static List<Register> loadRegisters(DataInputFacade in) throws IOException, UnknownBuchungTypeException, ParseException {
-		int numberOfRegisters = in.getInt();
+	
+	public void saveData(DataOutputFacade output, Datenbasis datenbasis) throws IOException {
+		output.writeString(datenbasis.getVersionInfo()); // "jHaushalt" + VERSION_DATENBASIS) !!!
+		List<Register> registersList = datenbasis.getRegisterList();
+		output.writeInt(registersList.size());
+	}
+	
+	private void saveRegistersList(DataOutputFacade output, List<Register> registerList) {
+		for (Register register: registerList) {
+			// do register factory
+		}
+	}
+	
+	private List<Register> loadRegisters(DataInputFacade inputFacade) throws IOException, UnknownBuchungTypeException, ParseException {
+		int numberOfRegisters = inputFacade.getInt();
 		List<Register> registerList = new ArrayList<Register>();
 		for (int i = 0; i < numberOfRegisters; i++) {
-			String registerName = createUniqueRegisterName(registerList, getStringDataFromFile(in));
-			registerList.add(RegisterFactory.getInstance(in, registerName));
+			registerList.add(registerFactory.getInstance(inputFacade, inputFacade.getDataString()));
 		}
 		return registerList;
 	}
 
-	private static String createUniqueRegisterName(List<Register> registerList, final String regname) {
-		String generierterName = regname;
-		boolean nameVorhanden;
-		int count = 0;
-		do {
-			nameVorhanden = false;
-			for (int i = 0; i < registerList.size(); i++) {
-				if (generierterName.equalsIgnoreCase("" + registerList.get(i))) {
-					nameVorhanden = true;
-				}
-			}
-			if (nameVorhanden) {
-				generierterName = regname + " (" + ++count + ")";
-			}
-		} while (nameVorhanden);
-		return generierterName;
-	}
-	
-	private static String getStringDataFromFile(DataInputFacade in) throws IOException {
-		return in.getDataString();
-	}
-	
 }

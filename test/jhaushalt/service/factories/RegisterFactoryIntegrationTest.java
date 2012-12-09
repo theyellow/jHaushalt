@@ -19,10 +19,12 @@ public class RegisterFactoryIntegrationTest {
 	private static final String ANY_BOOKING_TEXT = "Foo Text";
 	private static final String ANY_REGISTER_NAME = "anyRegisterName";
 
+	private RegisterFactory registerFactory = new RegisterFactory();
+	
 	@Test
 	public void getInstanceLoadsOneRegister() throws IOException, UnknownBuchungTypeException, ParseException {
 		DataInputFacade in = new DataSourceArrayHolder(createInputDataArray());
-		Register actualRegister = RegisterFactory.getInstance(in, ANY_REGISTER_NAME);
+		Register actualRegister = registerFactory.getInstance(in, ANY_REGISTER_NAME);
 		
 		assertThat(actualRegister.getName()).isEqualTo(ANY_REGISTER_NAME);
 		List<Buchung> bookings = actualRegister.getBookings();
