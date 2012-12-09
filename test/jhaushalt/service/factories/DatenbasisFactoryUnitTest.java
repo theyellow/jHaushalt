@@ -10,22 +10,26 @@ import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.List;
 
 import jhaushalt.domain.Datenbasis;
 import jhaushalt.domain.Register;
 import jhaushalt.service.factories.io.DataInputFacade;
+import jhaushalt.service.factories.io.DataOutputFacade;
 
 import org.junit.Before;
 import org.junit.Test;
 
 public class DatenbasisFactoryUnitTest {
 
+	private static final String ANY_VERSION_INFORMATION = "any version information";
 	private static final String ANY_STRING_VALUE = "any String";
 	private static final String ANY_REGISTER_NAME = "Any Register Name";
 	private DatenbasisFactory datenbasisFactory;
 	private RegisterFactory registerFactory;
 	private DataInputFacade dataInputFacade;
+	private DataOutputFacade dataOutputFacade;
 	
 	@Before
 	public void setUp() {
@@ -33,6 +37,7 @@ public class DatenbasisFactoryUnitTest {
 		registerFactory = mock(RegisterFactory.class);
 		datenbasisFactory.setRegisterFactory(registerFactory);
 		dataInputFacade = mock(DataInputFacade.class);
+		dataOutputFacade = mock(DataOutputFacade.class);
 	}
 	
 	@Test
@@ -72,5 +77,28 @@ public class DatenbasisFactoryUnitTest {
 		assertThat(registers.get(2).getName()).isEqualTo(ANY_REGISTER_NAME);
 		verify(registerFactory, times(3)).getInstance(dataInputFacade, ANY_REGISTER_NAME);
 	}
+	
+	@Test
+	public void saveDatenbasis() throws IOException {
+		Datenbasis datenbasis = new Datenbasis();
+		datenbasis.setVersionInfo(ANY_VERSION_INFORMATION);
+		List<Register> registerList = createRegisterList();
+		datenbasis.setRegisterList(registerList);
+
+		datenbasisFactory.saveData(dataOutputFacade, datenbasis);
+		
+		verify(dataOutputFacade).writeString(ANY_VERSION_INFORMATION);
+		verify(dataOutputFacade).writeInt(registerList.size());
+		verify(registerFactory).saveData(dataOutputFacade, registerList.get(0));
+		verify(registerFactory).saveData(dataOutputFacade, registerList.get(1));
+	}
+
+	private List<Register> createRegisterList() {
+		List<Register> registerList = new ArrayList<Register>();
+		registerList.add(new Register("register 1"));
+		registerList.add(new Register("register 2"));
+		return registerList;
+	}
+	
 	
 }

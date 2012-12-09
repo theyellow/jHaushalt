@@ -1,6 +1,7 @@
 package jhaushalt.service.factories;
 
 import java.io.IOException;
+import java.nio.channels.NotYetBoundException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
@@ -8,6 +9,7 @@ import java.util.List;
 import jhaushalt.domain.Register;
 import jhaushalt.domain.buchung.Buchung;
 import jhaushalt.service.factories.io.DataInputFacade;
+import jhaushalt.service.factories.io.DataOutputFacade;
 
 public class RegisterFactory {
 	
@@ -25,6 +27,11 @@ public class RegisterFactory {
 			buchungen.add(BuchungFactory.getInstance(in));
 		}
 		return buchungen;
+	}
+
+	public void saveData(DataOutputFacade dataOutputFacade, Register register) {
+		// TODO to be implemented
+		throw new NotYetBoundException();
 	}
 
 }

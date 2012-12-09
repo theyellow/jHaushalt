@@ -28,15 +28,16 @@ public class DatenbasisFactory {
 		return datenbasis;
 	}
 	
-	public void saveData(DataOutputFacade output, Datenbasis datenbasis) throws IOException {
-		output.writeString(datenbasis.getVersionInfo()); // "jHaushalt" + VERSION_DATENBASIS) !!!
-		List<Register> registersList = datenbasis.getRegisterList();
-		output.writeInt(registersList.size());
+	public void saveData(DataOutputFacade dataOutputFacade, Datenbasis datenbasis) throws IOException {
+		dataOutputFacade.writeString(datenbasis.getVersionInfo()); // "jHaushalt" + VERSION_DATENBASIS) !!!
+		List<Register> registerList = datenbasis.getRegisterList();
+		dataOutputFacade.writeInt(registerList.size());
+		saveRegistersList(dataOutputFacade, registerList);
 	}
 	
-	private void saveRegistersList(DataOutputFacade output, List<Register> registerList) {
+	private void saveRegistersList(DataOutputFacade dataOutputFacade, List<Register> registerList) {
 		for (Register register: registerList) {
-			// do register factory
+			registerFactory.saveData(dataOutputFacade, register);
 		}
 	}
 	
