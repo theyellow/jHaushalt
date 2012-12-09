@@ -11,6 +11,7 @@ import jhaushalt.domain.Register;
 import jhaushalt.domain.buchung.Buchung;
 import jhaushalt.service.factories.io.DataInputFacade;
 
+import org.junit.Before;
 import org.junit.Test;
 
 
@@ -19,7 +20,13 @@ public class RegisterFactoryIntegrationTest {
 	private static final String ANY_BOOKING_TEXT = "Foo Text";
 	private static final String ANY_REGISTER_NAME = "anyRegisterName";
 
-	private RegisterFactory registerFactory = new RegisterFactory();
+	private RegisterFactory registerFactory;
+	
+	@Before
+	public void setUp() {
+		registerFactory = new RegisterFactory();
+		registerFactory.setBookingFactory(new BuchungFactory());
+	}
 	
 	@Test
 	public void getInstanceLoadsOneRegister() throws IOException, UnknownBuchungTypeException, ParseException {

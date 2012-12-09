@@ -1,7 +1,6 @@
 package jhaushalt.service.factories;
 
 import java.io.IOException;
-import java.nio.channels.NotYetBoundException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,6 +11,12 @@ import jhaushalt.service.factories.io.DataInputFacade;
 import jhaushalt.service.factories.io.DataOutputFacade;
 
 public class RegisterFactory {
+	
+	private BuchungFactory bookingFactory;
+	
+	public void setBookingFactory(BuchungFactory bookingFactory) {
+		this.bookingFactory = bookingFactory;
+	}
 	
 	public Register getInstance (DataInputFacade in, String registerName) throws IOException, UnknownBuchungTypeException, ParseException {
 		Register register = new Register(registerName);
@@ -24,14 +29,17 @@ public class RegisterFactory {
 		final int numberOfBuchungen = in.getInt();
 		List<Buchung> buchungen = new ArrayList<Buchung>();
 		for (int i = 0; i < numberOfBuchungen; i++) {
-			buchungen.add(BuchungFactory.getInstance(in));
+			buchungen.add(bookingFactory.getInstance(in));
 		}
 		return buchungen;
 	}
 
-	public void saveData(DataOutputFacade dataOutputFacade, Register register) {
-		// TODO to be implemented
-		throw new NotYetBoundException();
+	public void saveData(DataOutputFacade dataOutputFacade, Register register) throws IOException {
+		List<Buchung> bookingList = register.getBookings();
+		dataOutputFacade.writeInt(bookingList.size());
+		for (Buchung booking: bookingList) {
+			bookingFactory.saveData(dataOutputFacade, booking);
+		}
 	}
 
 }

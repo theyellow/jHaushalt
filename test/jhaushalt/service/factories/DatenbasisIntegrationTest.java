@@ -31,7 +31,9 @@ public class DatenbasisIntegrationTest {
 	@Test
 	public void doSomeRawChecksOnDatenbasisFactory() throws IOException, UnknownBuchungTypeException, ParseException {
 		DataInputStreamFacade holder = createDataInputStream("testdatenbank.jhh");
+		BuchungFactory buchungFactory = new BuchungFactory();
 		RegisterFactory registerFactory = new RegisterFactory();
+		registerFactory.setBookingFactory(buchungFactory);
 		datenbasisFactory.setRegisterFactory(registerFactory);
 		
 		Datenbasis datenbasis = datenbasisFactory.getInstance(holder);

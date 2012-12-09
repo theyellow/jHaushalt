@@ -14,6 +14,7 @@ import jhaushalt.service.factories.io.DataInputFacade;
 public class DatenbasisWithAutomationFactory {
 
 	private DatenbasisFactory datenbasisFactory;
+	private BuchungFactory buchungFactory;
 	
 	public void setDatenbasisFactory(DatenbasisFactory datenbasisFactory) {
 		this.datenbasisFactory = datenbasisFactory;
@@ -28,14 +29,14 @@ public class DatenbasisWithAutomationFactory {
 		return datenbasis;
 	}
 
-	private static List<Buchung> loadAutomatedEntries (DataInputFacade in) throws IOException, UnknownBuchungTypeException, ParseException {
+	private List<Buchung> loadAutomatedEntries (DataInputFacade in) throws IOException, UnknownBuchungTypeException, ParseException {
 		final int numberOfAutomatedEntries = in.getInt();
 		List<Buchung> automatedEntries = new ArrayList<Buchung>();
 		
 		for (int i = 0; i < numberOfAutomatedEntries; i++) {
 			// Buchung laden:
 			//final String typ = in.readUTF();
-			automatedEntries.add(BuchungFactory.getInstance(in));
+			automatedEntries.add(buchungFactory.getInstance(in));
 //			if (typ.equals("Umbuchung")) {
 //				//doUmbuchung(in);
 //			} else if (!typ.equals("StandardBuchung") && !typ.equals("StandardBuchung2")) {

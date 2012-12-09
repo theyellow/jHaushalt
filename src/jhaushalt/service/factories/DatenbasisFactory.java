@@ -35,7 +35,7 @@ public class DatenbasisFactory {
 		saveRegistersList(dataOutputFacade, registerList);
 	}
 	
-	private void saveRegistersList(DataOutputFacade dataOutputFacade, List<Register> registerList) {
+	private void saveRegistersList(DataOutputFacade dataOutputFacade, List<Register> registerList) throws IOException {
 		for (Register register: registerList) {
 			registerFactory.saveData(dataOutputFacade, register);
 		}
