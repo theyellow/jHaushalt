@@ -99,8 +99,6 @@ public class DataServiceImpl implements DataService {
 				final EinzelKategorie kategorie = kategorien[kategorienIndex];
 				final Geldbetrag wert = buchung.getKategorieWert(kategorie, unterkategorienVerwenden);
 				if (! wert.equals(Geldbetrag.NULL_EURO)) {
-					System.out.println("Buchung: "+datum+", Text: "+buchung.getText()+", Kategorie: "+kategorie+", Wert: "+buchung.getWert());
-					System.out.println("Booking: "+datum+", Text: "+buchung.getText()+", Kategorie: "+kategorie+", Wert: "+wert);
 					return new BookEntry(datum, buchung.getText(), kategorie, wert);
 				}
 			}
